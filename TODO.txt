@@ -1,0 +1,40 @@
+TODO Obecne
+
+
+Generator
+- OK Vypnout vytup pokud generator nebezi
+- dodelat sweep                                                                                                    
+- OK upravit load formular pro arb generovani aby bylo schopne brat primo data z osciloskopu (zeptat se na preskoceni prvniho radku + preskoceni prvniho sloupce)
+
+Scope
+- prepinani rozsahu (ukladani do flash)
+- OK nastavit dobu odberu vzorku podle vzorkovaci frekvence  (done on F3-disco)
+- OK dodelat tralcitko max vzorkovaci frekvence  (done on F3-disco)
+- dodelat volbu kanalu ADC a pinu
+
+
+Aplikace
+- generator nastaveni duty meni oba parametry   (Nepodarilo se reprodukovat)
+- OK zobrazovat com port v nazvu okna
+
+
+
+Obecne
+OK - Bug - generator kanal 2 generuje i kdyz neni zapnut (vypnout DMA)
+OK - Bug 00d - aplikace nezobrazuje posledni cislo nazvu pinu (f303 discovery je napsano PB1 misto PB12)
+OK - Bug 00c - pokud se zmeni vzorkovani behem odesilani tak se spatne vypocita X osa 
+OK - Bug 00d - USB led by mela svitit i kdyz usb neni pripojeno (najit kde je pripojena - pravdepodobne to zpusobila zmena v gpio.c)
+OK - Bug 00a - Zmena frekvence pri odesilani dat vyvola chybu (internal prefix 1DataReady se dostane ven)
+OK - Bug 00b - pokuf je v datech strednik tak gen vyhodi chybu E999
+ 
+
+Counter: 
+FRatio A0 D7:
+do popisu se mozna mohlo uvest n- sample count    frekvency ratio   n x fa/fb , al eto je jen vec popisu. zatim to pocka.
+Bylo bytrochu vyhodne, pokud by se cislo " sample count" podrzelo natavene, kdyz se prepne do  mereni frekvence a pak se prepne nazpet.  Pocatecni nastaveni by to mohlo mit jen pri otevreni celeho okna citacu.
+
+Events Time interval:
+Dale u intervalu mi to meri jen jednorazove na start, opakovaci rezim jsem nedokazal spustit (INDEPENDENT mode).
+pokud by slo Single a start /stop, bylo by to sikovne, aby se to nemuselo rucne starovat.
+
+Dopsat kanaly v apce..
