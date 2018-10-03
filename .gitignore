@@ -1,0 +1,41 @@
+
+# build files
+*.o
+*.d
+*.crf
+*.__i
+*.dep
+*.plg
+*.htm
+
+#IDE files
+*.suo
+*.uvg*
+*.uvopt*
+*.uvproj*
+*.axf
+*.lst
+*.map
+*.hex
+
+desktop.ini
+logfile*.txt
+
+
+#runable files
+*.exe
+
+
+# C# build
+*.manifest
+*.pdb
+
+
+# other
+*.chm
+*.cache
+*.CopyComplete
+*.cache
+PC_APP/InstruLab/InstruLab/obj/x86/Debug/DesignTimeResolveAssemblyReferences.cache
+*.Cache
+*.cache
