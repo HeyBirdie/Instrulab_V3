@@ -149,7 +149,7 @@ namespace LEO
         public CounterConfig_def cntCfg;
         private StreamWriter logWriter;
         private List<String> logger = new List<String>();
-        private const bool writeLog = false;
+        private const bool writeLog = true;
         Scope Scope_form;
         Generator Gen_form;
         Voltmeter Volt_form;
@@ -236,17 +236,18 @@ namespace LEO
                 {
                     bool logOpened = false;
                     int index = 1;
-                    while (!logOpened)
+                    try
                     {
-                        try
+                        if (File.Exists("logfile" + index + ".txt"))
                         {
-                            logWriter = File.AppendText("logfile" + index + ".txt");
-                            logOpened = true;
+                            File.Delete("logfile" + index + ".txt");
                         }
-                        catch (Exception ex)
-                        {
-                            index++;
-                        }
+                        logWriter = File.AppendText("logfile" + index + ".txt");
+                        logOpened = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        index++;
                     }
                 }
                 Log("PORT otevřen: " + portName + "  Baudrate:" + speed + "  Zařízení:" + name);
@@ -1193,7 +1194,7 @@ namespace LEO
                                 }
                                 catch (Exception ex)
                                 {
-                                    logRecieved("Unknown message " + new string(inputMsg, 0, 4));
+                                    logRecieved("Unknown error " + new string(inputMsg, 0, 4));
                                     if (lastError != -1)
                                     {
 
@@ -1205,10 +1206,10 @@ namespace LEO
                             }
                             else
                             {
-                                logRecieved("Unknown message " + new string(inputMsg, 0, 4));
+                                logRecieved("Unknown message " + "(0x" + String.Format("{0:X}", Convert.ToByte(inputMsg[0])) + String.Format("{0:X}", Convert.ToByte(inputMsg[1]),2) + String.Format("{0:X}", Convert.ToByte(inputMsg[2]), 2) + String.Format("{0:X}", Convert.ToByte(inputMsg[3]), 2) + ")" + new string(inputMsg, 0, 4));
                                 if (lastError != -1)
                                 {
-                                    MessageBox.Show("Unknow message recieved \r\n" + new string(inputMsg, 0, 4), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    MessageBox.Show("Unknow message recieved \r\n" + "\r\n(0x" + String.Format("{0:X}", Convert.ToByte(inputMsg[0]), 2) + String.Format("{0:X}", Convert.ToByte(inputMsg[1]), 2) + String.Format("{0:X}", Convert.ToByte(inputMsg[2]), 2) + String.Format("{0:X}", Convert.ToByte(inputMsg[3]), 2) + ")" + new string(inputMsg, 0, 4), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                                     lastError = -1;
                                     //Console.WriteLine(new string(inputMsg, 0, 4));
                                 }

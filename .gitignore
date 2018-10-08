@@ -17,6 +17,7 @@
 *.lst
 *.map
 *.hex
+*._2i
 
 desktop.ini
 logfile*.txt
@@ -39,3 +40,8 @@ logfile*.txt
 PC_APP/InstruLab/InstruLab/obj/x86/Debug/DesignTimeResolveAssemblyReferences.cache
 *.Cache
 *.cache
+*.crf
+*.pdb
+*._2i
+*.application
+*.manifest

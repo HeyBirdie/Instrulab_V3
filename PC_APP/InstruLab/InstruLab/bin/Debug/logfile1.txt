@@ -1,5 +1,0 @@
-
-Log Entry : 9:40:51 Friday, February 2, 2018
-  :PORT otevřen: COM4  Baudrate:115200  Zařízení:STM32F303-Nucleo
--------------------------------
-PORT zavřen: COM4

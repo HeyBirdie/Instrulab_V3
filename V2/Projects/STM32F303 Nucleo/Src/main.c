@@ -124,7 +124,7 @@ int main(void)
 	osThreadDef(CMD_PARSER_TASK, CmdParserTask, osPriorityNormal, 0, configMINIMAL_STACK_SIZE*2);
 	osThreadDef(USER_TASK, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE);
 	osThreadDef(COMM_TASK, CommTask, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE*2);
-	osThreadDef(LL_COMM_TASK, LLCommTask, osPriorityNormal, 0, configMINIMAL_STACK_SIZE);
+	//osThreadDef(LL_COMM_TASK, LLCommTask, osPriorityNormal, 0, configMINIMAL_STACK_SIZE);
 
 	#ifdef USE_SCOPE
 	osThreadDef(SCOPE_TASK, ScopeTask, osPriorityNormal, 0, configMINIMAL_STACK_SIZE*2);
@@ -152,7 +152,7 @@ int main(void)
 	osThreadCreate (osThread(CMD_PARSER_TASK), NULL);
 	osThreadCreate (osThread(USER_TASK), NULL);
 	osThreadCreate (osThread(COMM_TASK), NULL);
-	osThreadCreate (osThread(LL_COMM_TASK), NULL);
+	//osThreadCreate (osThread(LL_COMM_TASK), NULL);
 
 	#ifdef USE_SCOPE
 	osThreadCreate (osThread(SCOPE_TASK), NULL);
@@ -205,8 +205,8 @@ static void StartThread(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-		xQueueSendToBack(messageQueue, "QflushComms", portMAX_DELAY);
-		osDelay(10);
+		//xQueueSendToBack(messageQueue, "QflushComms", portMAX_DELAY);
+		//osDelay(10);
   }
 
   /* USER CODE END 5 */ 

@@ -114,16 +114,16 @@ void commsSendDMA(uint8_t chr){
 }
 
 void commsSendInt32DMA(int32_t num){
-	commsSendUint32DMA(num);
+	//commsSendUint32DMA(num);
 }
 
 void commsSendUint32DMA(uint32_t num){
-	uint8_t buff[4];
-	buff[0]=(uint8_t)(num);
-	buff[1]=(uint8_t)(num>>8);
-	buff[2]=(uint8_t)(num>>16);
-	buff[3]=(uint8_t)(num>>24);
-  commsSendBuffDMA(buff, 4);
+//	uint8_t buff[4];
+//	buff[0]=(uint8_t)(num);
+//	buff[1]=(uint8_t)(num>>8);
+//	buff[2]=(uint8_t)(num>>16);
+//	buff[3]=(uint8_t)(num>>24);
+ // commsSendBuffDMA(buff, 4);
 }
 
 void commsSendBuffDMA(uint8_t *buff, uint16_t len){

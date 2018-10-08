@@ -385,10 +385,12 @@ namespace LEO
             {
                 hold = true;
                 this.button_hold.Text = "Measure";
+                device.send(Commands.SCOPE + ":" + Commands.STOP + ";");
             }
             else {
                 hold = false;
                 this.button_hold.Text = "Hold";
+                device.send(Commands.SCOPE + ":" + Commands.START + ";");
             }
             this.Invalidate();
         }
