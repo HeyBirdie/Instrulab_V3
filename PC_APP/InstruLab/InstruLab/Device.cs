@@ -689,7 +689,7 @@ namespace LEO
             Thread.Sleep(1);
             if (watch <= 0)
             {
-                // throw (new Exception("Reading timeout")); 
+                 throw (new Exception("Reading timeout")); 
             }
         }
 
@@ -715,7 +715,7 @@ namespace LEO
                         wait_for_data(watchDog--);
                         if (watchDog < 0)
                         {
-                            port.Read(inputMsg, 0, 2);
+                            // port.Read(inputMsg, 0, 2);
                         }
                     }
                     port.Read(inputMsg, 0, 4);
@@ -773,10 +773,11 @@ namespace LEO
                                     ushort depth = (ushort)Math.Pow(2, res);
                                     for (i = 0; i < leng / 2; i++)
                                     {
-                                        scopeCfg.samples[currChan - 1, i] = (ushort)(depth - BitConverter.ToUInt16(scopeCfg.buffer, i * 2));                                       
+                                        scopeCfg.samples[currChan - 1, i] = (ushort)(depth - BitConverter.ToUInt16(scopeCfg.buffer, i * 2));
                                     }
                                 }
-                                else {
+                                else
+                                {
                                     for (i = 0; i < leng / 2; i++)
                                     {
                                         scopeCfg.samples[currChan - 1, i] = BitConverter.ToUInt16(scopeCfg.buffer, i * 2);
@@ -864,7 +865,7 @@ namespace LEO
                             break;
                         case Commands.GEN_OK:
                             //Console.WriteLine(Commands.TRIGGERED);
-                            logRecieved("OK");
+                            logRecieved("GEN_OK");
                             switch (DACFormOpened)
                             {
                                 case FormOpened.GENERATOR:
@@ -916,7 +917,7 @@ namespace LEO
                             {
                                 wait_for_data(watchDog--);
                             }
-                            port.Read(inputData, 0, 4);                                                        
+                            port.Read(inputData, 0, 4);
                             int triggerPointer = trigP = BitConverter.ToInt32(inputData, 0);
                             LogAnlys_form.add_message(new Message(Message.MsgRequest.LOG_ANLYS_TRIGGER_POINTER, "LOG_ANLYS_TRIG_POINTER", triggerPointer));
                             break;
@@ -927,7 +928,7 @@ namespace LEO
                                 wait_for_data(watchDog--);
                             }
                             port.Read(inputData, 0, 4);
-                            int dataLength = receiveDataLength = BitConverter.ToInt32(inputData, 0);                            
+                            int dataLength = receiveDataLength = BitConverter.ToInt32(inputData, 0);
                             break;
 
                         case Commands.LOG_ANLYS_DATA:
@@ -991,7 +992,7 @@ namespace LEO
                                 logRecieved("Counter freq IC1 was not parsed  " + new string(inputValIc1, 0, 4));
                             }
 
-                            port.DiscardInBuffer();
+                            //port.DiscardInBuffer();
                             break;
                         /************************* IC2 data *************************/
                         case Commands.CNT_IC2_DATA:
@@ -1029,17 +1030,17 @@ namespace LEO
                                 double dutyCycle = double.Parse(cntDutyCycle, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
                                 string cntPulseWidth = new string(inputValIcDc1, 6, 15);
                                 cntCfg.pulseWidth = double.Parse(cntPulseWidth, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
-                                
+
                                 Counter_form.add_message(new Message(Message.MsgRequest.COUNTER_IC_DUTY_CYCLE, "IC_DUTY_CYCLE", dutyCycle));
                                 /* There seems to be a problem passing two messages consequently in short time. */
-                        //        Counter_form.add_message(new Message(Message.MsgRequest.COUNTER_IC_PULSE_WIDTH, "IC_PULSE_WIDTH", pulseWidth));
+                                //        Counter_form.add_message(new Message(Message.MsgRequest.COUNTER_IC_PULSE_WIDTH, "IC_PULSE_WIDTH", pulseWidth));
                             }
                             catch (Exception ex)
                             {
                                 logRecieved("Counter IC1 duty cycle was not parsed  " + new string(inputValIcDc1, 0, 4));
                             }
 
-                            port.DiscardInBuffer();
+                            //port.DiscardInBuffer();
                             break;
                         /************************* IC1 Duty Cycle *************************/
                         //case Commands.CNT_DUTY_CYCLE_RECEIVE:
@@ -1180,11 +1181,12 @@ namespace LEO
                                     {
                                         break;
                                     }
-                                    if (err == 999 && LastCommand.Equals(Commands.SCOPE + ":" + Commands.SCOPE_NEXT + ";")) {
+                                    if (err == 999 && LastCommand.Equals(Commands.SCOPE + ":" + Commands.SCOPE_NEXT + ";"))
+                                    {
                                         LastCommand = "";
                                         this.send(Commands.SCOPE + ":" + Commands.SCOPE_NEXT + ";");
                                         //MessageBox.Show("Recovered from Err\r\n" + new string(inputMsg, 0, 4) + "\r\n" + getErrReason(err), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                    } 
+                                    }
                                     if (lastError != err)
                                     {
                                         MessageBox.Show("Error recieved \r\n" + new string(inputMsg, 0, 4) + "\r\n" + getErrReason(err), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1206,11 +1208,17 @@ namespace LEO
                             }
                             else
                             {
-                                logRecieved("Unknown message " + "(0x" + String.Format("{0:X}", Convert.ToByte(inputMsg[0])) + String.Format("{0:X}", Convert.ToByte(inputMsg[1]),2) + String.Format("{0:X}", Convert.ToByte(inputMsg[2]), 2) + String.Format("{0:X}", Convert.ToByte(inputMsg[3]), 2) + ")" + new string(inputMsg, 0, 4));
+                                int red = port.BytesToRead;
+                                char[] bu = new char[red];
+                                port.Read(bu, 0, red);
+                                string s = new string(bu);
+                                logRecieved("Unknown message " + "(0x" + String.Format("{0:X}", Convert.ToByte(inputMsg[0])) + String.Format("{0:X}", Convert.ToByte(inputMsg[1]), 2) + String.Format("{0:X}", Convert.ToByte(inputMsg[2]), 2) + String.Format("{0:X}", Convert.ToByte(inputMsg[3]), 2) + ")" + new string(inputMsg, 0, 4) + " (buffer:" + red + ":" + s);
                                 if (lastError != -1)
                                 {
-                                    MessageBox.Show("Unknow message recieved \r\n" + "\r\n(0x" + String.Format("{0:X}", Convert.ToByte(inputMsg[0]), 2) + String.Format("{0:X}", Convert.ToByte(inputMsg[1]), 2) + String.Format("{0:X}", Convert.ToByte(inputMsg[2]), 2) + String.Format("{0:X}", Convert.ToByte(inputMsg[3]), 2) + ")" + new string(inputMsg, 0, 4), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    MessageBox.Show("Unknow message recieved \r\n" + red + "\r\n" + s + "\r\n(0x" + String.Format("{0:X}", Convert.ToByte(inputMsg[0]), 2) + String.Format("{0:X}", Convert.ToByte(inputMsg[1]), 2) + String.Format("{0:X}", Convert.ToByte(inputMsg[2]), 2) + String.Format("{0:X}", Convert.ToByte(inputMsg[3]), 2) + ")" + new string(inputMsg, 0, 4), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                                     lastError = -1;
+
+
                                     //Console.WriteLine(new string(inputMsg, 0, 4));
                                 }
                             }
@@ -1227,11 +1235,12 @@ namespace LEO
                     {
                         port.DiscardInBuffer();
                         report.Sendreport("Mismatch communication Error recieved", ex, this, logger, 31681);
+                        MessageBox.Show("Unknow error \r\n" + ex, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
-                catch (System.InvalidOperationException)
+                catch (Exception ex)
                 {
-
+                    MessageBox.Show("Unknow error \r\n" + ex, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 Thread.Yield();
             }
