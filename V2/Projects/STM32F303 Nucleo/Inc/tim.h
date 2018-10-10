@@ -131,7 +131,7 @@ void TIM_LogAnlys_Stop(void);
 void TIM_PostTrigger_ARR_PSC_Reconfig(uint32_t arrPsc);
 void TIM_SamplingFreq_ARR_PSC_Reconfig(uint32_t arrPsc);
 
-void TIM_EnableTrigger(void);
+void GPIO_EnableTrigger(void);
 void TIM_PostTrigger_SoftwareStart(void);
 void TIM_PreTriggerDelay(uint16_t timeInMillisec);
 void TIM_TriggerConfig(uint8_t chan);

@@ -590,6 +590,36 @@ namespace LEO
             sendCommandNumber(Commands.LOG_ANLYS_TRIGGER_CHANNEL, 2);
         }
 
+        private void radioButton_trig_ch3_CheckedChanged(object sender, EventArgs e)
+        {
+            sendCommandNumber(Commands.LOG_ANLYS_TRIGGER_CHANNEL, 3);
+        }
+
+        private void radioButton_trig_ch4_Click(object sender, EventArgs e)
+        {
+            sendCommandNumber(Commands.LOG_ANLYS_TRIGGER_CHANNEL, 4);
+        }
+
+        private void radioButton_trig_c5_Click(object sender, EventArgs e)
+        {
+            sendCommandNumber(Commands.LOG_ANLYS_TRIGGER_CHANNEL, 5);
+        }
+
+        private void radioButton_trig_ch6_Click(object sender, EventArgs e)
+        {
+            sendCommandNumber(Commands.LOG_ANLYS_TRIGGER_CHANNEL, 6);
+        }
+
+        private void radioButton_trig_ch7_Click(object sender, EventArgs e)
+        {
+            sendCommandNumber(Commands.LOG_ANLYS_TRIGGER_CHANNEL, 7);
+        }
+
+        private void radioButton_trig_ch8_Click(object sender, EventArgs e)
+        {
+            sendCommandNumber(Commands.LOG_ANLYS_TRIGGER_CHANNEL, 8);
+        }
+
         private void checkBox_trig_rise_CheckedChanged(object sender, EventArgs e)
         {
             sendCommand(Commands.LOG_ANLYS_TRIGGER_EVENT, Commands.LOG_ANLYS_TRIGGER_EDGE_RISING);

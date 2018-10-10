@@ -780,14 +780,18 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
   {
     /* Peripheral clock enable */
     __HAL_RCC_TIM1_CLK_ENABLE();
-		
+
 		/*Configure GPIO pins : PB10 PB11 PB12 PB13 PB7 PB8 PB9 */
 		GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_13 
-														|GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9;
+														|GPIO_PIN_6|GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9;
 		GPIO_InitStruct.Mode = GPIO_MODE_INPUT; //GPIO_MODE_INPUT;
-		GPIO_InitStruct.Pull = GPIO_NOPULL; //GPIO_PULLDOWN;
+		GPIO_InitStruct.Pull = GPIO_PULLUP; //GPIO_PULLDOWN;
 		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
 		HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+		
+		HAL_NVIC_SetPriority(EXTI9_5_IRQn,9,0);
+		HAL_NVIC_SetPriority(EXTI15_10_IRQn,9,0);
+		
   
     /* TIM1 DMA Init */
     /* TIM1_UP Init */
@@ -817,7 +821,7 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
     PB6     ------> TIM4_CH1 */
     GPIO_InitStruct.Pin = GPIO_PIN_6;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP; //GPIO_MODE_INPUT;
-    GPIO_InitStruct.Pull = GPIO_NOPULL; //GPIO_PULLDOWN;
+    GPIO_InitStruct.Pull = GPIO_PULLUP; //GPIO_PULLDOWN;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF2_TIM4;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);			
@@ -1709,27 +1713,69 @@ void TIM_PreTriggerDelay(uint16_t timeInMillisec)
 }
 
 /* Called from logAnlys Task after pretrigger thread.sleep time elapsed. */
-void TIM_EnableTrigger(void)
+void GPIO_EnableTrigger(void)
 {
-	// 0x4002005C hdma_tim1_up.Instance->CNDTR
-//	HAL_DMA_Abort(&hdma_tim4_up);
-//	HAL_DMA_Start(&hdma_tim4_up, (uint32_t)(&hdma_tim1_up.Instance->CNDTR), (uint32_t)&logAnlys.triggerPointer, 1);		
+	GPIO_InitTypeDef   GPIO_InitStructure;
+	IRQn_Type ExtiLine;
 	
-//	/* Trigger interrupt after posttriger timer elapses (Update Event). */
-//	__HAL_TIM_ENABLE_IT(&htim4, TIM_IT_UPDATE);		
+	//restore default settings
+	HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
+	HAL_NVIC_DisableIRQ(EXTI15_10_IRQn);
 	
-	if(logAnlys.trigConfig == TRIG_CHAN1){		
-		/* Enable Capture Compare interrupt to disable trigger. */
-		__HAL_TIM_ENABLE_IT(&htim4, TIM_IT_CC1);				
-		/* Enable capturing */
-		TIM_CCxChannelCmd(htim4.Instance, TIM_CHANNEL_1, ENABLE);		
-		
-	}else if(logAnlys.trigConfig == TRIG_CHAN2){
-		/* Enable Capture Compare interrupt to disable trigger. */
-		__HAL_TIM_ENABLE_IT(&htim4, TIM_IT_CC2);		
-		/* Enable capturing */
-		TIM_CCxChannelCmd(htim4.Instance, TIM_CHANNEL_2, ENABLE);				
+	GPIO_InitStructure.Pin = GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_13 |GPIO_PIN_6|GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9;
+	EXTI->IMR &= ~(GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_13 |GPIO_PIN_6|GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9);  //when selecting different line the EXTI settings remain the same
+	
+	GPIO_InitStructure.Mode = GPIO_MODE_INPUT; //GPIO_MODE_INPUT;
+	GPIO_InitStructure.Pull = GPIO_PULLUP; //GPIO_PULLDOWN;
+	GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
+	HAL_GPIO_Init(GPIOB, &GPIO_InitStructure);
+	
+	
+	//init right pin to interrupt
+	if(logAnlys.trigEdge == TRIG_EDGE_FALLING){
+		GPIO_InitStructure.Mode = GPIO_MODE_IT_FALLING;
+	}else {
+		GPIO_InitStructure.Mode = GPIO_MODE_IT_RISING;
 	}
+	
+	switch(logAnlys.trigConfig){
+		case TRIG_CHAN1:
+			GPIO_InitStructure.Pin = GPIO_PIN_6;
+			ExtiLine = EXTI9_5_IRQn;
+			break;
+		case TRIG_CHAN2:
+			GPIO_InitStructure.Pin = GPIO_PIN_7;
+			ExtiLine = EXTI9_5_IRQn;
+			break;
+		case TRIG_CHAN3:
+			GPIO_InitStructure.Pin = GPIO_PIN_8;
+			ExtiLine = EXTI9_5_IRQn;
+			break;
+		case TRIG_CHAN4:
+			GPIO_InitStructure.Pin = GPIO_PIN_9;
+			ExtiLine = EXTI9_5_IRQn;
+			break;
+		case TRIG_CHAN5:
+			GPIO_InitStructure.Pin = GPIO_PIN_10;
+			ExtiLine = EXTI15_10_IRQn;
+			break;
+		case TRIG_CHAN6:
+			GPIO_InitStructure.Pin = GPIO_PIN_11;
+			ExtiLine = EXTI15_10_IRQn;
+			break;
+		case TRIG_CHAN7:
+			GPIO_InitStructure.Pin = GPIO_PIN_12;
+			ExtiLine = EXTI15_10_IRQn;
+			break;
+		case TRIG_CHAN8:
+			GPIO_InitStructure.Pin = GPIO_PIN_13;
+			ExtiLine = EXTI15_10_IRQn;
+			break;
+	}
+
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStructure);
+  HAL_NVIC_EnableIRQ(ExtiLine);
+
 }
 
 void TIM_LogAnlys_RisingTrigger(void){
@@ -1752,8 +1798,8 @@ void TIM_LogAnlys_FallingTrigger(void){
 void TIM_LogAnlys_RisingTrigger_Channel1(void)
 {
 	//TIM4->CCER &= ~(uint16_t)(TIM_CCER_CC1P | TIM_CCER_CC1NP);	
-	TIM_RESET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_1);
-	TIM_SET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_1, TIM_ICPOLARITY_RISING);
+//	TIM_RESET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_1);
+//	TIM_SET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_1, TIM_ICPOLARITY_RISING);
 	logAnlys.trigEdge = TRIG_EDGE_RISING;
 }
 
@@ -1761,8 +1807,8 @@ void TIM_LogAnlys_RisingTrigger_Channel1(void)
 void TIM_LogAnlys_RisingTrigger_Channel2(void)
 {
 	//TIM4->CCER &= ~(uint16_t)(TIM_CCER_CC2P | TIM_CCER_CC2NP);
-	TIM_RESET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_2);
-	TIM_SET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_2, TIM_ICPOLARITY_RISING);	
+//	TIM_RESET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_2);
+//	TIM_SET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_2, TIM_ICPOLARITY_RISING);	
 	logAnlys.trigEdge = TRIG_EDGE_RISING;
 }
 
@@ -1771,8 +1817,8 @@ void TIM_LogAnlys_FallingTrigger_Channel1(void)
 {
 //	TIM4->CCER &= ~(uint16_t)(TIM_CCER_CC1NP);	
 //	TIM4->CCER |= (uint16_t)(TIM_CCER_CC1P);	
-	TIM_RESET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_1);
-	TIM_SET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_1, TIM_ICPOLARITY_FALLING);
+//	TIM_RESET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_1);
+//	TIM_SET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_1, TIM_ICPOLARITY_FALLING);
 	logAnlys.trigEdge = TRIG_EDGE_FALLING;
 }
 
@@ -1781,33 +1827,33 @@ void TIM_LogAnlys_FallingTrigger_Channel2(void)
 {
 //	TIM4->CCER &= ~(uint16_t)(TIM_CCER_CC2NP);	
 //	TIM4->CCER |= (uint16_t)(TIM_CCER_CC2P);	
-	TIM_RESET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_2);
-	TIM_SET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_2, TIM_ICPOLARITY_FALLING);	
+//	TIM_RESET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_2);
+//	TIM_SET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_2, TIM_ICPOLARITY_FALLING);	
 	logAnlys.trigEdge = TRIG_EDGE_FALLING;
 }
 
 /* Can be 1 or 2 - PB6 or PB7 */
 void TIM_TriggerConfig(uint8_t chan)
 {
-	if(chan == 1){
-		TIM_ConfigTrigger_Channel1();
-		logAnlys.trigConfig = TRIG_CHAN1;
-		
-		if(logAnlys.trigEdge == TRIG_EDGE_RISING){
-			TIM_LogAnlys_RisingTrigger_Channel1();
-		}else{
-			TIM_LogAnlys_FallingTrigger_Channel1();
-		}
-	}else if(chan == 2){
-		TIM_ConfigTrigger_Channel2();
-		logAnlys.trigConfig = TRIG_CHAN2;
-		
-		if(logAnlys.trigEdge == TRIG_EDGE_RISING){
-			TIM_LogAnlys_RisingTrigger_Channel2();
-		}else{
-			TIM_LogAnlys_FallingTrigger_Channel2();
-		}		
-	}
+//	if(chan == 1){
+//		TIM_ConfigTrigger_Channel1();
+//		logAnlys.trigConfig = TRIG_CHAN1;
+//		
+//		if(logAnlys.trigEdge == TRIG_EDGE_RISING){
+//			TIM_LogAnlys_RisingTrigger_Channel1();
+//		}else{
+//			TIM_LogAnlys_FallingTrigger_Channel1();
+//		}
+//	}else if(chan == 2){
+//		TIM_ConfigTrigger_Channel2();
+//		logAnlys.trigConfig = TRIG_CHAN2;
+//		
+//		if(logAnlys.trigEdge == TRIG_EDGE_RISING){
+//			TIM_LogAnlys_RisingTrigger_Channel2();
+//		}else{
+//			TIM_LogAnlys_FallingTrigger_Channel2();
+//		}		
+//	}
 }
 
 void TIM_ConfigTrigger_Channel1(void)
@@ -1895,52 +1941,52 @@ void TIM_ResetTrigger_Channel2(void)
 
 void TIM_GPIOTrigConfig_Channel1(void)
 {
-	GPIO_InitTypeDef GPIO_InitStruct;	
-	
-	/**TIM4 GPIO Configuration   
-	PB6     ------> TIM4_CH1 */
-	GPIO_InitStruct.Pin = GPIO_PIN_6;
-	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-	GPIO_InitStruct.Alternate = GPIO_AF2_TIM4;
-	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+//	GPIO_InitTypeDef GPIO_InitStruct;	
+//	
+//	/**TIM4 GPIO Configuration   
+//	PB6     ------> TIM4_CH1 */
+//	GPIO_InitStruct.Pin = GPIO_PIN_6;
+//	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+//	GPIO_InitStruct.Pull = GPIO_NOPULL;
+//	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+//	GPIO_InitStruct.Alternate = GPIO_AF2_TIM4;
+//	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 }
 
 void TIM_GPIOTrigConfig_Channel2(void)
 {
-	GPIO_InitTypeDef GPIO_InitStruct;	
-	
-	/**TIM4 GPIO Configuration    
-	PB7     ------> TIM4_CH2 */
-	GPIO_InitStruct.Pin = GPIO_PIN_7;
-	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-	GPIO_InitStruct.Alternate = GPIO_AF2_TIM4;
-	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+//	GPIO_InitTypeDef GPIO_InitStruct;	
+//	
+//	/**TIM4 GPIO Configuration    
+//	PB7     ------> TIM4_CH2 */
+//	GPIO_InitStruct.Pin = GPIO_PIN_7;
+//	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+//	GPIO_InitStruct.Pull = GPIO_NOPULL;
+//	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+//	GPIO_InitStruct.Alternate = GPIO_AF2_TIM4;
+//	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 }
 
 void TIM_GPIOInputConfig_Channel1(void)
 {
-	GPIO_InitTypeDef GPIO_InitStruct;	
+//	GPIO_InitTypeDef GPIO_InitStruct;	
 
-	GPIO_InitStruct.Pin = GPIO_PIN_6;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);	
+//	GPIO_InitStruct.Pin = GPIO_PIN_6;
+//  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+//  GPIO_InitStruct.Pull = GPIO_NOPULL;
+//	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+//  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);	
 }
 
 void TIM_GPIOInputConfig_Channel2(void)
 {
-	GPIO_InitTypeDef GPIO_InitStruct;	
-	
-  GPIO_InitStruct.Pin = GPIO_PIN_7;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);			
+//	GPIO_InitTypeDef GPIO_InitStruct;	
+//	
+//  GPIO_InitStruct.Pin = GPIO_PIN_7;
+//  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+//  GPIO_InitStruct.Pull = GPIO_NOPULL;
+//	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+//  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);			
 }
 
 #endif //USE_LOG_ANLYS

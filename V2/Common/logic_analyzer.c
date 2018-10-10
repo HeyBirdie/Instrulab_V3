@@ -141,7 +141,7 @@ void logAnlysStart(void){
 		TIM_PostTrigger_SoftwareStart();
 	}
 	/* Enable trigger after pretrigger time elapses */
-	TIM_EnableTrigger();	
+	GPIO_EnableTrigger();	
 }	
 
 void logAnlysStop(void){
@@ -172,15 +172,43 @@ void logAnlysSetSamplesNum(uint16_t samplesNum){
 }
 
 void logAnlysSetTriggerRising(void){
-	TIM_LogAnlys_RisingTrigger();
+	logAnlys.trigEdge = TRIG_EDGE_RISING;
+	GPIO_EnableTrigger();	
 }
 
 void logAnlysSetTriggerFalling(void){
-	TIM_LogAnlys_FallingTrigger();
+	logAnlys.trigEdge = TRIG_EDGE_FALLING;
+	GPIO_EnableTrigger();	
 }
 
 void logAnlysSetTriggerChannel(uint32_t chan){
-	TIM_TriggerConfig((uint8_t)chan);
+	switch(chan){
+		case 1:
+			logAnlys.trigConfig = TRIG_CHAN1;
+			break;
+		case 2:
+			logAnlys.trigConfig = TRIG_CHAN2;
+			break;
+		case 3:
+			logAnlys.trigConfig = TRIG_CHAN3;
+			break;
+		case 4:
+			logAnlys.trigConfig = TRIG_CHAN4;
+			break;
+		case 5:
+			logAnlys.trigConfig = TRIG_CHAN5;
+			break;
+		case 6:
+			logAnlys.trigConfig = TRIG_CHAN6;
+			break;
+		case 7:
+			logAnlys.trigConfig = TRIG_CHAN7;
+			break;
+		case 8:
+			logAnlys.trigConfig = TRIG_CHAN8;
+			break;
+	}
+	GPIO_EnableTrigger();	
 }
 
 void logAnlysSetDefault(void){

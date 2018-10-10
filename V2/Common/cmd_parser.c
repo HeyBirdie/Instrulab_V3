@@ -817,7 +817,7 @@ command parseLogAnlysCmd(void){
 				}else if(cmdIn == CMD_TRIG_MODE_NORMAL){
 						logAnlys.triggerMode = LOGA_MODE_NORMAL;
 				}else if(cmdIn == CMD_TRIG_MODE_SINGLE){
-					logAnlys.triggerMode = LOGA_MODE_SINGLE;
+					logAnlys.triggerMode = LOGA_MODE_SINGLE;  ////// myslim ze nestaci jenom zmenit mode ale musi se znova spustit vzorkovani nebo neco ne???????
 				}	
 			}				
 			break;				

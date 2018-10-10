@@ -35,7 +35,13 @@ typedef enum{
 
 typedef enum{
 	TRIG_CHAN1 = 0,
-	TRIG_CHAN2
+	TRIG_CHAN2,
+	TRIG_CHAN3,
+	TRIG_CHAN4,
+	TRIG_CHAN5,
+	TRIG_CHAN6,
+	TRIG_CHAN7,
+	TRIG_CHAN8
 }trigConfigTypeDef;
 
 typedef enum{
