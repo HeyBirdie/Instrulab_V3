@@ -816,44 +816,10 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
     /* Peripheral clock enable */
     __HAL_RCC_TIM4_CLK_ENABLE();
 		
-		/* TRIGGER GPIO CONFIGURATION */
-    /**TIM4 GPIO Configuration    
-    PB6     ------> TIM4_CH1 */
-    GPIO_InitStruct.Pin = GPIO_PIN_6;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP; //GPIO_MODE_INPUT;
-    GPIO_InitStruct.Pull = GPIO_PULLUP; //GPIO_PULLDOWN;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-    GPIO_InitStruct.Alternate = GPIO_AF2_TIM4;
-    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);			
-		
-		/* TIM4 DMA Init */
-    /* TIM4_UP Init -  */
-//    hdma_tim4_up.Instance = DMA1_Channel7;
-//    hdma_tim4_up.Init.Direction = DMA_PERIPH_TO_MEMORY;
-//    hdma_tim4_up.Init.PeriphInc = DMA_PINC_DISABLE;
-//    hdma_tim4_up.Init.MemInc = DMA_MINC_DISABLE;
-//    hdma_tim4_up.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
-//    hdma_tim4_up.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
-//    hdma_tim4_up.Init.Mode = DMA_NORMAL;
-//    hdma_tim4_up.Init.Priority = DMA_PRIORITY_VERY_HIGH;
-//    HAL_DMA_Init(&hdma_tim4_up);
-		/* Enable DMA request from Capture/Compare event on Channel 1. */
-		/* Trigger interrupt after posttriger timer elapses (Update Event). */
-		//TIM4->DIER |= TIM_DIER_UIE;
-		/* Trigger interrupt on capture event to disable the trigger (+ save the trigger pointer in ISR instead DMA doing it). */
-		//TIM4->DIER |= TIM_DIER_CC1IE;				
-		
-		/* Link the DMA */
-//    __HAL_LINKDMA(htim_base,hdma[TIM_DMA_ID_UPDATE],hdma_tim4_up);			
-		/* Register DMA CpltCallback to deactivate the trigger input in to prevent triggering again. */
-//		HAL_DMA_RegisterCallback(&hdma_tim4_up, HAL_DMA_XFER_CPLT_CB_ID, LOG_ANLYS_TriggerEventOccuredCallback);
-		
-		/* DMA1_Channel2_IRQn interrupt configuration */
-//		HAL_NVIC_SetPriority(DMA1_Channel7_IRQn, 9, 0);
-//		HAL_NVIC_EnableIRQ(DMA1_Channel7_IRQn);	
+		__HAL_TIM_ENABLE_IT(&htim4, TIM_IT_UPDATE);
 
     /* TIM4 interrupt Init */
-    HAL_NVIC_SetPriority(TIM4_IRQn, 5, 0);
+    HAL_NVIC_SetPriority(TIM4_IRQn, 9, 0);
     HAL_NVIC_EnableIRQ(TIM4_IRQn);
   }
 	#endif //USE_LOG_ANLYS
@@ -1071,25 +1037,9 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* htim_base)
 	
 	if(htim_base->Instance==TIM4 && logAnlys.state==ENABLE){
     __HAL_RCC_TIM4_CLK_DISABLE();
-		
-    /**TIM4 GPIO Configuration    
-    PB6     ------> TIM4_CH1 */
-		if(logAnlys.trigConfig == TRIG_CHAN1){
-			HAL_GPIO_DeInit(GPIOB, GPIO_PIN_6);		
-		}else{
-			HAL_GPIO_DeInit(GPIOB, GPIO_PIN_7);		
-		} 
-		/* Disable DMA request from Capture/Compare event on both Channels. */
-		TIM4->DIER &= ~TIM_DIER_CC1DE;		
-		TIM4->DIER &= ~TIM_DIER_CC2DE;		
-		/* Disable capturing */
-		TIM4->CCER &= ~TIM_CCER_CC1E; 
-		TIM4->CCER &= ~TIM_CCER_CC2E;
-
-		HAL_DMA_UnRegisterCallback(&hdma_tim4_up, HAL_DMA_XFER_CPLT_CB_ID);			
-		HAL_DMA_DeInit(htim_base->hdma[TIM_DMA_ID_UPDATE]);	
-		HAL_NVIC_DisableIRQ(DMA1_Channel7_IRQn);
 		HAL_NVIC_DisableIRQ(TIM4_IRQn);
+		HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
+		HAL_NVIC_DisableIRQ(EXTI15_10_IRQn);
 	}
 	
 	#endif //USE_LOG_ANLYS
@@ -1531,16 +1481,13 @@ void TIM_ARR_PSC_Reconfig(uint32_t arrPsc)
 /* ************************************************************************************** */
 /* ------------------------ Logic analyzer Interrupts/Callbacks ------------------------- */
 /* ************************************************************************************** */
-int trigIsr = 0, ueIsr = 0;
 void LOG_ANLYS_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {	
   if(__HAL_TIM_GET_FLAG(htim, TIM_FLAG_UPDATE) != RESET)
   {		
     if(__HAL_TIM_GET_IT_SOURCE(htim, TIM_IT_UPDATE) != RESET)
     {
-			__HAL_TIM_DISABLE_IT(&htim4, TIM_IT_UPDATE);
-			ueIsr++;
-			/* This ISR fired more than twice - need to fix */
+//		__HAL_TIM_DISABLE_IT(&htim4, TIM_IT_UPDATE);
 			__HAL_TIM_CLEAR_FLAG(htim, TIM_FLAG_UPDATE);
 			/* Stop timer trigering the DMA for data transfer */
 			HAL_TIM_Base_Stop(&htim1);
@@ -1551,74 +1498,14 @@ void LOG_ANLYS_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   }
 }
 
-//void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-//{
-//	/* Stop timer trigering the DMA for data transfer */
-//	HAL_TIM_Base_Stop(&htim1);
-//	HAL_DMA_Abort(&hdma_tim1_up);					
-//	/* Data sending */
-//	logAnlysPeriodElapsedCallback();		
-//}
-
 /* Unable the trigger in this interrupt callback */
-void LOG_ANLYS_TriggerEventOccuredCallback(TIM_HandleTypeDef *htim)
+void LOG_ANLYS_TriggerEventOccuredCallback(void)
 {
-	/* Interrupt comes from CC1. */
-	if(__HAL_TIM_GET_FLAG(htim, TIM_FLAG_CC1) != RESET)
-  {		
-		if(__HAL_TIM_GET_IT_SOURCE(htim, TIM_IT_CC1) != RESET)
-    { 
-			__HAL_TIM_CLEAR_FLAG(htim, TIM_FLAG_CC1);
-			logAnlys.triggerPointer = hdma_tim1_up.Instance->CNDTR;		
-
-			trigIsr++;
-			
-			/* Trigger interrupt after posttriger timer elapses (Update Event). */
-			__HAL_TIM_ENABLE_IT(&htim4, TIM_IT_UPDATE);				
-			
-			if(logAnlys.trigConfig == TRIG_CHAN1){
-				/* Disable capturing */
-				TIM_CCxChannelCmd(htim->Instance, TIM_CHANNEL_1, DISABLE);
-				/* Disable Capture Compare interrupt to disable trigger. */
-				__HAL_TIM_DISABLE_IT(htim, TIM_IT_CC1);					
-				
-				logAnlys.trigOccur = TRIG_OCCURRED;
-			}			
-		}
-	}
-	/* Interrupt comes from CC2. */
-	if(__HAL_TIM_GET_FLAG(htim, TIM_FLAG_CC2) != RESET)
-  {
-		if(__HAL_TIM_GET_IT_SOURCE(htim, TIM_IT_CC2) != RESET)
-    { 
-			__HAL_TIM_CLEAR_FLAG(htim, TIM_FLAG_CC2);
-			logAnlys.triggerPointer = hdma_tim1_up.Instance->CNDTR;			
-			
-			if(logAnlys.trigConfig == TRIG_CHAN2){
-				/* Disable capturing */
-				TIM_CCxChannelCmd(htim->Instance, TIM_CHANNEL_2, DISABLE);
-				/* Disable Capture Compare interrupt to disable trigger. */
-				__HAL_TIM_DISABLE_IT(htim, TIM_IT_CC2);						
-				
-				logAnlys.trigOccur = TRIG_OCCURRED;
-			}			
-		}
-	}	
+	logAnlys.triggerPointer = hdma_tim1_up.Instance->CNDTR;		
+	/* Trigger interrupt after posttriger timer elapses (Update Event). */
+	__HAL_TIM_ENABLE_IT(&htim4, TIM_IT_UPDATE);				
+	logAnlys.trigOccur = TRIG_OCCURRED;
 }
-
-//void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
-//{
-//	logAnlys.triggerPointer = hdma_tim1_up.Instance->CNDTR;		
-//	
-//	if(logAnlys.trigConfig == TRIG_CHAN1){
-//		/* Disable capturing */
-//		TIM_CCxChannelCmd(htim->Instance, TIM_CHANNEL_1, DISABLE);
-//		/* Disable Capture Compare interrupt to disable trigger. */
-//		__HAL_TIM_DISABLE_IT(htim, TIM_IT_CC1);					
-//		
-//		logAnlys.trigOccur = TRIG_OCCURRED;
-//	}		
-//}
 
 /* ************************************************************************************** */
 /* --------------------- Logic analyzer Initialization + Starting ----------------------- */
@@ -1658,7 +1545,6 @@ void TIM_LogAnlys_Stop(void)
 {
 	/* Aborted so the CNDTR (data length - number of samples) can be changed. */
 	HAL_DMA_Abort(&hdma_tim1_up);	
-	HAL_DMA_Abort(&hdma_tim4_up);
 	HAL_TIM_Base_Stop(&htim1);
 	HAL_TIM_Base_Stop(&htim4);
 	__HAL_TIM_SET_COUNTER(&htim4, 0x00);
@@ -1673,9 +1559,6 @@ void TIM_PostTrigger_ARR_PSC_Reconfig(uint32_t arrPsc)
 	uint16_t arr, psc;		
 	arr = (uint16_t)arrPsc;
 	psc = (uint16_t)(arrPsc >> 16);
-		
-//	TIM4->ARR = arr;
-//	TIM4->PSC = psc;
 	
 	__HAL_TIM_SET_AUTORELOAD(&htim4, arr);
 	__HAL_TIM_SET_PRESCALER(&htim4, psc);
@@ -1690,16 +1573,12 @@ void TIM_SamplingFreq_ARR_PSC_Reconfig(uint32_t arrPsc)
 	
 	logAnlys.samplingFreq = LOG_ANLYS_TIMEBASE_PERIPH_CLOCK / ((arr + 1) * (psc + 1));
 	
-//	TIM1->ARR = arr;
-//	TIM1->PSC = psc;
-	
 	__HAL_TIM_SET_AUTORELOAD(&htim4, arr);
 	__HAL_TIM_SET_PRESCALER(&htim4, psc);	
 }
 
 void TIM_PostTrigger_SoftwareStart(void)
-{
-	/* Trigger interrupt after posttriger timer elapses (Update Event). */
+{	/* Trigger interrupt after posttriger timer elapses (Update Event). */
 //	__HAL_TIM_ENABLE_IT(&htim4, TIM_IT_UPDATE);	
 	__HAL_TIM_SET_COUNTER(&htim4, 0x00);
 	HAL_TIM_Base_Start(&htim4);
@@ -1775,223 +1654,9 @@ void GPIO_EnableTrigger(void)
 
   HAL_GPIO_Init(GPIOB, &GPIO_InitStructure);
   HAL_NVIC_EnableIRQ(ExtiLine);
-
-}
-
-void TIM_LogAnlys_RisingTrigger(void){
-	if(logAnlys.trigConfig == TRIG_CHAN1){
-		TIM_LogAnlys_RisingTrigger_Channel1();
-	}else{
-		TIM_LogAnlys_RisingTrigger_Channel2();
-	}	
-}
-
-void TIM_LogAnlys_FallingTrigger(void){
-	if(logAnlys.trigConfig == TRIG_CHAN1){
-		TIM_LogAnlys_FallingTrigger_Channel1();
-	}else{
-		TIM_LogAnlys_FallingTrigger_Channel2();
-	}
-}
-
-/* Rising even to be used as trigger.	*/					
-void TIM_LogAnlys_RisingTrigger_Channel1(void)
-{
-	//TIM4->CCER &= ~(uint16_t)(TIM_CCER_CC1P | TIM_CCER_CC1NP);	
-//	TIM_RESET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_1);
-//	TIM_SET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_1, TIM_ICPOLARITY_RISING);
-	logAnlys.trigEdge = TRIG_EDGE_RISING;
-}
-
-/* Rising even to be used as trigger.	*/					
-void TIM_LogAnlys_RisingTrigger_Channel2(void)
-{
-	//TIM4->CCER &= ~(uint16_t)(TIM_CCER_CC2P | TIM_CCER_CC2NP);
-//	TIM_RESET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_2);
-//	TIM_SET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_2, TIM_ICPOLARITY_RISING);	
-	logAnlys.trigEdge = TRIG_EDGE_RISING;
-}
-
-/* Falling even to be used as trigger.	*/
-void TIM_LogAnlys_FallingTrigger_Channel1(void)
-{
-//	TIM4->CCER &= ~(uint16_t)(TIM_CCER_CC1NP);	
-//	TIM4->CCER |= (uint16_t)(TIM_CCER_CC1P);	
-//	TIM_RESET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_1);
-//	TIM_SET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_1, TIM_ICPOLARITY_FALLING);
-	logAnlys.trigEdge = TRIG_EDGE_FALLING;
-}
-
-/* Falling even to be used as trigger.	*/
-void TIM_LogAnlys_FallingTrigger_Channel2(void)
-{
-//	TIM4->CCER &= ~(uint16_t)(TIM_CCER_CC2NP);	
-//	TIM4->CCER |= (uint16_t)(TIM_CCER_CC2P);	
-//	TIM_RESET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_2);
-//	TIM_SET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_2, TIM_ICPOLARITY_FALLING);	
-	logAnlys.trigEdge = TRIG_EDGE_FALLING;
-}
-
-/* Can be 1 or 2 - PB6 or PB7 */
-void TIM_TriggerConfig(uint8_t chan)
-{
-//	if(chan == 1){
-//		TIM_ConfigTrigger_Channel1();
-//		logAnlys.trigConfig = TRIG_CHAN1;
-//		
-//		if(logAnlys.trigEdge == TRIG_EDGE_RISING){
-//			TIM_LogAnlys_RisingTrigger_Channel1();
-//		}else{
-//			TIM_LogAnlys_FallingTrigger_Channel1();
-//		}
-//	}else if(chan == 2){
-//		TIM_ConfigTrigger_Channel2();
-//		logAnlys.trigConfig = TRIG_CHAN2;
-//		
-//		if(logAnlys.trigEdge == TRIG_EDGE_RISING){
-//			TIM_LogAnlys_RisingTrigger_Channel2();
-//		}else{
-//			TIM_LogAnlys_FallingTrigger_Channel2();
-//		}		
-//	}
-}
-
-void TIM_ConfigTrigger_Channel1(void)
-{
-	/* Do not run timer after initialization, wait for start command */
-	//TIM4->CR1 &= ~TIM_CR1_CEN;
-	HAL_TIM_Base_Stop(&htim4);
-	
-	TIM_ResetTrigger_Channel2();
-	TIM_GPIOInputConfig_Channel2();
-	
-	TIM_GPIOTrigConfig_Channel1();				
-	TIM_SetTrigger_channel1();
-}
-
-void TIM_ConfigTrigger_Channel2(void)
-{	
-	/* Do not run timer after initialization, wait for start command */
-	//TIM4->CR1 &= ~TIM_CR1_CEN;
-	HAL_TIM_Base_Stop(&htim4);
-	
-	TIM_ResetTrigger_Channel1();	
-	TIM_GPIOInputConfig_Channel1();
-	
-	TIM_GPIOTrigConfig_Channel2();		
-	TIM_SetTrigger_channel2();
-}
-
-void TIM_SetTrigger_channel1(void)
-{
-	/* Set TIM CNT to zero */
-	TIM4->CNT = 0;			
-	/* Set IC1 prescaler to 1 */
-	TIM4->CCMR1 &= ~TIM_CCMR1_IC1PSC;			
-	/* Select the valid trigger input TI1FP1 */
-	TIM4->SMCR &= ~TIM_SMCR_TS;
-	TIM4->SMCR |= TIM_SMCR_TS_0 | TIM_SMCR_TS_2;			
-	/* Configure the slave mode controller in reset mode */
-//	TIM4->SMCR &= ~TIM_SMCR_SMS;
-//	TIM4->SMCR |= TIM_SMCR_SMS_2;	
-}
-
-void TIM_SetTrigger_channel2(void)
-{
-	/* Set TIM CNT to zero */
-	TIM4->CNT = 0;					
-	/* Set IC2 prescaler to 1 */
-	TIM4->CCMR1 &= ~TIM_CCMR1_IC2PSC;		
-	/* Select the valid trigger input TI2FP2 */
-	TIM4->SMCR &= ~TIM_SMCR_TS;
-	TIM4->SMCR |= TIM_SMCR_TS_1 | TIM_SMCR_TS_2;			
-	/* Configure the slave mode controller in reset mode */
-//	TIM4->SMCR &= ~TIM_SMCR_SMS;
-//	TIM4->SMCR |= TIM_SMCR_SMS_2;		
-}
-
-void TIM_ResetTrigger_Channel1(void)
-{	
-	/* Disable capturing */
-	TIM4->CCER &= ~TIM_CCER_CC1E; 	
-	/* Disable DMA request from channel 1 */
-	TIM4->DIER &= ~TIM_DIER_CC1DE;
-	/* Disable Capture Compare interrupt to disable trigger. */		
-	TIM4->DIER &= ~TIM_DIER_CC1IE;			
-	/* Unselect the trigger input */
-	TIM4->SMCR &= ~TIM_SMCR_TS;		
-	/* Disable the slave mode controller */
-//	TIM4->SMCR &= ~TIM_SMCR_SMS;		
-}
-
-
-void TIM_ResetTrigger_Channel2(void)
-{	
-	/* Disable capturing */
-	TIM4->CCER &= ~TIM_CCER_CC2E; 
-	/* Disable DMA request from channel 2 */
-	TIM4->DIER &= ~TIM_DIER_CC2DE;
-	/* Disable Capture Compare interrupt to disable trigger. */		
-	TIM4->DIER &= ~TIM_DIER_CC2IE;			
-	/* Unselect the trigger input */
-	TIM4->SMCR &= ~TIM_SMCR_TS;		
-	/* Disable the slave mode controller */
-//	TIM4->SMCR &= ~TIM_SMCR_SMS;		
-}
-
-void TIM_GPIOTrigConfig_Channel1(void)
-{
-//	GPIO_InitTypeDef GPIO_InitStruct;	
-//	
-//	/**TIM4 GPIO Configuration   
-//	PB6     ------> TIM4_CH1 */
-//	GPIO_InitStruct.Pin = GPIO_PIN_6;
-//	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-//	GPIO_InitStruct.Pull = GPIO_NOPULL;
-//	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-//	GPIO_InitStruct.Alternate = GPIO_AF2_TIM4;
-//	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-}
-
-void TIM_GPIOTrigConfig_Channel2(void)
-{
-//	GPIO_InitTypeDef GPIO_InitStruct;	
-//	
-//	/**TIM4 GPIO Configuration    
-//	PB7     ------> TIM4_CH2 */
-//	GPIO_InitStruct.Pin = GPIO_PIN_7;
-//	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-//	GPIO_InitStruct.Pull = GPIO_NOPULL;
-//	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-//	GPIO_InitStruct.Alternate = GPIO_AF2_TIM4;
-//	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-}
-
-void TIM_GPIOInputConfig_Channel1(void)
-{
-//	GPIO_InitTypeDef GPIO_InitStruct;	
-
-//	GPIO_InitStruct.Pin = GPIO_PIN_6;
-//  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-//  GPIO_InitStruct.Pull = GPIO_NOPULL;
-//	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-//  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);	
-}
-
-void TIM_GPIOInputConfig_Channel2(void)
-{
-//	GPIO_InitTypeDef GPIO_InitStruct;	
-//	
-//  GPIO_InitStruct.Pin = GPIO_PIN_7;
-//  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-//  GPIO_InitStruct.Pull = GPIO_NOPULL;
-//	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-//  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);			
 }
 
 #endif //USE_LOG_ANLYS
-
-
 
 
 

@@ -147,15 +147,8 @@ void TIM_GPIOTrigConfig_Channel2(void);
 void TIM_GPIOInputConfig_Channel1(void);
 void TIM_GPIOInputConfig_Channel2(void);
 
-void TIM_LogAnlys_RisingTrigger(void);
-void TIM_LogAnlys_FallingTrigger(void);
-void TIM_LogAnlys_RisingTrigger_Channel1(void);
-void TIM_LogAnlys_RisingTrigger_Channel2(void);
-void TIM_LogAnlys_FallingTrigger_Channel1(void);
-void TIM_LogAnlys_FallingTrigger_Channel2(void);
-
 void LOG_ANLYS_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
-void LOG_ANLYS_TriggerEventOccuredCallback(TIM_HandleTypeDef *htim);
+void LOG_ANLYS_TriggerEventOccuredCallback(void);
 #endif //USE_LOG_ANLYS
 
 

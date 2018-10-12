@@ -149,73 +149,85 @@ void DMA1_Channel2_IRQHandler(void)
 *	Saves DMA CNDTR pointer state to find out later where the trigger occured.
 * NOT USED ANYMORE !!!
 */
-void DMA1_Channel7_IRQHandler(void)
-{
-  HAL_DMA_IRQHandler(&hdma_tim4_up);
-	//HAL_DMA_IRQHandler(&hdma_usart2_tx);
-	//huart2.gState =HAL_UART_STATE_READY;
-//	  HAL_DMA_IRQHandler(&hdma_usart2_tx);
-}
+//void DMA1_Channel7_IRQHandler(void)
+//{
+//  HAL_DMA_IRQHandler(&hdma_tim4_up);
+//	//HAL_DMA_IRQHandler(&hdma_usart2_tx);
+//	//huart2.gState =HAL_UART_STATE_READY;
+////	  HAL_DMA_IRQHandler(&hdma_usart2_tx);
+//}
 
 void EXTI15_10_IRQHandler(void){
 	LOG_ANLYS_handle_interrupt(EXTI->PR);
-
 }
 
 void EXTI9_5_IRQHandler(void){
-	LOG_ANLYS_handle_interrupt(EXTI->PR);
+	LOG_ANLYS_handle_interrupt(EXTI->PR & 0x3fc0); //mask the pending requests to get interrupts from selected pins only
 }
 
-
 void LOG_ANLYS_handle_interrupt(uint32_t pr){
+	uint8_t isRightPin = 0;
 	
 	if(pr & (1 << 6) ){ 	//pending request on pin 6
 		__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_6);
 		if(logAnlys.trigConfig == TRIG_CHAN1){
-			//todo - trig occured on right pin --> start the tim to stop accquisition
+			HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
+			isRightPin = 1;
 		}
 	}
 	if(pr & (1 << 7) ){ 	//pending request on pin 7
 		__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_7);
 		if(logAnlys.trigConfig == TRIG_CHAN2){
-			//todo - trig occured on right pin --> start the tim to stop accquisition
+			HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
+			isRightPin = 1;
 		}
 	}
 	if(pr & (1 << 8) ){ 	//pending request on pin 8
 		__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_8);
 		if(logAnlys.trigConfig == TRIG_CHAN3){
-			//todo - trig occured on right pin --> start the tim to stop accquisition
+			HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
+			isRightPin = 1;
 		}
 	}
 	if(pr & (1 << 9) ){ 	//pending request on pin 9
 		__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_9);
 		if(logAnlys.trigConfig == TRIG_CHAN4){
-			//todo - trig occured on right pin --> start the tim to stop accquisition
+			HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
+			isRightPin = 1;
 		}
 	}
 	if(pr & (1 << 10) ){ 	//pending request on pin 10
 		__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_10);
 		if(logAnlys.trigConfig == TRIG_CHAN5){
-			//todo - trig occured on right pin --> start the tim to stop accquisition
+			HAL_NVIC_DisableIRQ(EXTI15_10_IRQn);
+			isRightPin = 1;
 		}
 	}
 	if(pr & (1 << 11) ){ 	//pending request on pin 11
 		__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_11);
 		if(logAnlys.trigConfig == TRIG_CHAN6){
-			//todo - trig occured on right pin --> start the tim to stop accquisition
+			HAL_NVIC_DisableIRQ(EXTI15_10_IRQn);
+			isRightPin = 1;
 		}
 	}
 	if(pr & (1 << 12) ){ 	//pending request on pin 12
 		__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_12);
 		if(logAnlys.trigConfig == TRIG_CHAN7){
-			//todo - trig occured on right pin --> start the tim to stop accquisition
+			HAL_NVIC_DisableIRQ(EXTI15_10_IRQn);
+			isRightPin = 1;
 		}
 	}
 	if(pr & (1 << 13) ){ 	//pending request on pin 13
 		__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_13);
 		if(logAnlys.trigConfig == TRIG_CHAN8){
-			//todo - trig occured on right pin --> start the tim to stop accquisition
+			HAL_NVIC_DisableIRQ(EXTI15_10_IRQn);
+			isRightPin = 1;
 		}
+	}
+	
+	if(isRightPin == 1){
+		LOG_ANLYS_TriggerEventOccuredCallback();
+		TIM_PostTrigger_SoftwareStart();
 	}
 }
 
@@ -232,7 +244,6 @@ void TIM4_IRQHandler(void)
 //  HAL_TIM_IRQHandler(&htim4);
 	
 	if(logAnlys.state == LOGA_ENABLED){
-		LOG_ANLYS_TriggerEventOccuredCallback(&htim4);
 		LOG_ANLYS_PeriodElapsedCallback(&htim4);		
 	}else{
 		COUNTER_PeriodElapsedCallback(&htim4);
