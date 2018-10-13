@@ -397,14 +397,14 @@ namespace LEO
             ushort[] tempArray = new ushort[array.Length];
             tempArray = device.logAnlysCfg.samples;
 
-            /* Required trigger point. Defined by pretrigger trackbar value. */
-            int requiredTrigger = (int)(pretrig / (double)100 * array.Length);
-            /* Actual trigger point (received) - triggerPointer represents the value of CNDTR register in time of trigger event. */
-            int actualTrigger = array.Length - triggerPointer;
-            /* Calculate the number of array elements to be shifted. */
-            int shiftNum = (actualTrigger > requiredTrigger) ? array.Length - actualTrigger + requiredTrigger : requiredTrigger - actualTrigger;
-            /* Shift the array to align it for painting. */
-            rotateArrayForward(tempArray, shiftNum);            
+            ///* Required trigger point. Defined by pretrigger trackbar value. */
+            //int requiredTrigger = (int)(pretrig / (double)100 * array.Length);
+            ///* Actual trigger point (received) - triggerPointer represents the value of CNDTR register in time of trigger event. */
+            //int actualTrigger = array.Length - triggerPointer;
+            ///* Calculate the number of array elements to be shifted. */
+            //int shiftNum = (actualTrigger > requiredTrigger) ? array.Length - actualTrigger + requiredTrigger : requiredTrigger - actualTrigger;
+            ///* Shift the array to align it for painting. */
+            //rotateArrayForward(tempArray, shiftNum);
 
             /* Extract zeroes and ones of required GPIO pin from received buffer. */
             for (int j = 0; j < array.Length; j++)

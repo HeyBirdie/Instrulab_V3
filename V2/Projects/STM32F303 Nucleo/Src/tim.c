@@ -1500,10 +1500,10 @@ void LOG_ANLYS_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 /* Unable the trigger in this interrupt callback */
 void LOG_ANLYS_TriggerEventOccuredCallback(void)
-{
-	logAnlys.triggerPointer = hdma_tim1_up.Instance->CNDTR;		
+{		
+	logAnlys.triggerPointer = hdma_tim1_up.Instance->CNDTR;	
 	/* Trigger interrupt after posttriger timer elapses (Update Event). */
-	__HAL_TIM_ENABLE_IT(&htim4, TIM_IT_UPDATE);				
+	__HAL_TIM_ENABLE_IT(&htim4, TIM_IT_UPDATE);
 	logAnlys.trigOccur = TRIG_OCCURRED;
 }
 
@@ -1536,7 +1536,7 @@ void TIM_LogAnlys_Start(void)
 	/* Enable DMA transfers. */
 	HAL_DMA_Start(&hdma_tim1_up, (uint32_t)&(GPIOB->IDR), (uint32_t)logAnlys.bufferMemory, logAnlys.samplesNumber);		
 	/* Set counter to "0" as later tested for pretrigger purposes */
-	__HAL_TIM_SET_COUNTER(&htim1, 0x00);
+//	__HAL_TIM_SET_COUNTER(&htim1, 0x00);
 	/* Start TIM1 to trigger DMA for data transfering with user required frequency. */
 	HAL_TIM_Base_Start(&htim1);	
 }

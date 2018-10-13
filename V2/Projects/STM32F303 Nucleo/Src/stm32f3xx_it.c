@@ -149,13 +149,13 @@ void DMA1_Channel2_IRQHandler(void)
 *	Saves DMA CNDTR pointer state to find out later where the trigger occured.
 * NOT USED ANYMORE !!!
 */
-//void DMA1_Channel7_IRQHandler(void)
-//{
-//  HAL_DMA_IRQHandler(&hdma_tim4_up);
-//	//HAL_DMA_IRQHandler(&hdma_usart2_tx);
-//	//huart2.gState =HAL_UART_STATE_READY;
-////	  HAL_DMA_IRQHandler(&hdma_usart2_tx);
-//}
+void DMA1_Channel7_IRQHandler(void)
+{
+  HAL_DMA_IRQHandler(&hdma_tim4_up);
+	//HAL_DMA_IRQHandler(&hdma_usart2_tx);
+	//huart2.gState =HAL_UART_STATE_READY;
+//	  HAL_DMA_IRQHandler(&hdma_usart2_tx);
+}
 
 void EXTI15_10_IRQHandler(void){
 	LOG_ANLYS_handle_interrupt(EXTI->PR);

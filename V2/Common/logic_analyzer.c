@@ -131,8 +131,8 @@ void logAnlysStart(void){
 	
 	/* Wait the pretrigger time - vTaskDelayUntil func. does not work !!! */
 	/* vTaskDelayUntil(&xLastWakeTime, logAnlys.preTriggerTime/portTICK_RATE_MS); */
-	/* vTaskDelay(logAnlys.preTriggerTime/portTICK_RATE_MS); */
-	TIM_PreTriggerDelay(logAnlys.preTriggerTime);
+	vTaskDelay(logAnlys.preTriggerTime/portTICK_RATE_MS);
+//	TIM_PreTriggerDelay(logAnlys.preTriggerTime);
 	taskPass++;
 	
 	if(logAnlys.triggerMode == LOGA_MODE_AUTO){
