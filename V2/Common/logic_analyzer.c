@@ -124,7 +124,6 @@ void logAnlysDeinit(void){
 	logAnlys.state = LOGA_DISABLED;
 }	
 
-int taskPass = 0;
 void logAnlysStart(void){
 	/* Start sampling */
 	TIM_LogAnlys_Start();		
@@ -133,12 +132,13 @@ void logAnlysStart(void){
 	/* vTaskDelayUntil(&xLastWakeTime, logAnlys.preTriggerTime/portTICK_RATE_MS); */
 	vTaskDelay(logAnlys.preTriggerTime/portTICK_RATE_MS);
 //	TIM_PreTriggerDelay(logAnlys.preTriggerTime);
-	taskPass++;
 	
 	if(logAnlys.triggerMode == LOGA_MODE_AUTO){
 		/* In AUTO trigger mode the posttriger is started without event trigger. After posttrigger 
 			 time elapses the data is sent to PC even if the trigger does not occur. */
+		LOG_ANLYS_TriggerEventOccuredCallback();
 		TIM_PostTrigger_SoftwareStart();
+		
 	}
 	/* Enable trigger after pretrigger time elapses */
 	GPIO_EnableTrigger();	

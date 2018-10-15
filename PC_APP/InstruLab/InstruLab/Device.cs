@@ -697,7 +697,7 @@ namespace LEO
         {
             char[] inputMsg = new char[4];
             byte[] inputData = new byte[4];
-            int watchDog = 250;
+            int watchDog = 2500;
             logTextNL("Příjem dat: " + port.BytesToRead.ToString());
 
             while (port.IsOpen && port.BytesToRead > 0)
@@ -920,6 +920,7 @@ namespace LEO
                             port.Read(inputData, 0, 4);
                             int triggerPointer = trigP = BitConverter.ToInt32(inputData, 0);
                             LogAnlys_form.add_message(new Message(Message.MsgRequest.LOG_ANLYS_TRIGGER_POINTER, "LOG_ANLYS_TRIG_POINTER", triggerPointer));
+                            System.Console.WriteLine("pret:" + triggerPointer);
                             break;
 
                         case Commands.LOG_ANLYS_DATA_LENGTH:

@@ -396,6 +396,16 @@ namespace LEO
 
             ushort[] tempArray = new ushort[array.Length];
             tempArray = device.logAnlysCfg.samples;
+            
+            ushort[] tempArray2 = new ushort[array.Length];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                tempArray2[i] = tempArray[(i - triggerPointer + array.Length + array.Length - (int)(pretrig / (double)100 * array.Length)) % array.Length];
+            }
+
+            tempArray = tempArray2;
+            
 
             ///* Required trigger point. Defined by pretrigger trackbar value. */
             //int requiredTrigger = (int)(pretrig / (double)100 * array.Length);

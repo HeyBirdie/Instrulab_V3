@@ -1493,7 +1493,9 @@ void LOG_ANLYS_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			HAL_TIM_Base_Stop(&htim1);
 			HAL_DMA_Abort(&hdma_tim1_up);		
 			/* Data sending */
-			logAnlysPeriodElapsedCallback();						
+			if(logAnlys.trigOccur == TRIG_OCCURRED){
+				logAnlysPeriodElapsedCallback();					
+			}				
     }
   }
 }
