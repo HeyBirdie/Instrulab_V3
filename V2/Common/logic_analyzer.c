@@ -131,6 +131,7 @@ void logAnlysStart(void){
 	/* Wait the pretrigger time - vTaskDelayUntil func. does not work !!! */
 	/* vTaskDelayUntil(&xLastWakeTime, logAnlys.preTriggerTime/portTICK_RATE_MS); */
 	vTaskDelay(logAnlys.preTriggerTime/portTICK_RATE_MS);
+	
 //	TIM_PreTriggerDelay(logAnlys.preTriggerTime);
 	
 	if(logAnlys.triggerMode == LOGA_MODE_AUTO){
@@ -141,6 +142,7 @@ void logAnlysStart(void){
 		
 	}
 	/* Enable trigger after pretrigger time elapses */
+	__HAL_GPIO_EXTI_CLEAR_IT(0x3fc0);
 	GPIO_EnableTrigger();	
 }	
 
