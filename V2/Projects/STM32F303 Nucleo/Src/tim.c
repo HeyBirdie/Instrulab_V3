@@ -429,7 +429,6 @@ void MX_TIM1_LOG_ANLYS_Init(void)
 void MX_TIM4_LOG_ANLYS_Init(void)
 {
   TIM_ClockConfigTypeDef sClockSourceConfig;
-  TIM_SlaveConfigTypeDef sSlaveConfig;
   TIM_MasterConfigTypeDef sMasterConfig;
 
 	/* By default 1 Ksample buffer, 10 Ksamples per second, 50% trigger
@@ -446,12 +445,6 @@ void MX_TIM4_LOG_ANLYS_Init(void)
   HAL_TIM_ConfigClockSource(&htim4, &sClockSourceConfig);
 	
 	HAL_TIM_OnePulse_Init(&htim4, TIM_OPMODE_SINGLE);
-
-  sSlaveConfig.SlaveMode = TIM_SLAVEMODE_COMBINED_RESETTRIGGER;
-  sSlaveConfig.InputTrigger = TIM_TS_TI1FP1;
-  sSlaveConfig.TriggerPolarity = TIM_TRIGGERPOLARITY_RISING;
-  sSlaveConfig.TriggerFilter = 0;
-  HAL_TIM_SlaveConfigSynchronization(&htim4, &sSlaveConfig);
 
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_ENABLE;
@@ -708,7 +701,7 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
     */
     GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF4_TIM8;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);		
@@ -1492,6 +1485,8 @@ void LOG_ANLYS_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			/* Stop timer trigering the DMA for data transfer */
 			HAL_TIM_Base_Stop(&htim1);
 			HAL_DMA_Abort(&hdma_tim1_up);		
+			HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
+			HAL_NVIC_DisableIRQ(EXTI15_10_IRQn);
 			/* Data sending */
 			if(logAnlys.trigOccur == TRIG_OCCURRED){
 				logAnlysPeriodElapsedCallback();					
@@ -1500,10 +1495,12 @@ void LOG_ANLYS_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   }
 }
 
+
+
 /* Unable the trigger in this interrupt callback */
 void LOG_ANLYS_TriggerEventOccuredCallback(void)
 {		
-	logAnlys.triggerPointer = hdma_tim1_up.Instance->CNDTR;	
+	//logAnlys.triggerPointer = hdma_tim1_up.Instance->CNDTR;	
 	/* Trigger interrupt after posttriger timer elapses (Update Event). */
 	__HAL_TIM_ENABLE_IT(&htim4, TIM_IT_UPDATE);
 	logAnlys.trigOccur = TRIG_OCCURRED;
@@ -1558,15 +1555,19 @@ void TIM_LogAnlys_Stop(void)
 /* F303RE nucleo - TIM4 timing */
 void TIM_PostTrigger_ARR_PSC_Reconfig(uint32_t arrPsc)
 {
+	
 	uint16_t arr, psc;		
 	arr = (uint16_t)arrPsc;
-	psc = (uint16_t)(arrPsc >> 16);
+	psc = (uint16_t)(arrPsc >> 16);	
 	
 	__HAL_TIM_SET_AUTORELOAD(&htim4, arr);
 	__HAL_TIM_SET_PRESCALER(&htim4, psc);
+	
 }
 
 /* F303RE nucleo - TIM1 */
+
+
 void TIM_SamplingFreq_ARR_PSC_Reconfig(uint32_t arrPsc)
 {
 	uint16_t arr, psc;		
@@ -1574,9 +1575,10 @@ void TIM_SamplingFreq_ARR_PSC_Reconfig(uint32_t arrPsc)
 	psc = (uint16_t)(arrPsc >> 16);
 	
 	logAnlys.samplingFreq = LOG_ANLYS_TIMEBASE_PERIPH_CLOCK / ((arr + 1) * (psc + 1));
-	
-	__HAL_TIM_SET_AUTORELOAD(&htim4, arr);
-	__HAL_TIM_SET_PRESCALER(&htim4, psc);	
+
+	__HAL_TIM_SET_AUTORELOAD(&htim1, arr);
+	__HAL_TIM_SET_PRESCALER(&htim1, psc);	
+
 }
 
 void TIM_PostTrigger_SoftwareStart(void)

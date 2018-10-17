@@ -126,24 +126,27 @@ void logAnlysDeinit(void){
 
 void logAnlysStart(void){
 	/* Start sampling */
-	TIM_LogAnlys_Start();		
+//	HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
+//	HAL_NVIC_DisableIRQ(EXTI15_10_IRQn);
+	
+	TIM_LogAnlys_Start();	
 	
 	/* Wait the pretrigger time - vTaskDelayUntil func. does not work !!! */
 	/* vTaskDelayUntil(&xLastWakeTime, logAnlys.preTriggerTime/portTICK_RATE_MS); */
-	vTaskDelay(logAnlys.preTriggerTime/portTICK_RATE_MS);
+	vTaskDelay(logAnlys.preTriggerTime/portTICK_RATE_MS);	
 	
-//	TIM_PreTriggerDelay(logAnlys.preTriggerTime);
+	__HAL_GPIO_EXTI_CLEAR_IT(0x3fc0);
 	
 	if(logAnlys.triggerMode == LOGA_MODE_AUTO){
 		/* In AUTO trigger mode the posttriger is started without event trigger. After posttrigger 
 			 time elapses the data is sent to PC even if the trigger does not occur. */
 		LOG_ANLYS_TriggerEventOccuredCallback();
-		TIM_PostTrigger_SoftwareStart();
-		
+		TIM_PostTrigger_SoftwareStart();	
 	}
 	/* Enable trigger after pretrigger time elapses */
-	__HAL_GPIO_EXTI_CLEAR_IT(0x3fc0);
+		
 	GPIO_EnableTrigger();	
+
 }	
 
 void logAnlysStop(void){

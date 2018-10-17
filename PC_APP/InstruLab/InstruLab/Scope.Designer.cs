@@ -328,7 +328,7 @@
             this.toolStripMenuItem_XT_plot.CheckOnClick = true;
             this.toolStripMenuItem_XT_plot.CheckState = System.Windows.Forms.CheckState.Checked;
             this.toolStripMenuItem_XT_plot.Name = "toolStripMenuItem_XT_plot";
-            this.toolStripMenuItem_XT_plot.Size = new System.Drawing.Size(141, 22);
+            this.toolStripMenuItem_XT_plot.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItem_XT_plot.Text = "X-T Plot";
             this.toolStripMenuItem_XT_plot.Click += new System.EventHandler(this.toolStripMenuItem_XT_plot_Click);
             // 
@@ -336,14 +336,14 @@
             // 
             this.toolStripMenuItem_XY_plot.CheckOnClick = true;
             this.toolStripMenuItem_XY_plot.Name = "toolStripMenuItem_XY_plot";
-            this.toolStripMenuItem_XY_plot.Size = new System.Drawing.Size(141, 22);
+            this.toolStripMenuItem_XY_plot.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItem_XY_plot.Text = "X-Y Plot";
             this.toolStripMenuItem_XY_plot.Click += new System.EventHandler(this.toolStripMenuItem_XY_plot_Click);
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(138, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(149, 6);
             // 
             // interpolateToolStripMenuItem
             // 
@@ -351,20 +351,20 @@
             this.interpolateToolStripMenuItem.CheckOnClick = true;
             this.interpolateToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.interpolateToolStripMenuItem.Name = "interpolateToolStripMenuItem";
-            this.interpolateToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.interpolateToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.interpolateToolStripMenuItem.Text = "Interpolate";
             this.interpolateToolStripMenuItem.Click += new System.EventHandler(this.interpolateToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(138, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
             // 
             // showPointsToolStripMenuItem
             // 
             this.showPointsToolStripMenuItem.CheckOnClick = true;
             this.showPointsToolStripMenuItem.Name = "showPointsToolStripMenuItem";
-            this.showPointsToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.showPointsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.showPointsToolStripMenuItem.Text = "Show points";
             this.showPointsToolStripMenuItem.Click += new System.EventHandler(this.showPointsToolStripMenuItem_Click);
             // 
@@ -374,7 +374,7 @@
             this.antiAliasToolStripMenuItem.CheckOnClick = true;
             this.antiAliasToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.antiAliasToolStripMenuItem.Name = "antiAliasToolStripMenuItem";
-            this.antiAliasToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.antiAliasToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.antiAliasToolStripMenuItem.Text = "Anti-aliasing";
             this.antiAliasToolStripMenuItem.Click += new System.EventHandler(this.antiAliasToolStripMenuItem_Click);
             // 

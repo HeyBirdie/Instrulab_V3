@@ -157,11 +157,15 @@ void DMA1_Channel7_IRQHandler(void)
 //	  HAL_DMA_IRQHandler(&hdma_usart2_tx);
 }
 
+extern DMA_HandleTypeDef hdma_tim1_up;
+
 void EXTI15_10_IRQHandler(void){
+	logAnlys.triggerPointer = hdma_tim1_up.Instance->CNDTR;	
 	LOG_ANLYS_handle_interrupt(EXTI->PR);
 }
 
 void EXTI9_5_IRQHandler(void){
+	logAnlys.triggerPointer = hdma_tim1_up.Instance->CNDTR;	
 	LOG_ANLYS_handle_interrupt(EXTI->PR & 0x3fc0); //mask the pending requests to get interrupts from selected pins only
 }
 

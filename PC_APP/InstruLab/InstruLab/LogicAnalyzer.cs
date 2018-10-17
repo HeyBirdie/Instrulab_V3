@@ -45,6 +45,12 @@ namespace LEO
         public uint syncPwmArr = 0;
         public uint syncPwmPsc = 0;
 
+        bool showPoints = false;
+        double scale = 1.0;
+        double horPosition = 0.5;
+        double maxX = 0;
+        double minX = 0;
+
         public enum TRIGGER_MODE { AUTO, NORMAL, SINGLE, };
         TRIGGER_MODE triggerMode;
 
@@ -324,6 +330,17 @@ namespace LEO
             paint_one_signal(timeAxis, signal_ch7, 7, Color.Indigo);
             paint_one_signal(timeAxis, signal_ch8, 8, Color.Maroon);
 
+            //trigger time
+            PointPairList list1 = new PointPairList();
+            LineItem curve;
+            double maxtime = 1 / realSamplingFreq * device.logAnlysCfg.samples.Length;
+            list1 = new PointPairList();
+            list1.Add(((maxtime) * (pretrig) / 100 - (maxtime / device.logAnlysCfg.samples.Length)), 15);    
+            curve = logAnlysPane.AddCurve("", list1, Color.Blue, SymbolType.TriangleDown);
+            curve.Symbol.Size = 20;
+            curve.Symbol.Fill.Color = Color.Blue;
+            curve.Symbol.Fill.IsVisible = true;
+
             zedGraphControl_logAnlys.AxisChange();
             zedGraphControl_logAnlys.Invalidate();
         }
@@ -345,21 +362,27 @@ namespace LEO
             //    default: break;
             //}
 
-            logAnlysCurve = logAnlysPane.AddCurve("", timeAxis, valueAxis, color, SymbolType.Square);
+            logAnlysCurve = logAnlysPane.AddCurve("", timeAxis, valueAxis, color, SymbolType.Diamond);
             logAnlysCurve.Line.StepType = StepType.ForwardStep;
             logAnlysCurve.Line.IsSmooth = false;
             logAnlysCurve.Line.Width = 1.5F;
             logAnlysCurve.Line.IsAntiAlias = false;
             logAnlysCurve.Line.IsOptimizedDraw = true;
-            logAnlysCurve.Symbol.Size = 0;
+            logAnlysCurve.Symbol.Size = showPoints ? 5 : 0; ;
             logAnlysPane.YAxis.Scale.Max = 18;
             //logAnlysPane.XAxis.Scale.Max = dataLength / samplingFreq;
             logAnlysPane.XAxis.MajorGrid.IsVisible = true;
 
-            logAnlysPane.XAxis.Scale.MaxAuto = true;
-            logAnlysPane.XAxis.Scale.MinAuto = true;
+            //logAnlysPane.XAxis.Scale.MaxAuto = true;
+            //logAnlysPane.XAxis.Scale.MinAuto = true;
             logAnlysPane.YAxis.Scale.MaxAuto = true;
             logAnlysPane.YAxis.Scale.MinAuto = true;
+
+            logAnlysPane.XAxis.Scale.MaxAuto = false;
+            logAnlysPane.XAxis.Scale.MinAuto = false;
+            logAnlysPane.XAxis.Scale.Max = maxX;
+            logAnlysPane.XAxis.Scale.Min = minX;
+
             //logAnlysPane.XAxis.Scale.Min = 0;
             //logAnlysPane.YAxis.Scale.Max = 5;
             //logAnlysPane.YAxis.Scale.Min = 0.5f;            
@@ -370,6 +393,7 @@ namespace LEO
             uint length = (uint)device.logAnlysCfg.samples.Length;
 
             timeAxis = timAxis(new double[length]);
+            update_X_axe();
 
             signal_ch1 = valueAxis(new double[length], 8);
             testArray = signal_ch1;
@@ -399,6 +423,7 @@ namespace LEO
             
             ushort[] tempArray2 = new ushort[array.Length];
 
+            
             for (int i = 0; i < array.Length; i++)
             {
                 tempArray2[i] = tempArray[(i - triggerPointer + array.Length + array.Length - (int)(pretrig / (double)100 * array.Length)) % array.Length];
@@ -588,6 +613,17 @@ namespace LEO
             {
                 this.maskedTextBox_pretrig.Text = pretrig.ToString();
             }
+        }
+
+        public void update_X_axe()
+        {
+            double maxTime = 1 / realSamplingFreq * device.logAnlysCfg.samples.Length;
+            double interval = scale * maxTime;
+            double posmin = (interval / 2);
+            double posScale = (maxTime - interval) / maxTime;
+            maxX = (double)(maxTime) * horPosition * posScale + posmin + interval / 2;
+            minX = (double)(maxTime) * horPosition * posScale + posmin - interval / 2;
+
         }
 
         private void radioButton_trig_ch1_CheckedChanged(object sender, EventArgs e)
@@ -857,6 +893,23 @@ namespace LEO
                 samplingFreq = 100000;
                 this.label_freq.Text = "100 Ks";
             }
+        }
+
+        private void showPointsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            showPoints = this.showPointsToolStripMenuItem.Checked;
+        }
+
+        private void trackBar_zoom_ValueChanged(object sender, EventArgs e)
+        {
+            scale = 1.0 - (double)(this.trackBar_zoom.Value) / (this.trackBar_zoom.Maximum - this.trackBar_zoom.Minimum + 10);
+            update_X_axe();
+        }
+
+        private void trackBar_position_ValueChanged(object sender, EventArgs e)
+        {
+            horPosition = (double)(this.trackBar_position.Value) / (this.trackBar_position.Maximum - this.trackBar_position.Minimum);
+            update_X_axe();
         }
 
         private void radioButton_200k_CheckedChanged(object sender, EventArgs e)

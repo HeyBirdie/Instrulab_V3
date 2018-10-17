@@ -776,7 +776,9 @@ command parseLogAnlysCmd(void){
 		case CMD_LOG_ANLYS_POSTTRIG:
 			cmdIn = giveNextCmd();									
 			if(cmdIn != CMD_END && cmdIn != CMD_ERR){
+				logAnlysSendStop();
 				logAnlysSetPosttrigger((uint32_t)cmdIn);
+				logAnlysSendStart();
 			}else{
 				cmdIn = CMD_ERR;
 				error = LOG_ANLYS_INVALID_FEATURE;
@@ -785,7 +787,9 @@ command parseLogAnlysCmd(void){
 		case CMD_LOG_ANLYS_PRETRIG:
 			cmdIn = giveNextCmd();									
 			if(cmdIn != CMD_END && cmdIn != CMD_ERR){
+				logAnlysSendStop();
 				logAnlysSetPretrigger((uint32_t)cmdIn);
+				logAnlysSendStart();
 			}else{
 				cmdIn = CMD_ERR;
 				error = LOG_ANLYS_INVALID_FEATURE;

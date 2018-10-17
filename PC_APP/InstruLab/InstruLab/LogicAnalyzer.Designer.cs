@@ -40,11 +40,6 @@
             this.label_color_ch3 = new System.Windows.Forms.Label();
             this.label_color_ch2 = new System.Windows.Forms.Label();
             this.label_color_ch1 = new System.Windows.Forms.Label();
-            this.label_meas5 = new System.Windows.Forms.Label();
-            this.label_meas4 = new System.Windows.Forms.Label();
-            this.label_meas3 = new System.Windows.Forms.Label();
-            this.label_meas2 = new System.Windows.Forms.Label();
-            this.label_meas1 = new System.Windows.Forms.Label();
             this.zedGraphControl_logAnlys = new ZedGraph.ZedGraphControl();
             this.panel3 = new System.Windows.Forms.Panel();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
@@ -236,11 +231,6 @@
             this.panel1.Controls.Add(this.label_color_ch3);
             this.panel1.Controls.Add(this.label_color_ch2);
             this.panel1.Controls.Add(this.label_color_ch1);
-            this.panel1.Controls.Add(this.label_meas5);
-            this.panel1.Controls.Add(this.label_meas4);
-            this.panel1.Controls.Add(this.label_meas3);
-            this.panel1.Controls.Add(this.label_meas2);
-            this.panel1.Controls.Add(this.label_meas1);
             this.panel1.Controls.Add(this.zedGraphControl_logAnlys);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 24);
@@ -352,67 +342,6 @@
             this.label_color_ch1.Size = new System.Drawing.Size(31, 15);
             this.label_color_ch1.TabIndex = 3;
             this.label_color_ch1.Text = "Ch 1";
-            // 
-            // label_meas5
-            // 
-            this.label_meas5.AutoSize = true;
-            this.label_meas5.BackColor = System.Drawing.Color.White;
-            this.label_meas5.Location = new System.Drawing.Point(349, 15);
-            this.label_meas5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label_meas5.Name = "label_meas5";
-            this.label_meas5.Size = new System.Drawing.Size(33, 13);
-            this.label_meas5.TabIndex = 2;
-            this.label_meas5.Text = "Meas";
-            this.label_meas5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // label_meas4
-            // 
-            this.label_meas4.AutoSize = true;
-            this.label_meas4.BackColor = System.Drawing.Color.White;
-            this.label_meas4.Location = new System.Drawing.Point(274, 15);
-            this.label_meas4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label_meas4.Name = "label_meas4";
-            this.label_meas4.Size = new System.Drawing.Size(33, 13);
-            this.label_meas4.TabIndex = 2;
-            this.label_meas4.Text = "Meas";
-            this.label_meas4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // label_meas3
-            // 
-            this.label_meas3.AutoSize = true;
-            this.label_meas3.BackColor = System.Drawing.Color.White;
-            this.label_meas3.Location = new System.Drawing.Point(199, 15);
-            this.label_meas3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label_meas3.Name = "label_meas3";
-            this.label_meas3.Size = new System.Drawing.Size(33, 13);
-            this.label_meas3.TabIndex = 2;
-            this.label_meas3.Text = "Meas";
-            this.label_meas3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // label_meas2
-            // 
-            this.label_meas2.AutoSize = true;
-            this.label_meas2.BackColor = System.Drawing.Color.White;
-            this.label_meas2.Location = new System.Drawing.Point(124, 15);
-            this.label_meas2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label_meas2.Name = "label_meas2";
-            this.label_meas2.Size = new System.Drawing.Size(33, 13);
-            this.label_meas2.TabIndex = 2;
-            this.label_meas2.Text = "Meas";
-            this.label_meas2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // label_meas1
-            // 
-            this.label_meas1.AutoSize = true;
-            this.label_meas1.BackColor = System.Drawing.Color.White;
-            this.label_meas1.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.label_meas1.Location = new System.Drawing.Point(49, 15);
-            this.label_meas1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label_meas1.Name = "label_meas1";
-            this.label_meas1.Size = new System.Drawing.Size(33, 13);
-            this.label_meas1.TabIndex = 2;
-            this.label_meas1.Text = "Meas";
-            this.label_meas1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // zedGraphControl_logAnlys
             // 
@@ -927,6 +856,7 @@
             this.trackBar_zoom.Size = new System.Drawing.Size(225, 30);
             this.trackBar_zoom.TabIndex = 1;
             this.trackBar_zoom.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trackBar_zoom.ValueChanged += new System.EventHandler(this.trackBar_zoom_ValueChanged);
             // 
             // trackBar_position
             // 
@@ -939,6 +869,7 @@
             this.trackBar_position.TabIndex = 1;
             this.trackBar_position.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trackBar_position.Value = 512;
+            this.trackBar_position.ValueChanged += new System.EventHandler(this.trackBar_position_ValueChanged);
             // 
             // label2
             // 
@@ -1744,20 +1675,20 @@
             this.toolStripMenuItem_XT_plot.CheckOnClick = true;
             this.toolStripMenuItem_XT_plot.CheckState = System.Windows.Forms.CheckState.Checked;
             this.toolStripMenuItem_XT_plot.Name = "toolStripMenuItem_XT_plot";
-            this.toolStripMenuItem_XT_plot.Size = new System.Drawing.Size(141, 22);
+            this.toolStripMenuItem_XT_plot.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItem_XT_plot.Text = "X-T Plot";
             // 
             // toolStripMenuItem_XY_plot
             // 
             this.toolStripMenuItem_XY_plot.CheckOnClick = true;
             this.toolStripMenuItem_XY_plot.Name = "toolStripMenuItem_XY_plot";
-            this.toolStripMenuItem_XY_plot.Size = new System.Drawing.Size(141, 22);
+            this.toolStripMenuItem_XY_plot.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItem_XY_plot.Text = "X-Y Plot";
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(138, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(149, 6);
             // 
             // interpolateToolStripMenuItem
             // 
@@ -1765,20 +1696,21 @@
             this.interpolateToolStripMenuItem.CheckOnClick = true;
             this.interpolateToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.interpolateToolStripMenuItem.Name = "interpolateToolStripMenuItem";
-            this.interpolateToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.interpolateToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.interpolateToolStripMenuItem.Text = "Interpolate";
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(138, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
             // 
             // showPointsToolStripMenuItem
             // 
             this.showPointsToolStripMenuItem.CheckOnClick = true;
             this.showPointsToolStripMenuItem.Name = "showPointsToolStripMenuItem";
-            this.showPointsToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.showPointsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.showPointsToolStripMenuItem.Text = "Show points";
+            this.showPointsToolStripMenuItem.Click += new System.EventHandler(this.showPointsToolStripMenuItem_Click);
             // 
             // antiAliasToolStripMenuItem
             // 
@@ -1786,7 +1718,7 @@
             this.antiAliasToolStripMenuItem.CheckOnClick = true;
             this.antiAliasToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.antiAliasToolStripMenuItem.Name = "antiAliasToolStripMenuItem";
-            this.antiAliasToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.antiAliasToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.antiAliasToolStripMenuItem.Text = "Anti-aliasing";
             // 
             // toolStripMenuItem7
@@ -2129,11 +2061,6 @@
         private System.Windows.Forms.Label label_color_ch3;
         private System.Windows.Forms.Label label_color_ch2;
         private System.Windows.Forms.Label label_color_ch1;
-        private System.Windows.Forms.Label label_meas5;
-        private System.Windows.Forms.Label label_meas4;
-        private System.Windows.Forms.Label label_meas3;
-        private System.Windows.Forms.Label label_meas2;
-        private System.Windows.Forms.Label label_meas1;
         private ZedGraph.ZedGraphControl zedGraphControl_logAnlys;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
