@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 
 namespace LEO
 {
@@ -26,21 +27,21 @@ namespace LEO
         public string[] measStrings;
         public Color[] measCol;
 
+        bool[] calcTime = new bool[8] { false, false, false, false, false, false, false, false };
+        bool[] calcVolt = new bool[8] { false, false, false, false, false, false, false, false };
+        double[] RMS = new double[8] { 0, 0, 0, 0, 0, 0, 0, 0 };
 
-        bool[] calcVolt = new bool[4] { false,  false, false, false };
-        double[] RMS = new double[4] { 0, 0, 0, 0 };
-        
-        double[] Mean = new double[4] { 0, 0, 0, 0 };
-        ushort[] Max = new ushort[4] { ushort.MinValue, ushort.MinValue, ushort.MinValue, ushort.MinValue };
-        ushort[] Min = new ushort[4] { ushort.MaxValue, ushort.MaxValue, ushort.MaxValue, ushort.MaxValue };
+        double[] Mean = new double[8] { 0, 0, 0, 0, 0, 0, 0, 0 };
+        ushort[] Max = new ushort[8] { ushort.MinValue, ushort.MinValue, ushort.MinValue, ushort.MinValue, ushort.MinValue, ushort.MinValue, ushort.MinValue, ushort.MinValue };
+        ushort[] Min = new ushort[8] { ushort.MaxValue, ushort.MaxValue, ushort.MaxValue, ushort.MaxValue, ushort.MaxValue, ushort.MaxValue, ushort.MaxValue, ushort.MaxValue };
 
-        bool[] calcTime = new bool[4] { false, false, false, false };
-        double[] Period = new double[4] { 0, 0, 0, 0};
-        double[] Freq = new double[4] { 0, 0, 0, 0 };
-        double[] High = new double[4] { 0, 0, 0, 0 };
+        double[] Period = new double[8] { 0, 0, 0, 0, 0, 0, 0, 0 };
+        double[] Freq = new double[8] { 0, 0, 0, 0, 0, 0, 0, 0 };
+        double[] High = new double[8] { 0, 0, 0, 0, 0, 0, 0, 0 };
 
         const int MAX_ZERO_CROSS = 64;
-        int[,] ZeroCrossingTimes = new int[4,MAX_ZERO_CROSS];
+
+        int[,] ZeroCrossingTimes = new int[8,MAX_ZERO_CROSS];
         bool calcAllTimes = false;
 
 
@@ -113,6 +114,21 @@ namespace LEO
                 case 3:
                     measCol[index] = Color.Magenta;
                     break;
+                case 4:
+                    measCol[index] = Color.Black;
+                    break;
+                case 5:
+                    measCol[index] = Color.DarkOrange;
+                    break;
+                case 6:
+                    measCol[index] = Color.DarkTurquoise;
+                    break;
+                case 7:
+                    measCol[index] = Color.Maroon;
+                    break;
+                default:
+                    measCol[index] = Color.Gray;
+                    break;
             }        
         }
 
@@ -120,7 +136,7 @@ namespace LEO
         {
             if (!calcTime[ch])
             {
-                double center = (Max[ch] + Min[ch]) / 2;
+                double center = ((double)(Max[ch]) + Min[ch]) / 2;
                 //double center = Mean[ch] / scale;
 
                 int state = 0;
@@ -338,17 +354,17 @@ namespace LEO
 
         public void calculateMeasurements(ushort[,] samples, int rangeMax, int rangeMin, int numChann, int samplingFreq, int buffleng,int res)
         {
-            calcTime = new bool[4] { false, false, false, false };
-            calcVolt = new bool[4] { false, false, false, false};
-            RMS = new double[4] { 0, 0, 0, 0 };
+            calcTime = new bool[8] { false, false, false, false, false, false, false, false };
+            calcVolt = new bool[8] { false, false, false, false, false, false, false, false };
+            RMS = new double[8] { 0, 0, 0, 0, 0, 0, 0, 0 };
 
-            Mean = new double[4] { 0, 0, 0, 0 };
-            Max = new ushort[4] { ushort.MinValue, ushort.MinValue, ushort.MinValue, ushort.MinValue };
-            Min = new ushort[4] { ushort.MaxValue, ushort.MaxValue, ushort.MaxValue, ushort.MaxValue };
+            Mean = new double[8] { 0, 0, 0, 0, 0, 0, 0, 0 };
+            Max = new ushort[8] { ushort.MinValue, ushort.MinValue, ushort.MinValue, ushort.MinValue, ushort.MinValue, ushort.MinValue, ushort.MinValue, ushort.MinValue };
+            Min = new ushort[8] { ushort.MaxValue, ushort.MaxValue, ushort.MaxValue, ushort.MaxValue, ushort.MaxValue, ushort.MaxValue, ushort.MaxValue, ushort.MaxValue };
 
-            Period = new double[4] { 0, 0, 0, 0 };
-            Freq = new double[4] { 0, 0, 0, 0 };
-            High = new double[4] { 0, 0, 0, 0 };
+            Period = new double[8] { 0, 0, 0, 0, 0, 0, 0, 0 };
+            Freq = new double[8] { 0, 0, 0, 0, 0, 0, 0, 0 };
+            High = new double[8] { 0, 0, 0, 0, 0, 0, 0, 0 };
             Array.Clear(ZeroCrossingTimes, 0, 4 * MAX_ZERO_CROSS);
 
             int meascount = 0;
@@ -437,8 +453,8 @@ namespace LEO
                                 if (numChann > ch+1)
                                 {
                                     calculate_time(samples, samplingFreq, buffleng, ch);
-                                    calculate_time(samples, samplingFreq, buffleng, (ch + 1) % 4);
-                                    double phase = getPhase(ch, (ch + 1) % 4);
+                                    calculate_time(samples, samplingFreq, buffleng, (ch + 1) % numChann);
+                                    double phase = getPhase(ch, (ch + 1) % numChann);
                                     phase = phase / samplingFreq * Freq[ch] * 360;
                                     if (phase > 180) {
                                         phase = phase - 360;
@@ -451,11 +467,11 @@ namespace LEO
                                     }
                                     if (Double.IsPositiveInfinity(phase) || Double.IsNegativeInfinity(phase) || double.IsNaN(phase))
                                     {
-                                        measStrings[meascount] = "Phase: N/A";
+                                        measStrings[meascount] = "Ph " + (ch+1).ToString() + "-" + (((ch + 1) % numChann) +1).ToString() + ": N /A";
                                     }
                                     else
                                     {
-                                        measStrings[meascount] = "Phase: " + Math.Round(phase, 3) + "°";
+                                        measStrings[meascount] = "Ph " + (ch+1).ToString() + "-" + (((ch + 1) % numChann) +1).ToString() + ": " + Math.Round(phase, 1) + "°";
                                     }
                                     setColor(ch, meascount);
                                     meascount++;

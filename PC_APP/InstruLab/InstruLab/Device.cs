@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.IO;
 using LEO;
+using System.IO.Compression;
 
 namespace LEO
 {
@@ -92,6 +93,8 @@ namespace LEO
             public int numOfChannels;
             public UInt16[] samples;
             public string[] pins;
+            public int triggerChannel;
+            internal double maxTime;
         }
 
         public struct PwmGenConfig_def
@@ -168,6 +171,8 @@ namespace LEO
 
         private string LastCommand = "";
 
+        private int index = 1;
+
         /* Counter vars */
         double freq;
         int buff;
@@ -212,7 +217,35 @@ namespace LEO
             if (port.IsOpen)
             {
                 logTextNL("PORT zavřen: " + this.portName);
-                if (writeLog) { logWriter.Close(); }
+                if (writeLog) {
+
+                    logWriter.Close();
+                    FileStream inFile = new FileStream("logfile" + index + ".txt", FileMode.Open);
+                    
+                    // Create the compressed file.
+                    using (FileStream outFile = File.Create("log" + index + ".gz"))
+                    {
+                        using (GZipStream Compress = new GZipStream(outFile,CompressionMode.Compress))
+                        {
+                            // Copy the source file into the compression stream.
+                            byte[] buffer = new byte[4096];
+                            int numRead;
+                            while ((numRead = inFile.Read(buffer, 0, buffer.Length)) != 0)
+                            {
+                                Compress.Write(buffer, 0, numRead);
+                            }
+                        }
+                    }
+
+                    inFile.Close();
+
+                    if (File.Exists("logfile" + index + ".txt"))
+                    {
+                        File.Delete("logfile" + index + ".txt");
+                    }
+
+
+                }
                 try
                 {
                     port.Close();
@@ -235,12 +268,15 @@ namespace LEO
                 if (writeLog)
                 {
                     bool logOpened = false;
-                    int index = 1;
                     try
                     {
                         if (File.Exists("logfile" + index + ".txt"))
                         {
                             File.Delete("logfile" + index + ".txt");
+                        }
+                        if (File.Exists("logfile" + index + ".gz"))
+                        {
+                            File.Delete("logfile" + index + ".gz");
                         }
                         logWriter = File.AppendText("logfile" + index + ".txt");
                         logOpened = true;
@@ -920,7 +956,6 @@ namespace LEO
                             port.Read(inputData, 0, 4);
                             int triggerPointer = trigP = BitConverter.ToInt32(inputData, 0);
                             LogAnlys_form.add_message(new Message(Message.MsgRequest.LOG_ANLYS_TRIGGER_POINTER, "LOG_ANLYS_TRIG_POINTER", triggerPointer));
-                            System.Console.WriteLine("pret:" + triggerPointer);
                             break;
 
                         case Commands.LOG_ANLYS_DATA_LENGTH:
@@ -933,9 +968,13 @@ namespace LEO
                             break;
 
                         case Commands.LOG_ANLYS_DATA:
-                            while (port.BytesToRead < receiveDataLength)
+                            while (port.IsOpen && port.BytesToRead < receiveDataLength)
                             {
                                 wait_for_data(watchDog--);
+                            }
+
+                            if (!port.IsOpen) {
+                                break;
                             }
 
                             byte[] receiveArray = new byte[receiveDataLength];

@@ -424,7 +424,7 @@ namespace LEO
             catch (Exception ex)
             {
                 this.Close();
-                throw new System.ArgumentException("Error during data sending for generator");
+                throw new System.ArgumentException("Error during data sending for generator");  
             }
         }
 

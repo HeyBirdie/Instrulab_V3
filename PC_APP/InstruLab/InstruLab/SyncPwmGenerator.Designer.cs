@@ -438,7 +438,7 @@ namespace LEO
             this.trackBar_basic_duty.Orientation = System.Windows.Forms.Orientation.Vertical;
             this.trackBar_basic_duty.Size = new System.Drawing.Size(51, 198);
             this.trackBar_basic_duty.TabIndex = 1;
-            this.trackBar_basic_duty.TickStyle = System.Windows.Forms.TickStyle.Both;
+            this.trackBar_basic_duty.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trackBar_basic_duty.Value = 25;
             this.trackBar_basic_duty.Scroll += new System.EventHandler(this.trackBar_basic_duty_Scroll);
             // 
@@ -492,7 +492,7 @@ namespace LEO
             this.trackBar_basic_phase.Orientation = System.Windows.Forms.Orientation.Vertical;
             this.trackBar_basic_phase.Size = new System.Drawing.Size(53, 198);
             this.trackBar_basic_phase.TabIndex = 1;
-            this.trackBar_basic_phase.TickStyle = System.Windows.Forms.TickStyle.Both;
+            this.trackBar_basic_phase.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trackBar_basic_phase.Value = 90;
             this.trackBar_basic_phase.Scroll += new System.EventHandler(this.trackBar_basic_phase_Scroll);
             // 
@@ -536,7 +536,7 @@ namespace LEO
             this.trackBar_basic_freq.Orientation = System.Windows.Forms.Orientation.Vertical;
             this.trackBar_basic_freq.Size = new System.Drawing.Size(51, 179);
             this.trackBar_basic_freq.TabIndex = 0;
-            this.trackBar_basic_freq.TickStyle = System.Windows.Forms.TickStyle.Both;
+            this.trackBar_basic_freq.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trackBar_basic_freq.Value = 1;
             this.trackBar_basic_freq.Scroll += new System.EventHandler(this.trackBar_basic_freq_Scroll);
             // 
@@ -1395,6 +1395,7 @@ namespace LEO
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
+            this.MinimumSize = new System.Drawing.Size(651, 377);
             this.Name = "SyncPwmGenerator";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SyncPwmGenerator_FormClosing);
             this.menuStrip1.ResumeLayout(false);
