@@ -326,7 +326,7 @@ void CommTask(void const *argument){
 			/* Send data */
 			commsSendString(STR_LOG_ANLYS_DATA);	
 			commsSendBuff((uint8_t *)logAnlys.bufferMemory,(logAnlys.samplesNumber * 2));			
-			logAnlys.state = LOGA_WAIT_FOR_RESTART;
+			logAnlys.state = LOGA_WAIT_FOR_HOST;
 			#endif //USE_LOG_ANLYS
 			
 		// send system config

@@ -33,11 +33,12 @@ typedef enum{
 }triggerModeTypeDef;
 
 typedef enum{
-	LOGA_IDLE = 0,    			// during and after initialization & after deinit
-	LOGA_SAMPLING,					// sampling started
-	LOGA_SAMPLING_DONE,			// postrigger terminated sampling
-	LOGA_DATA_SENDING,			// data sending to PC
+	LOGA_IDLE = 0,    			  // during and after initialization & after deinit
+	LOGA_SAMPLING,					  // sampling started
+	LOGA_SAMPLING_DONE,			  // postrigger terminated sampling
+	LOGA_DATA_SENDING,			  // data sending to PC
 	LOGA_WAIT_FOR_RESTART,	// data sent to PC & wating for start command from host
+	LOGA_WAIT_FOR_HOST,
 	LOGA_ERR
 }stateTypeDef;
 
