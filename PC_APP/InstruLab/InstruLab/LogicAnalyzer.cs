@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -600,9 +601,11 @@ namespace LEO
                                 break;
                             case TRIGGER_MODE.AUTO:
                                 logAnlys_next();
+                                Debug.WriteLine("AUTO_DATA_QUEST");
                                 break;
                             case TRIGGER_MODE.NORMAL:
                                 logAnlys_next();
+                                Debug.WriteLine("NORMAL_DATA_QUEST");
                                 break;
                         }
                     }
@@ -1133,6 +1136,7 @@ namespace LEO
                 triggerMode = TRIGGER_MODE.SINGLE;
                 sendCommand(Commands.LOG_ANLYS_TRIGGER_MODE, Commands.LOG_ANLYS_TRIGGER_MODE_SINGLE);
                 logAnlys_next();
+                Debug.WriteLine("SINGLE_CLICK_QUEST");
                 checkBox_trig_single.Text = "Stop";
                 label_logAnlys_status.Text = "Wait";
             }
@@ -1145,8 +1149,8 @@ namespace LEO
             if (this.checkBox_trig_normal.Checked)
             {
                 triggerMode = TRIGGER_MODE.NORMAL;
-                sendCommand(Commands.LOG_ANLYS_TRIGGER_MODE, Commands.LOG_ANLYS_TRIGGER_MODE_NORMAL);
-                logAnlys_next();
+                sendCommand(Commands.LOG_ANLYS_TRIGGER_MODE, Commands.LOG_ANLYS_TRIGGER_MODE_NORMAL);                
+                Debug.WriteLine("NORMAL_CLICK_QUEST");
                 this.checkBox_trig_auto.Checked = false;
                 this.checkBox_trig_single.Checked = false;
                 this.checkBox_trig_single.Text = "Stop";
@@ -1159,8 +1163,8 @@ namespace LEO
             if (this.checkBox_trig_auto.Checked)
             {
                 triggerMode = TRIGGER_MODE.AUTO;
-                sendCommand(Commands.LOG_ANLYS_TRIGGER_MODE, Commands.LOG_ANLYS_TRIGGER_MODE_AUTO);
-                logAnlys_next();
+                sendCommand(Commands.LOG_ANLYS_TRIGGER_MODE, Commands.LOG_ANLYS_TRIGGER_MODE_AUTO);                 
+                Debug.WriteLine("AUTO_CLICK_QUEST");
                 this.checkBox_trig_normal.Checked = false;
                 this.checkBox_trig_single.Checked = false;
                 this.checkBox_trig_single.Text = "Stop";

@@ -46,7 +46,7 @@
 #define MAX_SAMPLING_FREQ 4000000 //smps
 #define MAX_ADC_CHANNELS 4
 
-#define MAX_SCOPE_BUFF_SIZE 30000//50000 //in bytes
+#define MAX_SCOPE_BUFF_SIZE 40000//50000 //in bytes
 #define SCOPE_BUFFER_MARGIN 50
 
 #define SCOPE_CH1_PIN_STR "A5__" //must be 4 chars

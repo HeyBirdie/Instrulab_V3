@@ -769,7 +769,7 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
 	
 	
 	#ifdef USE_LOG_ANLYS
-  if(htim_base->Instance==TIM1 && logAnlys.state==LOGA_ENABLED)
+  if(htim_base->Instance==TIM1 && logAnlys.enable==LOGA_ENABLED)
   {
     /* Peripheral clock enable */
     __HAL_RCC_TIM1_CLK_ENABLE();
@@ -783,8 +783,7 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
 		HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 		
 		HAL_NVIC_SetPriority(EXTI9_5_IRQn,9,0);
-		HAL_NVIC_SetPriority(EXTI15_10_IRQn,9,0);
-		
+		HAL_NVIC_SetPriority(EXTI15_10_IRQn,9,0);		
   
     /* TIM1 DMA Init */
     /* TIM1_UP Init */
@@ -798,13 +797,13 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
     hdma_tim1_up.Init.Priority = DMA_PRIORITY_HIGH;
     HAL_DMA_Init(&hdma_tim1_up);
 		/* Trigger DMA by TIMer to transfer data from GPIO IDR reg. to memory buffer. */
-		TIM1->DIER |= TIM_DIER_UDE;
-		//__HAL_TIM_ENABLE_DMA(&htim1, TIM_DIER_UDE);
+//		TIM1->DIER |= TIM_DIER_UDE;
+		__HAL_TIM_ENABLE_DMA(&htim1, TIM_DIER_UDE);
 
     __HAL_LINKDMA(htim_base,hdma[TIM_DMA_ID_UPDATE],hdma_tim1_up);
   }
   
-	if(htim_base->Instance==TIM4 && logAnlys.state==LOGA_ENABLED)
+	if(htim_base->Instance==TIM4 && logAnlys.enable==LOGA_ENABLED)
   {
     /* Peripheral clock enable */
     __HAL_RCC_TIM4_CLK_ENABLE();
@@ -929,7 +928,7 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
 		}
 	}
 	
-	if(htim_base->Instance==TIM4 && logAnlys.state==LOGA_DISABLED){
+	if(htim_base->Instance==TIM4 && logAnlys.enable==LOGA_DISABLED){
 		__TIM4_CLK_ENABLE();
 		
 		if(counter.state==COUNTER_REF){
@@ -1028,7 +1027,7 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* htim_base)
     HAL_DMA_DeInit(htim_base->hdma[TIM_DMA_ID_UPDATE]);		
 	}
 	
-	if(htim_base->Instance==TIM4 && logAnlys.state==ENABLE){
+	if(htim_base->Instance==TIM4 && logAnlys.enable==ENABLE){
     __HAL_RCC_TIM4_CLK_DISABLE();
 		HAL_NVIC_DisableIRQ(TIM4_IRQn);
 		HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
@@ -1480,13 +1479,16 @@ void LOG_ANLYS_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   {		
     if(__HAL_TIM_GET_IT_SOURCE(htim, TIM_IT_UPDATE) != RESET)
     {
-//		__HAL_TIM_DISABLE_IT(&htim4, TIM_IT_UPDATE);
 			__HAL_TIM_CLEAR_FLAG(htim, TIM_FLAG_UPDATE);
+			
 			/* Stop timer trigering the DMA for data transfer */
 			HAL_TIM_Base_Stop(&htim1);
 			HAL_DMA_Abort(&hdma_tim1_up);		
-			HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
-			HAL_NVIC_DisableIRQ(EXTI15_10_IRQn);
+			
+			GPIO_DisableIRQ();
+			
+			logAnlys.state = LOGA_SAMPLING_DONE;
+			
 			/* Data sending */
 			if(logAnlys.trigOccur == TRIG_OCCURRED){
 				logAnlysPeriodElapsedCallback();					
@@ -1495,12 +1497,9 @@ void LOG_ANLYS_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   }
 }
 
-
-
 /* Unable the trigger in this interrupt callback */
 void LOG_ANLYS_TriggerEventOccuredCallback(void)
 {		
-	//logAnlys.triggerPointer = hdma_tim1_up.Instance->CNDTR;	
 	/* Trigger interrupt after posttriger timer elapses (Update Event). */
 	__HAL_TIM_ENABLE_IT(&htim4, TIM_IT_UPDATE);
 	logAnlys.trigOccur = TRIG_OCCURRED;
@@ -1517,82 +1516,70 @@ void TIM_LogAnlys_Init(void)
 }
 
 void TIM_LogAnlys_Deinit(void)
-{
-//	HAL_TIM_Base_DeInit(&htim1);
-//	HAL_TIM_Base_DeInit(&htim4);
-	
-	RCC->APB2RSTR |= RCC_APB2RSTR_TIM1RST;
-	RCC->APB2RSTR &= ~RCC_APB2RSTR_TIM1RST;
-	
+{	
+	RCC->APB2RSTR |= RCC_APB2RSTR_TIM1RST;	//	HAL_TIM_Base_DeInit(&htim1);
+	RCC->APB2RSTR &= ~RCC_APB2RSTR_TIM1RST;	//	HAL_TIM_Base_DeInit(&htim4);
 	RCC->APB1RSTR |= RCC_APB1RSTR_TIM4RST;
 	RCC->APB1RSTR &= ~RCC_APB1RSTR_TIM4RST;	
 }
 
 void TIM_LogAnlys_Start(void)
-{	
-	/* Abort DMA for buffer length changing. */
-//	HAL_DMA_Abort(&hdma_tim1_up);
+{		
 	/* Enable DMA transfers. */
 	HAL_DMA_Start(&hdma_tim1_up, (uint32_t)&(GPIOB->IDR), (uint32_t)logAnlys.bufferMemory, logAnlys.samplesNumber);		
-	/* Set counter to "0" as later tested for pretrigger purposes */
-//	__HAL_TIM_SET_COUNTER(&htim1, 0x00);
 	/* Start TIM1 to trigger DMA for data transfering with user required frequency. */
 	HAL_TIM_Base_Start(&htim1);	
 }
 
 void TIM_LogAnlys_Stop(void)
 {
-	/* Aborted so the CNDTR (data length - number of samples) can be changed. */
-	HAL_DMA_Abort(&hdma_tim1_up);	
-	HAL_TIM_Base_Stop(&htim1);
+	/* Abort sampling so that CNDTR (DMA data length) can be changed. */
+	TIM_SamplingStop();
+	GPIO_DisableIRQ();	
+	
 	HAL_TIM_Base_Stop(&htim4);
 	__HAL_TIM_SET_COUNTER(&htim4, 0x00);
-	// TIM4->CNT = 0;
 	/* Slave TIM1 is stopped by TIM4 upon Update Event
 	   and TIM4 is initialized in One Pulse Mode. */
 }
 
 /* F303RE nucleo - TIM4 timing */
 void TIM_PostTrigger_ARR_PSC_Reconfig(uint32_t arrPsc)
-{
-	
-	uint16_t arr, psc;		
-	arr = (uint16_t)arrPsc;
-	psc = (uint16_t)(arrPsc >> 16);	
+{	
+	uint16_t arr = (uint16_t)arrPsc;
+	uint16_t psc = (uint16_t)(arrPsc >> 16);	
 	
 	__HAL_TIM_SET_AUTORELOAD(&htim4, arr);
 	__HAL_TIM_SET_PRESCALER(&htim4, psc);
-	
 }
 
 /* F303RE nucleo - TIM1 */
-
-
 void TIM_SamplingFreq_ARR_PSC_Reconfig(uint32_t arrPsc)
 {
-	uint16_t arr, psc;		
-	arr = (uint16_t)arrPsc;
-	psc = (uint16_t)(arrPsc >> 16);
+	uint16_t arr = (uint16_t)arrPsc;
+	uint16_t psc = (uint16_t)(arrPsc >> 16);
 	
 	logAnlys.samplingFreq = LOG_ANLYS_TIMEBASE_PERIPH_CLOCK / ((arr + 1) * (psc + 1));
 
 	__HAL_TIM_SET_AUTORELOAD(&htim1, arr);
 	__HAL_TIM_SET_PRESCALER(&htim1, psc);	
-
 }
 
 void TIM_PostTrigger_SoftwareStart(void)
 {	/* Trigger interrupt after posttriger timer elapses (Update Event). */
-//	__HAL_TIM_ENABLE_IT(&htim4, TIM_IT_UPDATE);	
 	__HAL_TIM_SET_COUNTER(&htim4, 0x00);
 	HAL_TIM_Base_Start(&htim4);
 }
 
-/* Plays a role of delay in pretrigger */
-void TIM_PreTriggerDelay(uint16_t timeInMillisec)
-{	
-	uint16_t cntVal = timeInMillisec * logAnlys.samplingFreq / 1000;
-	while(__HAL_TIM_GET_COUNTER(&htim1) < cntVal);
+void GPIO_DisableIRQ(void){
+	__HAL_GPIO_EXTI_CLEAR_IT(0x3fc0);
+	HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
+	HAL_NVIC_DisableIRQ(EXTI15_10_IRQn);	
+}
+
+void TIM_SamplingStop(void){
+	HAL_TIM_Base_Stop(&htim1);
+	HAL_DMA_Abort(&hdma_tim1_up);		
 }
 
 /* Called from logAnlys Task after pretrigger thread.sleep time elapsed. */

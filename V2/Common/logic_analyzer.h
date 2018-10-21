@@ -19,19 +19,27 @@
 // Constant definitions =======================================================
 //#define LOG_ANLYS_DEFAULT_SAMPLING_FREQ 	1000
 //#define LOG_ANLYS_DEFAULT_PRETRIGGER 			0x8000    //[ms]
-#define AUTO_TRIG_WAIT_NORMAL 4
 
 /* Enums */
 typedef enum{
 	LOGA_DISABLED = 0,
 	LOGA_ENABLED
-}stateTypeDef;
+}enableTypeDef;
 
 typedef enum{
 	LOGA_MODE_AUTO = 0,
 	LOGA_MODE_NORMAL = 1,
 	LOGA_MODE_SINGLE = 2
 }triggerModeTypeDef;
+
+typedef enum{
+	LOGA_IDLE = 0,    			// during and after initialization & after deinit
+	LOGA_SAMPLING,					// sampling started
+	LOGA_SAMPLING_DONE,			// postrigger terminated sampling
+	LOGA_DATA_SENDING,			// data sending to PC
+	LOGA_WAIT_FOR_RESTART,	// data sent to PC & wating for start command from host
+	LOGA_ERR
+}stateTypeDef;
 
 typedef enum{
 	TRIG_CHAN1 = 0,
@@ -63,6 +71,7 @@ typedef struct{
 	uint16_t samplesNumber;
 	
 	stateTypeDef state;
+	enableTypeDef enable;
 	triggerModeTypeDef triggerMode;
 	trigConfigTypeDef trigConfig;
 	trigEdgeTypeDef trigEdge;
@@ -97,6 +106,7 @@ void logAnlysSetPretrigger(uint32_t timeInMilliseconds);
 void logAnlysSetTriggerChannel(uint32_t chan);
 void logAnlysSetTriggerRising(void);
 void logAnlysSetTriggerFalling(void);
+void logAnlysDisablePostTrigIRQ(void);
 
 void logAnlysSetDefault(void);
 

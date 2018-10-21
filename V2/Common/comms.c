@@ -314,6 +314,7 @@ void CommTask(void const *argument){
 		/* Send LOGIC ANALYZER data */
 		}else if(message[0]=='L'){
 			#ifdef USE_LOG_ANLYS
+			logAnlys.state = LOGA_DATA_SENDING;
 			if(logAnlys.trigOccur == TRIG_OCCURRED){
 				commsSendString(STR_LOG_ANLYS_TRIGGER_POINTER);	
 				commsSendUint32(logAnlys.triggerPointer);
@@ -325,7 +326,9 @@ void CommTask(void const *argument){
 			/* Send data */
 			commsSendString(STR_LOG_ANLYS_DATA);	
 			commsSendBuff((uint8_t *)logAnlys.bufferMemory,(logAnlys.samplesNumber * 2));			
+			logAnlys.state = LOGA_WAIT_FOR_RESTART;
 			#endif //USE_LOG_ANLYS
+			
 		// send system config
 		}else if(message[0]=='3'){
 			sendSystConf();

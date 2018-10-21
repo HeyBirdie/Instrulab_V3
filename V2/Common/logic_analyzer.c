@@ -50,9 +50,11 @@ void LogAnlysTask(void const *argument)
 		xSemaphoreTakeRecursive(logAnlysMutex, portMAX_DELAY);
 		
 		if(message[0]=='1'){
+			logAnlys.state = LOGA_IDLE;
 			logAnlysInit();
 		}else if(message[0]=='2'){
 			logAnlysDeinit();
+			logAnlys.state = LOGA_IDLE;
 		}else if(message[0]=='3'){
 			logAnlysStart();
 		}else if(message[0]=='4'){
@@ -115,21 +117,19 @@ void logAnlysInit(void){
 	/* Log. analyzer uses TIM4 as well as Universal counter. Therefore, there
 		 has to be some clue for msp_init function to decide which functionality
 		 to initialize - LOGA_ENABLED */
-	logAnlys.state = LOGA_ENABLED;
+	logAnlys.enable = LOGA_ENABLED;
 	TIM_LogAnlys_Init();
 }	
 
 void logAnlysDeinit(void){
 	TIM_LogAnlys_Deinit();
-	logAnlys.state = LOGA_DISABLED;
+	logAnlys.enable = LOGA_DISABLED;
 }	
 
 void logAnlysStart(void){
-	/* Start sampling */
-//	HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
-//	HAL_NVIC_DisableIRQ(EXTI15_10_IRQn);
-	
+	/* Start sampling */	
 	TIM_LogAnlys_Start();	
+	logAnlys.state = LOGA_SAMPLING;		
 	
 	/* Wait the pretrigger time - vTaskDelayUntil func. does not work !!! */
 	/* vTaskDelayUntil(&xLastWakeTime, logAnlys.preTriggerTime/portTICK_RATE_MS); */
@@ -143,14 +143,14 @@ void logAnlysStart(void){
 		LOG_ANLYS_TriggerEventOccuredCallback();
 		TIM_PostTrigger_SoftwareStart();	
 	}
-	/* Enable trigger after pretrigger time elapses */
-		
+	
+	/* Enable trigger after pretrigger time elapses */		
 	GPIO_EnableTrigger();	
-
 }	
 
 void logAnlysStop(void){
 	TIM_LogAnlys_Stop();
+	logAnlys.state = LOGA_WAIT_FOR_RESTART;
 }	
 
 /* Configure TIM1 to trigger DMA with required frequency. */
@@ -186,6 +186,10 @@ void logAnlysSetTriggerFalling(void){
 	GPIO_EnableTrigger();	
 }
 
+void logAnlysDisablePostTrigIRQ(void){
+	GPIO_DisableIRQ();
+}
+
 void logAnlysSetTriggerChannel(uint32_t chan){
 	switch(chan){
 		case 1:
@@ -213,7 +217,7 @@ void logAnlysSetTriggerChannel(uint32_t chan){
 			logAnlys.trigConfig = TRIG_CHAN8;
 			break;
 	}
-	GPIO_EnableTrigger();	
+//	GPIO_EnableTrigger();	
 }
 
 void logAnlysSetDefault(void){

@@ -955,6 +955,7 @@ namespace LEO
                             }
                             port.Read(inputData, 0, 4);
                             int triggerPointer = trigP = BitConverter.ToInt32(inputData, 0);
+                            Debug.WriteLine(triggerPointer.ToString());
                             LogAnlys_form.add_message(new Message(Message.MsgRequest.LOG_ANLYS_TRIGGER_POINTER, "LOG_ANLYS_TRIG_POINTER", triggerPointer));
                             break;
 
@@ -985,6 +986,7 @@ namespace LEO
                             {
                                 logAnlysCfg.samples[j] = BitConverter.ToUInt16(receiveArray, j * 2);
                             }
+                            Debug.WriteLine("DATA");
                             LogAnlys_form.add_message(new Message(Message.MsgRequest.LOG_ANLYS_DATA, "LOG_ANLYS_DATA"));
                             break;
                         /* -------------------------------------------------------------------------------------------------------------------------------- */

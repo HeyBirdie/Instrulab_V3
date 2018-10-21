@@ -66,6 +66,12 @@
             this.trackBar_ver_cur_a = new System.Windows.Forms.TrackBar();
             this.trackBar_ver_cur_b = new System.Windows.Forms.TrackBar();
             this.groupBox_busdecode = new System.Windows.Forms.GroupBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.button_decode_settings = new System.Windows.Forms.Button();
             this.radioButton_decode_SPI = new System.Windows.Forms.RadioButton();
             this.radioButton_decode_off = new System.Windows.Forms.RadioButton();
             this.radioButton_decode_I2C = new System.Windows.Forms.RadioButton();
@@ -161,12 +167,6 @@
             this.lowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             this.clearAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.button_decode_settings = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
             this.panel5.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -674,6 +674,61 @@
             this.groupBox_busdecode.TabStop = false;
             this.groupBox_busdecode.Text = "Bus decode";
             // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(116, 82);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(13, 13);
+            this.label9.TabIndex = 6;
+            this.label9.Text = "--";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(116, 66);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(13, 13);
+            this.label10.TabIndex = 6;
+            this.label10.Text = "--";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(116, 50);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(13, 13);
+            this.label8.TabIndex = 6;
+            this.label8.Text = "--";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(116, 34);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(13, 13);
+            this.label7.TabIndex = 6;
+            this.label7.Text = "--";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(116, 18);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(45, 13);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "Settings";
+            // 
+            // button_decode_settings
+            // 
+            this.button_decode_settings.Enabled = false;
+            this.button_decode_settings.Location = new System.Drawing.Point(115, 99);
+            this.button_decode_settings.Name = "button_decode_settings";
+            this.button_decode_settings.Size = new System.Drawing.Size(75, 23);
+            this.button_decode_settings.TabIndex = 5;
+            this.button_decode_settings.Text = "Settings";
+            this.button_decode_settings.UseVisualStyleBackColor = true;
+            // 
             // radioButton_decode_SPI
             // 
             this.radioButton_decode_SPI.AutoSize = true;
@@ -1118,6 +1173,7 @@
             // button_max_possible
             // 
             this.button_max_possible.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.button_max_possible.Enabled = false;
             this.button_max_possible.Location = new System.Drawing.Point(1, 101);
             this.button_max_possible.Margin = new System.Windows.Forms.Padding(1);
             this.button_max_possible.Name = "button_max_possible";
@@ -1203,6 +1259,7 @@
             // 
             this.radioButton_50x.Appearance = System.Windows.Forms.Appearance.Button;
             this.radioButton_50x.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.radioButton_50x.Enabled = false;
             this.radioButton_50x.Location = new System.Drawing.Point(105, 51);
             this.radioButton_50x.Margin = new System.Windows.Forms.Padding(1);
             this.radioButton_50x.Name = "radioButton_50x";
@@ -1217,6 +1274,7 @@
             // 
             this.radioButton_100x.Appearance = System.Windows.Forms.Appearance.Button;
             this.radioButton_100x.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.radioButton_100x.Enabled = false;
             this.radioButton_100x.Location = new System.Drawing.Point(1, 76);
             this.radioButton_100x.Margin = new System.Windows.Forms.Padding(1);
             this.radioButton_100x.Name = "radioButton_100x";
@@ -1231,6 +1289,7 @@
             // 
             this.radioButton_200x.Appearance = System.Windows.Forms.Appearance.Button;
             this.radioButton_200x.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.radioButton_200x.Enabled = false;
             this.radioButton_200x.Location = new System.Drawing.Point(53, 76);
             this.radioButton_200x.Margin = new System.Windows.Forms.Padding(1);
             this.radioButton_200x.Name = "radioButton_200x";
@@ -1245,6 +1304,7 @@
             // 
             this.radioButton_500x.Appearance = System.Windows.Forms.Appearance.Button;
             this.radioButton_500x.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.radioButton_500x.Enabled = false;
             this.radioButton_500x.Location = new System.Drawing.Point(105, 76);
             this.radioButton_500x.Margin = new System.Windows.Forms.Padding(1);
             this.radioButton_500x.Name = "radioButton_500x";
@@ -1650,14 +1710,14 @@
             // 
             this.uARTToolStripMenuItem.CheckOnClick = true;
             this.uARTToolStripMenuItem.Name = "uARTToolStripMenuItem";
-            this.uARTToolStripMenuItem.Size = new System.Drawing.Size(104, 22);
+            this.uARTToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.uARTToolStripMenuItem.Text = "UART";
             // 
             // sPIToolStripMenuItem
             // 
             this.sPIToolStripMenuItem.CheckOnClick = true;
             this.sPIToolStripMenuItem.Name = "sPIToolStripMenuItem";
-            this.sPIToolStripMenuItem.Size = new System.Drawing.Size(104, 22);
+            this.sPIToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.sPIToolStripMenuItem.Text = "SPI";
             // 
             // fourierTransformToolStripMenuItem
@@ -1814,61 +1874,6 @@
             this.clearAllToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
             this.clearAllToolStripMenuItem.Text = "Clear all";
             this.clearAllToolStripMenuItem.Click += new System.EventHandler(this.clearAllToolStripMenuItem_Click);
-            // 
-            // button_decode_settings
-            // 
-            this.button_decode_settings.Enabled = false;
-            this.button_decode_settings.Location = new System.Drawing.Point(115, 99);
-            this.button_decode_settings.Name = "button_decode_settings";
-            this.button_decode_settings.Size = new System.Drawing.Size(75, 23);
-            this.button_decode_settings.TabIndex = 5;
-            this.button_decode_settings.Text = "Settings";
-            this.button_decode_settings.UseVisualStyleBackColor = true;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(116, 18);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(45, 13);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "Settings";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(116, 34);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(13, 13);
-            this.label7.TabIndex = 6;
-            this.label7.Text = "--";
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(116, 50);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(13, 13);
-            this.label8.TabIndex = 6;
-            this.label8.Text = "--";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(116, 66);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(13, 13);
-            this.label10.TabIndex = 6;
-            this.label10.Text = "--";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(116, 82);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(13, 13);
-            this.label9.TabIndex = 6;
-            this.label9.Text = "--";
             // 
             // LogicAnalyzer
             // 
