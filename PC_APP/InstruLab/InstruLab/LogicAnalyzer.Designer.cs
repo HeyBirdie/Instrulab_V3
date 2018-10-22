@@ -1172,6 +1172,7 @@
             // button_max_possible
             // 
             this.button_max_possible.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.button_max_possible.Enabled = false;
             this.button_max_possible.Location = new System.Drawing.Point(1, 101);
             this.button_max_possible.Margin = new System.Windows.Forms.Padding(1);
             this.button_max_possible.Name = "button_max_possible";
@@ -1257,6 +1258,7 @@
             // 
             this.radioButton_50x.Appearance = System.Windows.Forms.Appearance.Button;
             this.radioButton_50x.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.radioButton_50x.Enabled = false;
             this.radioButton_50x.Location = new System.Drawing.Point(105, 51);
             this.radioButton_50x.Margin = new System.Windows.Forms.Padding(1);
             this.radioButton_50x.Name = "radioButton_50x";
@@ -1271,6 +1273,7 @@
             // 
             this.radioButton_100x.Appearance = System.Windows.Forms.Appearance.Button;
             this.radioButton_100x.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.radioButton_100x.Enabled = false;
             this.radioButton_100x.Location = new System.Drawing.Point(1, 76);
             this.radioButton_100x.Margin = new System.Windows.Forms.Padding(1);
             this.radioButton_100x.Name = "radioButton_100x";
@@ -1285,6 +1288,7 @@
             // 
             this.radioButton_200x.Appearance = System.Windows.Forms.Appearance.Button;
             this.radioButton_200x.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.radioButton_200x.Enabled = false;
             this.radioButton_200x.Location = new System.Drawing.Point(53, 76);
             this.radioButton_200x.Margin = new System.Windows.Forms.Padding(1);
             this.radioButton_200x.Name = "radioButton_200x";
@@ -1299,6 +1303,7 @@
             // 
             this.radioButton_500x.Appearance = System.Windows.Forms.Appearance.Button;
             this.radioButton_500x.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.radioButton_500x.Enabled = false;
             this.radioButton_500x.Location = new System.Drawing.Point(105, 76);
             this.radioButton_500x.Margin = new System.Windows.Forms.Padding(1);
             this.radioButton_500x.Name = "radioButton_500x";
@@ -1704,14 +1709,14 @@
             // 
             this.uARTToolStripMenuItem.CheckOnClick = true;
             this.uARTToolStripMenuItem.Name = "uARTToolStripMenuItem";
-            this.uARTToolStripMenuItem.Size = new System.Drawing.Size(104, 22);
+            this.uARTToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.uARTToolStripMenuItem.Text = "UART";
             // 
             // sPIToolStripMenuItem
             // 
             this.sPIToolStripMenuItem.CheckOnClick = true;
             this.sPIToolStripMenuItem.Name = "sPIToolStripMenuItem";
-            this.sPIToolStripMenuItem.Size = new System.Drawing.Size(104, 22);
+            this.sPIToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.sPIToolStripMenuItem.Text = "SPI";
             // 
             // fourierTransformToolStripMenuItem

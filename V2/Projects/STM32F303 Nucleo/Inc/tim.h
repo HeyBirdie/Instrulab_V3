@@ -132,23 +132,12 @@ void TIM_PostTrigger_ARR_PSC_Reconfig(uint32_t arrPsc);
 void TIM_SamplingFreq_ARR_PSC_Reconfig(uint32_t arrPsc);
 
 void GPIO_EnableTrigger(void);
+void GPIO_DisableIRQ(void);
 void TIM_PostTrigger_SoftwareStart(void);
-void TIM_PreTriggerDelay(uint16_t timeInMillisec);
-void TIM_TriggerConfig(uint8_t chan);
-
-void TIM_ConfigTrigger_Channel1(void);
-void TIM_ConfigTrigger_Channel2(void);
-void TIM_SetTrigger_channel1(void);
-void TIM_SetTrigger_channel2(void);
-void TIM_ResetTrigger_Channel1(void);
-void TIM_ResetTrigger_Channel2(void);
-void TIM_GPIOTrigConfig_Channel1(void);
-void TIM_GPIOTrigConfig_Channel2(void);
-void TIM_GPIOInputConfig_Channel1(void);
-void TIM_GPIOInputConfig_Channel2(void);
 
 void LOG_ANLYS_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
 void LOG_ANLYS_TriggerEventOccuredCallback(void);
+void TIM_SamplingStop(void);
 #endif //USE_LOG_ANLYS
 
 

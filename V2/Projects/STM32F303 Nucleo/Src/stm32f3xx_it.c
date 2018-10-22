@@ -247,7 +247,7 @@ void TIM4_IRQHandler(void)
 {
 //  HAL_TIM_IRQHandler(&htim4);
 	
-	if(logAnlys.state == LOGA_ENABLED){
+	if(logAnlys.enable == LOGA_ENABLED){
 		LOG_ANLYS_PeriodElapsedCallback(&htim4);		
 	}else{
 		COUNTER_PeriodElapsedCallback(&htim4);
