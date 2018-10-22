@@ -759,6 +759,11 @@ command parseLogAnlysCmd(void){
 	uint8_t error=0;
 
 	cmdIn = giveNextCmd();
+	/* In order to change any parameter, sampling has to be stopped. */
+	if((logAnlys.state == LOGA_SAMPLING) && ((cmdIn != CMD_LOG_ANLYS_STOP) && (cmdIn != CMD_GET_CONFIG))){
+		logAnlysStop(); 
+	}
+	
 	switch (cmdIn)
 	{
 		case CMD_LOG_ANLYS_INIT:
@@ -773,23 +778,19 @@ command parseLogAnlysCmd(void){
 		case CMD_LOG_ANLYS_STOP:
 			logAnlysSendStop();		
 			break;
-		case CMD_LOG_ANLYS_POSTTRIG:
+		case CMD_LOG_ANLYS_PRETRIG:
 			cmdIn = giveNextCmd();									
 			if(cmdIn != CMD_END && cmdIn != CMD_ERR){
-				logAnlysSendStop();
-				logAnlysSetPosttrigger((uint32_t)cmdIn);
-				logAnlysSendStart();
+				logAnlysSetPretrigger((uint32_t)cmdIn);	
 			}else{
 				cmdIn = CMD_ERR;
 				error = LOG_ANLYS_INVALID_FEATURE;
 			}	
 			break;
-		case CMD_LOG_ANLYS_PRETRIG:
+		case CMD_LOG_ANLYS_POSTTRIG:
 			cmdIn = giveNextCmd();									
-			if(cmdIn != CMD_END && cmdIn != CMD_ERR){
-				logAnlysSendStop();
-				logAnlysSetPretrigger((uint32_t)cmdIn);
-				logAnlysSendStart();
+			if(cmdIn != CMD_END && cmdIn != CMD_ERR){						
+				logAnlysSetPosttrigger((uint32_t)cmdIn);
 			}else{
 				cmdIn = CMD_ERR;
 				error = LOG_ANLYS_INVALID_FEATURE;
@@ -798,7 +799,7 @@ command parseLogAnlysCmd(void){
 		case CMD_LOG_ANLYS_SAMPLING_FREQ:
 			cmdIn = giveNextCmd();									
 			if(cmdIn != CMD_END && cmdIn != CMD_ERR){
-				logAnlysSetSamplingFreq((uint32_t)cmdIn);
+				logAnlysSetSamplingFreq((uint32_t)cmdIn);		
 			}else{
 				cmdIn = CMD_ERR;
 				error = LOG_ANLYS_INVALID_FEATURE;
@@ -806,7 +807,7 @@ command parseLogAnlysCmd(void){
 			break;	
 		case CMD_LOG_ANLYS_SAMPLES_NUM:		// data length	
 			cmdIn = giveNextCmd();									
-			if(cmdIn != CMD_END && cmdIn != CMD_ERR){
+			if(cmdIn != CMD_END && cmdIn != CMD_ERR){			
 				logAnlysSetSamplesNum((uint16_t)cmdIn);
 			}else{
 				cmdIn = CMD_ERR;
@@ -817,13 +818,13 @@ command parseLogAnlysCmd(void){
 			cmdIn = giveNextCmd();
 			if(isLogAnlysTriggerMode(cmdIn)){				
 				if(cmdIn == CMD_TRIG_MODE_AUTO){
-					 logAnlys.triggerMode = LOGA_MODE_AUTO;
+					logAnlys.triggerMode = LOGA_MODE_AUTO;
 				}else if(cmdIn == CMD_TRIG_MODE_NORMAL){
-						logAnlys.triggerMode = LOGA_MODE_NORMAL;
+					logAnlys.triggerMode = LOGA_MODE_NORMAL;
 				}else if(cmdIn == CMD_TRIG_MODE_SINGLE){
 					logAnlys.triggerMode = LOGA_MODE_SINGLE;  ////// myslim ze nestaci jenom zmenit mode ale musi se znova spustit vzorkovani nebo neco ne???????
 				}	
-			}				
+			}						
 			break;				
 		case CMD_LOG_ANLYS_TRIGGER_CHANNEL:
 			cmdIn = giveNextCmd();									
@@ -846,15 +847,19 @@ command parseLogAnlysCmd(void){
 				cmdIn = CMD_ERR;
 			}
 			break;	
-		default:
-			error = LOG_ANLYS_INVALID_FEATURE;
-			cmdIn = CMD_ERR;
-		break;
 		case CMD_GET_CONFIG:
 				xQueueSendToBack(messageQueue, "YSendLogAnlysConfig", portMAX_DELAY);
 			break;		
+		default:
+			error = LOG_ANLYS_INVALID_FEATURE;
+			cmdIn = CMD_ERR;
+		break;		
 	}
-
+	
+	if(logAnlys.state == LOGA_WAIT_FOR_RESTART){
+		logAnlysStart();
+	}
+	
 	cmdIn = (error > 0) ? error : CMD_END;
 	return cmdIn;			
 }
