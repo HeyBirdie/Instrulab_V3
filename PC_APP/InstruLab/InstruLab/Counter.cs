@@ -362,7 +362,10 @@ namespace LEO
             }
             catch (Exception ex)
             {
+                device.logTextNL(ex.ToString());
+                device.logTextNL(Environment.StackTrace.ToString());
                 this.Close();
+                
                 throw new System.ArgumentException("Counter painting went wrong");
             }
 

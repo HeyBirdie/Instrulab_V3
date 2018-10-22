@@ -116,6 +116,7 @@
     <Compile Include="BodePlot.Designer.cs">
       <DependentUpon>BodePlot.cs</DependentUpon>
     </Compile>
+    <Compile Include="BUS_Decode.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Comms_thread.cs" />
     <Compile Include="Counter.cs">

@@ -423,8 +423,10 @@ namespace LEO
             }
             catch (Exception ex)
             {
+                device.logTextNL(ex.ToString());
+                device.logTextNL(Environment.StackTrace.ToString());
                 this.Close();
-                throw new System.ArgumentException("Error during data sending for generator");
+                throw new System.ArgumentException("Error during data sending for generator");  
             }
         }
 

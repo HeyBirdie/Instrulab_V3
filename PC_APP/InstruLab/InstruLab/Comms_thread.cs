@@ -47,6 +47,7 @@ namespace LEO
                 if (connectedDevice!=null && connectedDevice.isPortError())
                 {
                     commState = CommsStates.ERROR;
+                    disconnect_device();
                 }
                 Thread.Sleep(10);
             }
