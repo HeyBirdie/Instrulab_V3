@@ -344,9 +344,11 @@ namespace LEO
                 {
                     scopePane.AxisChange();
                 }
-                catch (Exception ex) { }
+                catch (Exception ex)
+                { //do nothing it will be updated next time}
+                }
             }
-            if (maxY != last_maxY || minY != last_minY || horPosition!=LastHorPosition)
+            if (maxY != last_maxY || minY != last_minY || horPosition != LastHorPosition)
             {
 
                 scopePane.YAxis.Scale.MaxAuto = false;
@@ -434,7 +436,8 @@ namespace LEO
                 last_measValid = measValid;
             }
 
-            if (last_math != math) {
+            if (last_math != math)
+            {
                 update = true;
                 scopePane.CurveList.Clear();
                 process_signals();
@@ -452,12 +455,16 @@ namespace LEO
                 last_pretrigger = pretrigger;
             }
 
-            if (last_trigger_level != triggerLevel) {
+            if (last_trigger_level != triggerLevel)
+            {
                 set_trigger_level(triggerLevel);
                 last_trigger_level = triggerLevel;
                 scopePane.CurveList.Clear();
                 paint_signals();
                 paint_markers();
+                vertical_cursor_update();
+                horizontal_cursor_update();
+                paint_cursors();
                 update = true;
             }
 
@@ -466,6 +473,7 @@ namespace LEO
             {
                 this.Invalidate();
             }
+
         }
 
         public void update_Y_axe() {
@@ -768,7 +776,9 @@ namespace LEO
             }
             catch (Exception ex)
             {
-                this.Close();
+               device.logTextNL(ex.ToString());
+               device.logTextNL(Environment.StackTrace.ToString());
+              this.Close();
                 throw new System.ArgumentException("Scope painting went wrong");
             }
             

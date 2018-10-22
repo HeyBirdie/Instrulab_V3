@@ -485,6 +485,7 @@ namespace LEO
             }
             catch (Exception ex)
             {
+                //do nothing
             }
             return 0;
         }

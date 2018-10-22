@@ -66,6 +66,12 @@
             this.trackBar_ver_cur_a = new System.Windows.Forms.TrackBar();
             this.trackBar_ver_cur_b = new System.Windows.Forms.TrackBar();
             this.groupBox_busdecode = new System.Windows.Forms.GroupBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.button_decode_settings = new System.Windows.Forms.Button();
             this.radioButton_decode_SPI = new System.Windows.Forms.RadioButton();
             this.radioButton_decode_off = new System.Windows.Forms.RadioButton();
             this.radioButton_decode_I2C = new System.Windows.Forms.RadioButton();
@@ -161,12 +167,6 @@
             this.lowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             this.clearAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.button_decode_settings = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
             this.panel5.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -674,6 +674,61 @@
             this.groupBox_busdecode.TabStop = false;
             this.groupBox_busdecode.Text = "Bus decode";
             // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(116, 82);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(13, 13);
+            this.label9.TabIndex = 6;
+            this.label9.Text = "--";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(116, 66);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(13, 13);
+            this.label10.TabIndex = 6;
+            this.label10.Text = "--";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(116, 50);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(13, 13);
+            this.label8.TabIndex = 6;
+            this.label8.Text = "--";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(116, 34);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(13, 13);
+            this.label7.TabIndex = 6;
+            this.label7.Text = "--";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(116, 18);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(45, 13);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "Settings";
+            // 
+            // button_decode_settings
+            // 
+            this.button_decode_settings.Enabled = false;
+            this.button_decode_settings.Location = new System.Drawing.Point(115, 99);
+            this.button_decode_settings.Name = "button_decode_settings";
+            this.button_decode_settings.Size = new System.Drawing.Size(75, 23);
+            this.button_decode_settings.TabIndex = 5;
+            this.button_decode_settings.Text = "Settings";
+            this.button_decode_settings.UseVisualStyleBackColor = true;
+            // 
             // radioButton_decode_SPI
             // 
             this.radioButton_decode_SPI.AutoSize = true;
@@ -690,7 +745,6 @@
             // 
             this.radioButton_decode_off.AutoSize = true;
             this.radioButton_decode_off.Checked = true;
-            this.radioButton_decode_off.Enabled = false;
             this.radioButton_decode_off.Location = new System.Drawing.Point(9, 29);
             this.radioButton_decode_off.Margin = new System.Windows.Forms.Padding(2);
             this.radioButton_decode_off.Name = "radioButton_decode_off";
@@ -715,7 +769,6 @@
             // radioButton_decode_UART
             // 
             this.radioButton_decode_UART.AutoSize = true;
-            this.radioButton_decode_UART.Enabled = false;
             this.radioButton_decode_UART.Location = new System.Drawing.Point(9, 50);
             this.radioButton_decode_UART.Margin = new System.Windows.Forms.Padding(2);
             this.radioButton_decode_UART.Name = "radioButton_decode_UART";
@@ -1050,6 +1103,7 @@
             // 
             this.radioButton_20m.Appearance = System.Windows.Forms.Appearance.Button;
             this.radioButton_20m.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.radioButton_20m.Enabled = false;
             this.radioButton_20m.Location = new System.Drawing.Point(58, 101);
             this.radioButton_20m.Margin = new System.Windows.Forms.Padding(1);
             this.radioButton_20m.Name = "radioButton_20m";
@@ -1623,7 +1677,7 @@
             // 
             this.AnalogToolStripMenuItem.CheckOnClick = true;
             this.AnalogToolStripMenuItem.Name = "AnalogToolStripMenuItem";
-            this.AnalogToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
+            this.AnalogToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.AnalogToolStripMenuItem.Text = "Analog value";
             this.AnalogToolStripMenuItem.Click += new System.EventHandler(this.AnalogToolStripMenuItem_Click);
             // 
@@ -1697,7 +1751,7 @@
             this.toolStripMenuItem_ch1_meas.CheckState = System.Windows.Forms.CheckState.Checked;
             this.toolStripMenuItem_ch1_meas.DoubleClickEnabled = true;
             this.toolStripMenuItem_ch1_meas.Name = "toolStripMenuItem_ch1_meas";
-            this.toolStripMenuItem_ch1_meas.Size = new System.Drawing.Size(129, 22);
+            this.toolStripMenuItem_ch1_meas.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItem_ch1_meas.Text = "Channel 1";
             this.toolStripMenuItem_ch1_meas.Click += new System.EventHandler(this.toolStripMenuItem_ch1_meas_Click);
             // 
@@ -1706,7 +1760,7 @@
             this.toolStripMenuItem_ch2_meas.CheckOnClick = true;
             this.toolStripMenuItem_ch2_meas.DoubleClickEnabled = true;
             this.toolStripMenuItem_ch2_meas.Name = "toolStripMenuItem_ch2_meas";
-            this.toolStripMenuItem_ch2_meas.Size = new System.Drawing.Size(129, 22);
+            this.toolStripMenuItem_ch2_meas.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItem_ch2_meas.Text = "Channel 2";
             this.toolStripMenuItem_ch2_meas.Click += new System.EventHandler(this.toolStripMenuItem_ch2_meas_Click);
             // 
@@ -1715,7 +1769,7 @@
             this.toolStripMenuItem_ch3_meas.CheckOnClick = true;
             this.toolStripMenuItem_ch3_meas.DoubleClickEnabled = true;
             this.toolStripMenuItem_ch3_meas.Name = "toolStripMenuItem_ch3_meas";
-            this.toolStripMenuItem_ch3_meas.Size = new System.Drawing.Size(129, 22);
+            this.toolStripMenuItem_ch3_meas.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItem_ch3_meas.Text = "Channel 3";
             this.toolStripMenuItem_ch3_meas.Click += new System.EventHandler(this.toolStripMenuItem_ch3_meas_Click);
             // 
@@ -1724,151 +1778,96 @@
             this.toolStripMenuItem_ch4_meas.CheckOnClick = true;
             this.toolStripMenuItem_ch4_meas.DoubleClickEnabled = true;
             this.toolStripMenuItem_ch4_meas.Name = "toolStripMenuItem_ch4_meas";
-            this.toolStripMenuItem_ch4_meas.Size = new System.Drawing.Size(129, 22);
+            this.toolStripMenuItem_ch4_meas.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItem_ch4_meas.Text = "Channel 4";
             this.toolStripMenuItem_ch4_meas.Click += new System.EventHandler(this.toolStripMenuItem_ch4_meas_Click);
             // 
             // toolStripMenuItem_ch5_meas
             // 
             this.toolStripMenuItem_ch5_meas.Name = "toolStripMenuItem_ch5_meas";
-            this.toolStripMenuItem_ch5_meas.Size = new System.Drawing.Size(129, 22);
+            this.toolStripMenuItem_ch5_meas.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItem_ch5_meas.Text = "Channel 5";
             this.toolStripMenuItem_ch5_meas.Click += new System.EventHandler(this.channel5ToolStripMenuItem_Click);
             // 
             // toolStripMenuItem_ch6_meas
             // 
             this.toolStripMenuItem_ch6_meas.Name = "toolStripMenuItem_ch6_meas";
-            this.toolStripMenuItem_ch6_meas.Size = new System.Drawing.Size(129, 22);
+            this.toolStripMenuItem_ch6_meas.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItem_ch6_meas.Text = "Channel 6";
             this.toolStripMenuItem_ch6_meas.Click += new System.EventHandler(this.channel6ToolStripMenuItem_Click);
             // 
             // toolStripMenuItem_ch7_meas
             // 
             this.toolStripMenuItem_ch7_meas.Name = "toolStripMenuItem_ch7_meas";
-            this.toolStripMenuItem_ch7_meas.Size = new System.Drawing.Size(129, 22);
+            this.toolStripMenuItem_ch7_meas.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItem_ch7_meas.Text = "Channel 7";
             this.toolStripMenuItem_ch7_meas.Click += new System.EventHandler(this.channel7ToolStripMenuItem_Click);
             // 
             // toolStripMenuItem_ch8_meas
             // 
             this.toolStripMenuItem_ch8_meas.Name = "toolStripMenuItem_ch8_meas";
-            this.toolStripMenuItem_ch8_meas.Size = new System.Drawing.Size(129, 22);
+            this.toolStripMenuItem_ch8_meas.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItem_ch8_meas.Text = "Channel 8";
             this.toolStripMenuItem_ch8_meas.Click += new System.EventHandler(this.channel8ToolStripMenuItem_Click);
             // 
             // toolStripSeparator12
             // 
             this.toolStripSeparator12.Name = "toolStripSeparator12";
-            this.toolStripSeparator12.Size = new System.Drawing.Size(126, 6);
+            this.toolStripSeparator12.Size = new System.Drawing.Size(149, 6);
             // 
             // frequencyToolStripMenuItem
             // 
             this.frequencyToolStripMenuItem.Name = "frequencyToolStripMenuItem";
-            this.frequencyToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
+            this.frequencyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.frequencyToolStripMenuItem.Text = "Frequency";
             this.frequencyToolStripMenuItem.Click += new System.EventHandler(this.frequencyToolStripMenuItem_Click);
             // 
             // periodToolStripMenuItem
             // 
             this.periodToolStripMenuItem.Name = "periodToolStripMenuItem";
-            this.periodToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
+            this.periodToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.periodToolStripMenuItem.Text = "Period";
             this.periodToolStripMenuItem.Click += new System.EventHandler(this.periodToolStripMenuItem_Click);
             // 
             // phaseToolStripMenuItem
             // 
             this.phaseToolStripMenuItem.Name = "phaseToolStripMenuItem";
-            this.phaseToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
+            this.phaseToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.phaseToolStripMenuItem.Text = "Phase";
             this.phaseToolStripMenuItem.Click += new System.EventHandler(this.phaseToolStripMenuItem_Click);
             // 
             // dutyToolStripMenuItem
             // 
             this.dutyToolStripMenuItem.Name = "dutyToolStripMenuItem";
-            this.dutyToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
+            this.dutyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.dutyToolStripMenuItem.Text = "Duty";
             this.dutyToolStripMenuItem.Click += new System.EventHandler(this.dutyToolStripMenuItem_Click);
             // 
             // highToolStripMenuItem
             // 
             this.highToolStripMenuItem.Name = "highToolStripMenuItem";
-            this.highToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
+            this.highToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.highToolStripMenuItem.Text = "High";
             this.highToolStripMenuItem.Click += new System.EventHandler(this.highToolStripMenuItem_Click);
             // 
             // lowToolStripMenuItem
             // 
             this.lowToolStripMenuItem.Name = "lowToolStripMenuItem";
-            this.lowToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
+            this.lowToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.lowToolStripMenuItem.Text = "Low";
             this.lowToolStripMenuItem.Click += new System.EventHandler(this.lowToolStripMenuItem_Click);
             // 
             // toolStripSeparator9
             // 
             this.toolStripSeparator9.Name = "toolStripSeparator9";
-            this.toolStripSeparator9.Size = new System.Drawing.Size(126, 6);
+            this.toolStripSeparator9.Size = new System.Drawing.Size(149, 6);
             // 
             // clearAllToolStripMenuItem
             // 
             this.clearAllToolStripMenuItem.Name = "clearAllToolStripMenuItem";
-            this.clearAllToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
+            this.clearAllToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.clearAllToolStripMenuItem.Text = "Clear all";
             this.clearAllToolStripMenuItem.Click += new System.EventHandler(this.clearAllToolStripMenuItem_Click);
-            // 
-            // button_decode_settings
-            // 
-            this.button_decode_settings.Enabled = false;
-            this.button_decode_settings.Location = new System.Drawing.Point(115, 99);
-            this.button_decode_settings.Name = "button_decode_settings";
-            this.button_decode_settings.Size = new System.Drawing.Size(75, 23);
-            this.button_decode_settings.TabIndex = 5;
-            this.button_decode_settings.Text = "Settings";
-            this.button_decode_settings.UseVisualStyleBackColor = true;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(116, 18);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(45, 13);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "Settings";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(116, 34);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(13, 13);
-            this.label7.TabIndex = 6;
-            this.label7.Text = "--";
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(116, 50);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(13, 13);
-            this.label8.TabIndex = 6;
-            this.label8.Text = "--";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(116, 66);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(13, 13);
-            this.label10.TabIndex = 6;
-            this.label10.Text = "--";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(116, 82);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(13, 13);
-            this.label9.TabIndex = 6;
-            this.label9.Text = "--";
             // 
             // LogicAnalyzer
             // 

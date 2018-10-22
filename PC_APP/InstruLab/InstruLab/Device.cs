@@ -267,7 +267,6 @@ namespace LEO
             {
                 if (writeLog)
                 {
-                    bool logOpened = false;
                     try
                     {
                         if (File.Exists("logfile" + index + ".txt"))
@@ -279,7 +278,6 @@ namespace LEO
                             File.Delete("logfile" + index + ".gz");
                         }
                         logWriter = File.AppendText("logfile" + index + ".txt");
-                        logOpened = true;
                     }
                     catch (Exception ex)
                     {
@@ -351,6 +349,7 @@ namespace LEO
                         this.systemCfg.CoreClock = BitConverter.ToInt32(msg_byte, 4);
                         this.systemCfg.PeriphClock = BitConverter.ToInt32(msg_byte, 8);
                         this.systemCfg.MCU = new string(msg_char, 12, toRead - 16);
+                        this.mcu = this.systemCfg.MCU;
                     }
 
                     port.Write(Commands.VersionRequest + ";");
@@ -1237,6 +1236,8 @@ namespace LEO
                                 catch (Exception ex)
                                 {
                                     logRecieved("Unknown error " + new string(inputMsg, 0, 4));
+                                    logTextNL(ex.ToString());
+                                    logTextNL(Environment.StackTrace.ToString());
                                     if (lastError != -1)
                                     {
 
@@ -1274,13 +1275,17 @@ namespace LEO
                     if (port.IsOpen)
                     {
                         port.DiscardInBuffer();
+                        logTextNL("communication error:\r\n"+ex.ToString());
+                        logTextNL(Environment.StackTrace.ToString());
                         report.Sendreport("Mismatch communication Error recieved", ex, this, logger, 31681);
-                        MessageBox.Show("Unknow error \r\n" + ex, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Unknow error \r\n", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Unknow error \r\n" + ex, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    logTextNL("communication error:\r\n" + ex.ToString());
+                    logTextNL(Environment.StackTrace.ToString());
+                    MessageBox.Show("Unknow error \r\n", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 Thread.Yield();
             }
@@ -1641,7 +1646,10 @@ namespace LEO
             result = commsSemaphore.WaitOne(ms);
             if (!result)
             {
-                throw new Exception("Unable to take semaphore");
+                Exception ex = new Exception("Unable to take semaphore");
+                logTextNL(ex.ToString());
+                logTextNL(Environment.StackTrace.ToString());
+                throw ex;
             }
             semaphoreTakenBy = ms;
             return result;
@@ -1660,17 +1668,14 @@ namespace LEO
                 LastCommand = s;
                 port.Write(s);
 
-                //   if (!s.Equals("OSCP:SRAT")) {
                 logSend(s);
-
-                // }
-                //  Console.WriteLine(s);
             }
             catch (Exception ex)
             {
                 logTextNL("Data se nepodařilo odeslat:\r\n" + ex);
                 Console.WriteLine(ex);
                 portError = true;
+                
             }
         }
 

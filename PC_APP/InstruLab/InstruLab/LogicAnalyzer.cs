@@ -524,7 +524,7 @@ namespace LEO
             catch (Exception ex)
             {
                 device.logRecieved("Logic Analyzer - first GPIO pin not parsed.");
-                MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                device.logTextNL(ex.ToString());
             }
         }
 
@@ -658,7 +658,8 @@ namespace LEO
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                device.logTextNL(ex.ToString());
+                device.logTextNL(Environment.StackTrace.ToString());
                 this.Close();
                 throw new System.ArgumentException("Logic Analyzer painting went wrong");
             }

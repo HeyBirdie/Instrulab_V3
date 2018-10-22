@@ -58,7 +58,7 @@ namespace LEO
                 }
             }
             catch (Exception ex) {
-                MessageBox.Show("It is really bad\r\nno chance to recover anything\r\nSorry!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("It is really bad\r\nno chance to recover anything\r\nSorry!\r\n"+ex.GetType(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
