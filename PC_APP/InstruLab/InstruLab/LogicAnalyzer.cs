@@ -613,7 +613,6 @@ namespace LEO
                                     dataRecSemaphore = DATA_RECEPTION.WAITING;
                                     logAnlys_next();                                    
                                 }
-                                Debug.WriteLine("AUTO_DATA_QUEST");
                                 break;
                             case TRIGGER_MODE.NORMAL:
                                 if (dataRecSemaphore == DATA_RECEPTION.RECEIVED)
@@ -621,7 +620,6 @@ namespace LEO
                                     dataRecSemaphore = DATA_RECEPTION.WAITING;
                                     logAnlys_next();                                    
                                 }
-                                Debug.WriteLine("NORMAL_DATA_QUEST");
                                 break;
                         }
                     }
@@ -1157,7 +1155,6 @@ namespace LEO
                     logAnlys_next();
                 }
 
-                Debug.WriteLine("SINGLE_CLICK_QUEST");
                 checkBox_trig_single.Text = "Stop";
                 label_logAnlys_status.ForeColor = Color.Gray;
                 label_logAnlys_status.Text = "Wait";
@@ -1179,7 +1176,6 @@ namespace LEO
                     logAnlys_next();
                 }
                 
-                Debug.WriteLine("NORMAL_CLICK_QUEST");
                 this.checkBox_trig_auto.Checked = false;
                 this.checkBox_trig_single.Checked = false;
                 this.checkBox_trig_single.Text = "Stop";
@@ -1200,7 +1196,6 @@ namespace LEO
                     logAnlys_next();
                 }
 
-                Debug.WriteLine("AUTO_CLICK_QUEST");
                 this.checkBox_trig_normal.Checked = false;
                 this.checkBox_trig_single.Checked = false;
                 this.checkBox_trig_single.Text = "Stop";

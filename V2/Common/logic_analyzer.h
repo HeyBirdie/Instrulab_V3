@@ -19,6 +19,7 @@
 // Constant definitions =======================================================
 //#define LOG_ANLYS_DEFAULT_SAMPLING_FREQ 	1000
 //#define LOG_ANLYS_DEFAULT_PRETRIGGER 			0x8000    //[ms]
+#define LOG_ANLYS_DEFAULT_DATA_LEN 2000   // SHOULD BE SET TO 100 !!!
 
 /* Enums */
 typedef enum{
@@ -37,6 +38,7 @@ typedef enum{
 	LOGA_SAMPLING,					  // sampling started
 	LOGA_DATA_SENDING,			  // data sending to PC
 	LOGA_WAIT_FOR_RESTART,	  // data sent to PC & wating for start command from host
+	LOGA_DONE,
 	LOGA_ERR
 }stateTypeDef;
 

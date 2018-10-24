@@ -964,8 +964,7 @@ namespace LEO
                                 wait_for_data(watchDog--);
                             }
                             port.Read(inputData, 0, 4);
-                            int triggerPointer = trigP = BitConverter.ToInt32(inputData, 0);
-                            Debug.WriteLine(triggerPointer.ToString());
+                            int triggerPointer = trigP = BitConverter.ToInt32(inputData, 0);                            
                             LogAnlys_form.add_message(new Message(Message.MsgRequest.LOG_ANLYS_TRIGGER_POINTER, "LOG_ANLYS_TRIG_POINTER", triggerPointer));
                             break;
 
@@ -979,12 +978,13 @@ namespace LEO
                             break;
 
                         case Commands.LOG_ANLYS_DATA:
-                            while (port.IsOpen && port.BytesToRead < receiveDataLength)                            
+                            while (port.IsOpen && port.BytesToRead < receiveDataLength)
                             {
                                 wait_for_data(watchDog--);
                             }
 
-                            if (!port.IsOpen) {
+                            if (!port.IsOpen)
+                            {
                                 break;
                             }
 
@@ -997,9 +997,35 @@ namespace LEO
                             {
                                 logAnlysCfg.samples[j] = BitConverter.ToUInt16(receiveArray, j * 2);
                             }
-                            Debug.WriteLine("DATA");                            
                             LogAnlys_form.add_message(new Message(Message.MsgRequest.LOG_ANLYS_DATA, "LOG_ANLYS_DATA"));
                             break;
+                        //const int blockSize = 2000;                         // SHOULD BE SET TO 100 !!!                    
+                        //int blockNum = receiveDataLength / blockSize;       // number of blocks to be received
+
+                        //byte[] receiveArray = new byte[blockSize];          // temporary block array used in FOR loop 
+                        //byte[] completeArray = new byte[receiveDataLength]; // complete array gradually filled by temp block array
+
+                        //for (int ix = 0; ix < blockNum; ix++)
+                        //{
+                        //    while (port.IsOpen && port.BytesToRead < blockSize)
+                        //    {
+                        //        wait_for_data(watchDog--);
+                        //    }
+
+                        //    port.Read(receiveArray, 0, blockSize);          // read the block of data into temporary block array                          
+                        //    Array.Copy(receiveArray, 0, completeArray, ix * blockSize, blockSize);  // adding the temp array data to completeArray from required shifted index
+
+                        //    Thread.Yield();                            
+                        //}
+                        ///* receiveDataLength is doubled because of 16-bit sampling, but sending 8-bit array */
+                        //logAnlysCfg.samples = new ushort[(uint)(receiveDataLength / 2)];
+                        ///* Make from received 8-bit array back the 16-bit */
+                        //for (int j = 0; j < (uint)(receiveDataLength / 2); j++)
+                        //{
+                        //    logAnlysCfg.samples[j] = BitConverter.ToUInt16(completeArray, j * 2);
+                        //}                            
+                        //LogAnlys_form.add_message(new Message(Message.MsgRequest.LOG_ANLYS_DATA, "LOG_ANLYS_DATA"));
+                        //break;
                         /* -------------------------------------------------------------------------------------------------------------------------------- */
                         /* -------------------------------------------------- COUNTER RECEIVED MESSAGES --------------------------------------------------- */
                         /* -------------------------------------------------------------------------------------------------------------------------------- */
