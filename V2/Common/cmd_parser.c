@@ -760,7 +760,7 @@ command parseLogAnlysCmd(void){
 
 	cmdIn = giveNextCmd();
 	/* In order to change any parameter, sampling has to be stopped. */
-	if((logAnlys.state == LOGA_SAMPLING) && ((cmdIn != CMD_LOG_ANLYS_STOP) && (cmdIn != CMD_GET_CONFIG))){
+	if((logAnlys.state == LOGA_SAMPLING) && (cmdIn != CMD_LOG_ANLYS_STOP)){
 		logAnlysStop(); 
 	}
 	
@@ -846,7 +846,16 @@ command parseLogAnlysCmd(void){
 			}else{
 				cmdIn = CMD_ERR;
 			}
-			break;	
+			break;
+//		case CMD_LOG_ANLYS_USER_TRIG:
+//			cmdIn = giveNextCmd();
+//			if(cmdIn != CMD_END && cmdIn != CMD_ERR){			
+//				logAnlysUserTrigger((uint16_t)cmdIn);
+//			}else{
+//				cmdIn = CMD_ERR;
+//				error = LOG_ANLYS_INVALID_FEATURE;
+//			}			
+//			break;				
 		case CMD_GET_CONFIG:
 				xQueueSendToBack(messageQueue, "YSendLogAnlysConfig", portMAX_DELAY);
 			break;		
@@ -856,7 +865,11 @@ command parseLogAnlysCmd(void){
 		break;		
 	}
 	
-	if(logAnlys.state == LOGA_WAIT_FOR_RESTART){
+	if((logAnlys.state == LOGA_WAIT_FOR_RESTART) 
+		&& (cmdIn != CMD_LOG_ANLYS_PRETRIG)
+	  && (cmdIn != CMD_LOG_ANLYS_SAMPLES_NUM)
+		&& (cmdIn != CMD_LOG_ANLYS_SAMPLING_FREQ))
+	{
 		logAnlysStart();
 	}
 	

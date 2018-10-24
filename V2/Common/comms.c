@@ -320,13 +320,15 @@ void CommTask(void const *argument){
 				commsSendUint32(logAnlys.triggerPointer);
 				logAnlys.trigOccur = TRIG_NOT_OCCURRED;
 			}
+			/* Send user trigger associated with data */
+//			commsSendString(STR_LOG_ANLYS_USER_TRIGGER);				
+//			commsSendUint32(logAnlys.userTrigger);	
 			/* 16-bit GPIO register by DMA to 16-bit array. Array send 8-bit by 8-bit to PC. samplesNumber countes with 16-bit array. */
 			commsSendString(STR_LOG_ANLYS_DATA_LENGTH);				
 			commsSendUint32(logAnlys.samplesNumber * 2);	
 			/* Send data */
 			commsSendString(STR_LOG_ANLYS_DATA);	
-			commsSendBuff((uint8_t *)logAnlys.bufferMemory,(logAnlys.samplesNumber * 2));			
-			logAnlys.state = LOGA_WAIT_FOR_HOST;
+			commsSendBuff((uint8_t *)logAnlys.bufferMemory,(logAnlys.samplesNumber * 2));		
 			#endif //USE_LOG_ANLYS
 			
 		// send system config

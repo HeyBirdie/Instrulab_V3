@@ -38,7 +38,8 @@ namespace LEO
         private static string[] logAnlysPins = new string[8];
         private static uint posttrigPeriphClock; // 
         private static uint timeBasePeriphClock;
-        private int triggerPointer;
+        private int triggerPointer = 500;
+        private int userPretrig = 50;
 
         public enum math_def { NONE, ANALOG };
 
@@ -64,6 +65,8 @@ namespace LEO
 
         public enum TRIGGER_MODE { AUTO, NORMAL, SINGLE, };
         TRIGGER_MODE triggerMode;
+        public enum DATA_RECEPTION { WAITING, RECEIVED };
+        DATA_RECEPTION dataRecSemaphore;
 
         double[] testArray = new double[1000];
         ushort[] testArrayRaw = new ushort[1000];
@@ -553,7 +556,12 @@ namespace LEO
                     case Message.MsgRequest.LOG_ANLYS_TRIGGER_POINTER:
                         triggerPointer = message.GetNum();
                         break;
+                    //case Message.MsgRequest.LOG_ANLYS_USER_TRIGGER:
+                    //    /* user PRETRIG = user TRIGGER */
+                    //    userPretrig = message.GetNum();
+                    //    break;
                     case Message.MsgRequest.LOG_ANLYS_DATA:
+                        dataRecSemaphore = DATA_RECEPTION.RECEIVED;
                         retrieveData();
                         if (calcSignal_th != null && calcSignal_th.IsAlive)
                         {
@@ -600,11 +608,19 @@ namespace LEO
                                 checkBox_trig_single.Text = "Single";
                                 break;
                             case TRIGGER_MODE.AUTO:
-                                logAnlys_next();
+                                if (dataRecSemaphore == DATA_RECEPTION.RECEIVED)
+                                {
+                                    dataRecSemaphore = DATA_RECEPTION.WAITING;
+                                    logAnlys_next();                                    
+                                }
                                 Debug.WriteLine("AUTO_DATA_QUEST");
                                 break;
                             case TRIGGER_MODE.NORMAL:
-                                logAnlys_next();
+                                if (dataRecSemaphore == DATA_RECEPTION.RECEIVED)
+                                {
+                                    dataRecSemaphore = DATA_RECEPTION.WAITING;
+                                    logAnlys_next();                                    
+                                }
                                 Debug.WriteLine("NORMAL_DATA_QUEST");
                                 break;
                         }
@@ -999,7 +1015,7 @@ namespace LEO
         private void trackBar_pretrig_Scroll(object sender, EventArgs e)
         {
             pretrig = (uint)trackBar_pretrig.Value;
-            this.maskedTextBox_pretrig.Text = pretrig.ToString();
+            this.maskedTextBox_pretrig.Text = pretrig.ToString();            
         }
 
         private void maskedTextBox_pretrig_KeyPress(object sender, KeyPressEventArgs e)
@@ -1032,6 +1048,7 @@ namespace LEO
                 }
                 this.trackBar_pretrig.Value = (int)(val);
                 pretrig = val;
+                //sendCommandNumber(Commands.LOG_ANLYS_USER_TRIGGER, pretrig);
             }
             catch (Exception ex)
             {
@@ -1053,9 +1070,6 @@ namespace LEO
             minX = (double)(maxTime) * horPosition * posScale + posmin - interval / 2;
 
         }
-
-
-
 
         /* ------------------------------------------------------------------------------------------------------------------ */
         /* ---------------------------------------- below just callbacks from GUI ------------------------------------------ */
@@ -1136,9 +1150,16 @@ namespace LEO
             {
                 triggerMode = TRIGGER_MODE.SINGLE;
                 sendCommand(Commands.LOG_ANLYS_TRIGGER_MODE, Commands.LOG_ANLYS_TRIGGER_MODE_SINGLE);
-                logAnlys_next();
+
+                if (dataRecSemaphore == DATA_RECEPTION.RECEIVED)
+                {
+                    dataRecSemaphore = DATA_RECEPTION.WAITING;
+                    logAnlys_next();
+                }
+
                 Debug.WriteLine("SINGLE_CLICK_QUEST");
                 checkBox_trig_single.Text = "Stop";
+                label_logAnlys_status.ForeColor = Color.Gray;
                 label_logAnlys_status.Text = "Wait";
             }
             this.checkBox_trig_auto.Checked = false;
@@ -1150,7 +1171,14 @@ namespace LEO
             if (this.checkBox_trig_normal.Checked)
             {
                 triggerMode = TRIGGER_MODE.NORMAL;
-                sendCommand(Commands.LOG_ANLYS_TRIGGER_MODE, Commands.LOG_ANLYS_TRIGGER_MODE_NORMAL);                
+                sendCommand(Commands.LOG_ANLYS_TRIGGER_MODE, Commands.LOG_ANLYS_TRIGGER_MODE_NORMAL);
+
+                if (dataRecSemaphore == DATA_RECEPTION.RECEIVED)
+                {
+                    dataRecSemaphore = DATA_RECEPTION.WAITING;
+                    logAnlys_next();
+                }
+                
                 Debug.WriteLine("NORMAL_CLICK_QUEST");
                 this.checkBox_trig_auto.Checked = false;
                 this.checkBox_trig_single.Checked = false;
@@ -1164,7 +1192,14 @@ namespace LEO
             if (this.checkBox_trig_auto.Checked)
             {
                 triggerMode = TRIGGER_MODE.AUTO;
-                sendCommand(Commands.LOG_ANLYS_TRIGGER_MODE, Commands.LOG_ANLYS_TRIGGER_MODE_AUTO);                 
+                sendCommand(Commands.LOG_ANLYS_TRIGGER_MODE, Commands.LOG_ANLYS_TRIGGER_MODE_AUTO);
+
+                if (dataRecSemaphore == DATA_RECEPTION.RECEIVED)
+                {
+                    dataRecSemaphore = DATA_RECEPTION.WAITING;
+                    logAnlys_next();
+                }
+
                 Debug.WriteLine("AUTO_CLICK_QUEST");
                 this.checkBox_trig_normal.Checked = false;
                 this.checkBox_trig_single.Checked = false;

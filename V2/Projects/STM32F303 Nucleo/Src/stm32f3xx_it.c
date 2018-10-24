@@ -161,7 +161,7 @@ extern DMA_HandleTypeDef hdma_tim1_up;
 
 void EXTI15_10_IRQHandler(void){
 	logAnlys.triggerPointer = hdma_tim1_up.Instance->CNDTR;	
-	LOG_ANLYS_handle_interrupt(EXTI->PR);
+	LOG_ANLYS_handle_interrupt(EXTI->PR & 0x3fc0);
 }
 
 void EXTI9_5_IRQHandler(void){
@@ -229,8 +229,8 @@ void LOG_ANLYS_handle_interrupt(uint32_t pr){
 		}
 	}
 	
-	if(isRightPin == 1){
-		LOG_ANLYS_TriggerEventOccuredCallback();
+	if(isRightPin == 1){		
+		logAnlys.trigOccur = TRIG_OCCURRED;
 		TIM_PostTrigger_SoftwareStart();
 	}
 }

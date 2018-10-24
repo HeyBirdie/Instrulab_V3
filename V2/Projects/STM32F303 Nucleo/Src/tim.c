@@ -1487,8 +1487,6 @@ void LOG_ANLYS_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			
 			GPIO_DisableIRQ();
 			
-			logAnlys.state = LOGA_SAMPLING_DONE;
-			
 			/* Data sending */
 			if(logAnlys.trigOccur == TRIG_OCCURRED){
 				logAnlysPeriodElapsedCallback();					
@@ -1501,7 +1499,7 @@ void LOG_ANLYS_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 void LOG_ANLYS_TriggerEventOccuredCallback(void)
 {		
 	/* Trigger interrupt after posttriger timer elapses (Update Event). */
-	__HAL_TIM_ENABLE_IT(&htim4, TIM_IT_UPDATE);
+	logAnlys.triggerPointer = hdma_tim1_up.Instance->CNDTR;
 	logAnlys.trigOccur = TRIG_OCCURRED;
 }
 
@@ -1537,10 +1535,11 @@ void TIM_LogAnlys_Stop(void)
 	TIM_SamplingStop();
 	GPIO_DisableIRQ();	
 	
-	HAL_TIM_Base_Stop(&htim4);
+	HAL_TIM_Base_Stop(&htim4);	
 	__HAL_TIM_SET_COUNTER(&htim4, 0x00);
 	/* Slave TIM1 is stopped by TIM4 upon Update Event
 	   and TIM4 is initialized in One Pulse Mode. */
+	logAnlys.trigOccur = TRIG_NOT_OCCURRED;
 }
 
 /* F303RE nucleo - TIM4 timing */
@@ -1548,9 +1547,13 @@ void TIM_PostTrigger_ARR_PSC_Reconfig(uint32_t arrPsc)
 {	
 	uint16_t arr = (uint16_t)arrPsc;
 	uint16_t psc = (uint16_t)(arrPsc >> 16);	
-	
+		
 	__HAL_TIM_SET_AUTORELOAD(&htim4, arr);
 	__HAL_TIM_SET_PRESCALER(&htim4, psc);
+	
+	TIM4->EGR |= TIM_EGR_UG;
+	TIM_LogAnlys_Stop();
+	//HAL_TIM_Base_Stop(&htim4);
 }
 
 /* F303RE nucleo - TIM1 */
@@ -1566,7 +1569,8 @@ void TIM_SamplingFreq_ARR_PSC_Reconfig(uint32_t arrPsc)
 }
 
 void TIM_PostTrigger_SoftwareStart(void)
-{	/* Trigger interrupt after posttriger timer elapses (Update Event). */
+{	
+	/* Trigger interrupt after posttriger timer elapses (Update Event). */
 	__HAL_TIM_SET_COUNTER(&htim4, 0x00);
 	HAL_TIM_Base_Start(&htim4);
 }

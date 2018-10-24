@@ -947,6 +947,17 @@ namespace LEO
                         /* -------------------------------------------------------------------------------------------------------------------------------- */
                         /* ---------------------------------------------- LOGIC ANALYZER RECEIVED MESSAGES ------------------------------------------------ */
                         /* -------------------------------------------------------------------------------------------------------------------------------- */
+                        //case Commands.LOG_ANLYS_USER_TRIGGER:
+                        //    while (port.BytesToRead < 4)
+                        //    {
+                        //        wait_for_data(watchDog--);
+                        //    }
+                        //    port.Read(inputData, 0, 4);
+                        //    int userTrigger = BitConverter.ToInt32(inputData, 0);
+                        //    Debug.WriteLine(userTrigger.ToString());
+                        //    LogAnlys_form.add_message(new Message(Message.MsgRequest.LOG_ANLYS_USER_TRIGGER, "LOG_ANLYS_USER_TRIGGER", userTrigger));
+                        //    break;
+
                         case Commands.LOG_ANLYS_TRIGGER_POINTER:
                             while (port.BytesToRead < 4)
                             {
@@ -968,7 +979,7 @@ namespace LEO
                             break;
 
                         case Commands.LOG_ANLYS_DATA:
-                            while (port.IsOpen && port.BytesToRead < receiveDataLength)
+                            while (port.IsOpen && port.BytesToRead < receiveDataLength)                            
                             {
                                 wait_for_data(watchDog--);
                             }
@@ -981,11 +992,12 @@ namespace LEO
                             logAnlysCfg.samples = new ushort[(uint)(receiveDataLength / 2)];
 
                             port.Read(receiveArray, 0, receiveDataLength);
+
                             for (int j = 0; j < (uint)(receiveDataLength / 2); j++)
                             {
                                 logAnlysCfg.samples[j] = BitConverter.ToUInt16(receiveArray, j * 2);
                             }
-                            Debug.WriteLine("DATA");
+                            Debug.WriteLine("DATA");                            
                             LogAnlys_form.add_message(new Message(Message.MsgRequest.LOG_ANLYS_DATA, "LOG_ANLYS_DATA"));
                             break;
                         /* -------------------------------------------------------------------------------------------------------------------------------- */
