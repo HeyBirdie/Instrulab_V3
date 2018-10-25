@@ -271,7 +271,7 @@ void CommTask(void const *argument){
 
 				}else{		
 										
-					sprintf(message, "%06.3f", counter.counterIc.ic1freq);
+					sprintf(cntMessage, "%06.3f", counter.counterIc.ic1freq);
 					char cntMessage2[15];
 					sprintf(cntMessage2, "%015.12f", counter.counterIc.ic2freq);
 					

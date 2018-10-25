@@ -1287,6 +1287,7 @@ void TIM_GEN_PWM_ARR_Config(uint16_t arrVal, uint8_t chan){
 /* ************************************************************************************* */
 #ifdef USE_SYNC_PWM
 void TIM_SYNC_PWM_Init(void){		
+//	htim8.State = HAL_TIM_STATE_RESET;
 	MX_TIM8_SYNC_PWM_Init();
 	/* Very thanks to optimization 3, TIM Base Init function 
 		is not called from SYNC PWM Initi function. */
@@ -1509,16 +1510,25 @@ void LOG_ANLYS_TriggerEventOccuredCallback(void)
 
 void TIM_LogAnlys_Init(void)
 {
+	htim1.State = HAL_TIM_STATE_RESET;
+	htim4.State = HAL_TIM_STATE_RESET;	
+	
 	MX_TIM1_LOG_ANLYS_Init();
 	MX_TIM4_LOG_ANLYS_Init();
 }
 
 void TIM_LogAnlys_Deinit(void)
-{	
-	RCC->APB2RSTR |= RCC_APB2RSTR_TIM1RST;	//	HAL_TIM_Base_DeInit(&htim1);
-	RCC->APB2RSTR &= ~RCC_APB2RSTR_TIM1RST;	//	HAL_TIM_Base_DeInit(&htim4);
+{		
+	HAL_TIM_Base_DeInit(&htim4);	
+	HAL_TIM_Base_DeInit(&htim1);	
+	
 	RCC->APB1RSTR |= RCC_APB1RSTR_TIM4RST;
 	RCC->APB1RSTR &= ~RCC_APB1RSTR_TIM4RST;	
+	RCC->APB2RSTR |= RCC_APB2RSTR_TIM1RST;	
+	RCC->APB2RSTR &= ~RCC_APB2RSTR_TIM1RST;	
+	
+	htim1.State = HAL_TIM_STATE_RESET;
+	htim4.State = HAL_TIM_STATE_RESET;	
 }
 
 void TIM_LogAnlys_Start(void)
@@ -1676,6 +1686,9 @@ void COUNTER_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 /* ---------------------------- Counter timer INIT functions ---------------------------- */
 /* ************************************************************************************** */
 void TIM_counter_etr_init(void){	
+	htim4.State = HAL_TIM_STATE_RESET;
+	htim2.State = HAL_TIM_STATE_RESET;	
+	
 	TIM_doubleClockVal();	
 	MX_TIM4_Init();	
 	MX_TIM2_ETRorREF_Init();	
@@ -1691,12 +1704,18 @@ void TIM_counter_ref_init(void){
 	RCC->APB1RSTR |= RCC_APB1RSTR_TIM4RST;
 	RCC->APB1RSTR &= ~RCC_APB1RSTR_TIM4RST;		
 	
+	htim4.State = HAL_TIM_STATE_RESET;
+	htim2.State = HAL_TIM_STATE_RESET;		
+	
 	TIM_doubleClockVal();
 	MX_TIM4_Init();
 	MX_TIM2_ETRorREF_Init();
 }
 
 void TIM_counter_ic_init(void){	
+	htim4.State = HAL_TIM_STATE_RESET;
+	htim2.State = HAL_TIM_STATE_RESET;	
+	
 	TIM_doubleClockVal();	
 	MX_TIM4_Init();
 	MX_TIM2_ICorTI_Init();
@@ -1709,7 +1728,10 @@ void TIM_counter_ti_init(void){
 	RCC->APB1RSTR &= ~RCC_APB1RSTR_TIM2RST;	
 
 	RCC->APB1RSTR |= RCC_APB1RSTR_TIM4RST;
-	RCC->APB1RSTR &= ~RCC_APB1RSTR_TIM4RST;		
+	RCC->APB1RSTR &= ~RCC_APB1RSTR_TIM4RST;	
+
+	htim4.State = HAL_TIM_STATE_RESET;
+	htim2.State = HAL_TIM_STATE_RESET;		
 	
 	TIM_doubleClockVal();	
 	MX_TIM4_Init();	
