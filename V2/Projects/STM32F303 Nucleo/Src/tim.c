@@ -1562,7 +1562,7 @@ void TIM_PostTrigger_ARR_PSC_Reconfig(uint32_t arrPsc)
 	__HAL_TIM_SET_PRESCALER(&htim4, psc);
 	
 	TIM4->EGR |= TIM_EGR_UG;
-	TIM_LogAnlys_Stop();
+//	TIM_LogAnlys_Stop();
 	//HAL_TIM_Base_Stop(&htim4);
 }
 

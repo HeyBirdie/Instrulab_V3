@@ -178,10 +178,6 @@ namespace LEO
         int buff;
         string cntMessage;
 
-        string dc, pw;
-        double ddc, dpw;
-        
-
         /* Logic analyzer vars */
         int receiveDataLength;
 
@@ -1109,10 +1105,10 @@ namespace LEO
 
                             try
                             {
-                                string cntDutyCycle = dc = new string(inputValIcDc1, 0, 6);
-                                double dutyCycle = ddc = double.Parse(cntDutyCycle, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
-                                string cntPulseWidth = pw = new string(inputValIcDc1, 6, 15);
-                                cntCfg.pulseWidth = dpw = double.Parse(cntPulseWidth, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+                                string cntDutyCycle = new string(inputValIcDc1, 0, 6);
+                                double dutyCycle = double.Parse(cntDutyCycle, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+                                string cntPulseWidth = new string(inputValIcDc1, 6, 15);
+                                cntCfg.pulseWidth = double.Parse(cntPulseWidth, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
 
                                 Counter_form.add_message(new Message(Message.MsgRequest.COUNTER_IC_DUTY_CYCLE, "IC_DUTY_CYCLE", dutyCycle));
                                 /* There seems to be a problem passing two messages consequently in short time. */
