@@ -65,7 +65,8 @@ void commsSendBuff(uint8_t *buff, uint16_t len){
 		UARTsendBuff((char *)buff,len);
 	}
 	#else
-	UARTsendBuff((char *)buff,len);
+	//UARTsendBuff((char *)buff,len);
+	HAL_UART_Transmit(&huart2, buff, len, 10000);
 	#endif
 }
 void commsSendString(char *chr){
@@ -81,13 +82,11 @@ void commsSendString(char *chr){
 		UARTsendBuff(chr,i);
 	}
 	#else
-	UARTsendBuff(chr,i);
+//	UARTsendBuff(chr,i);
+	HAL_UART_Transmit(&huart2, (uint8_t *)chr, i, 10000);
 	#endif
 
 }
-
-
-
 
 void commsSendDMA(uint8_t chr){
 	#ifdef USE_USB

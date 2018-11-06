@@ -179,7 +179,7 @@ namespace LEO
         string cntMessage;
 
         /* Logic analyzer vars */
-        int receiveDataLength;
+        int receiveDataLength;        
 
         int lastError = 0;
         public Device(string portName, string name, int speed)
@@ -304,7 +304,7 @@ namespace LEO
                 port.Write(Commands.RESET_DEVICE + ";");
                 Thread.Sleep(200);
                 load_config();
-                port.Close();
+                port.Close();                
                 port.ReadTimeout = 10000;
                 port.WriteTimeout = 1000;
                 port.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(this.serialPort_DataReceived);
@@ -705,7 +705,7 @@ namespace LEO
 
                         /* Without periphClocks reception */
                         //cntCfg.modes = new string(msg_char, 4, toRead - 29);
-                        //cntCfg.pins = new string(msg_char, 15, toRead - 11).Split(' ');
+                        //cntCfg.pins = new string(msg_char, 15, toRead - 11).Split(' ');                        
                     }
                     else
                     {
@@ -721,7 +721,7 @@ namespace LEO
 
         public void wait_for_data(int watch)
         {
-            Thread.Sleep(1);
+            Thread.Sleep(1);            
             if (watch <= 0)
             {
                  throw (new Exception("Reading timeout")); 
@@ -978,54 +978,56 @@ namespace LEO
                             break;
 
                         case Commands.LOG_ANLYS_DATA:
-                            while (port.IsOpen && port.BytesToRead < receiveDataLength)
-                            {
-                                wait_for_data(watchDog--);
-                            }
+                            watchDog = 5000;
+                            //while (port.IsOpen && port.BytesToRead < receiveDataLength)
+                            //{
+                            //    wait_for_data(watchDog--);
+                            //}
 
-                            if (!port.IsOpen)
-                            {
-                                break;
-                            }
+                            //if (!port.IsOpen)
+                            //{
+                            //    break;
+                            //}
 
-                            byte[] receiveArray = new byte[receiveDataLength];
+                            //byte[] receiveArray = new byte[receiveDataLength];
+                            //logAnlysCfg.samples = new ushort[(uint)(receiveDataLength / 2)];
+
+                            //port.Read(receiveArray, 0, receiveDataLength);
+
+                            //for (int j = 0; j < (uint)(receiveDataLength / 2); j++)
+                            //{
+                            //    logAnlysCfg.samples[j] = BitConverter.ToUInt16(receiveArray, j * 2);
+                            //}
+                            //LogAnlys_form.add_message(new Message(Message.MsgRequest.LOG_ANLYS_DATA, "LOG_ANLYS_DATA"));
+                            //break;
+                            const int blockSize = 50;                         // SHOULD BE SET TO 100 !!!                    
+                            int blockNum = receiveDataLength / blockSize;       // number of blocks to be received
+                                                                                //watchDog = 5000;
+                            byte[] receiveArray = new byte[blockSize];          // temporary block array used in FOR loop 
+                            byte[] completeArray = new byte[receiveDataLength]; // complete array gradually filled by temp block array
+
+                            for (int ix = 0; ix < blockNum; ix++)
+                            {
+                                while (port.IsOpen && (port.BytesToRead < blockSize))
+                                {
+                                    wait_for_data(watchDog--);
+                                }
+
+                                //port.Read(receiveArray, 0, blockSize);          // read the block of data into temporary block array                          
+                                //Array.Copy(receiveArray, 0, completeArray, ix * blockSize, blockSize);  // adding the temp array data to completeArray from required shifted index
+                                port.Read(completeArray, ix * blockSize, blockSize);
+
+                                Thread.Yield();
+                            }
+                            /* receiveDataLength is doubled because of 16-bit sampling, but sending 8-bit array */
                             logAnlysCfg.samples = new ushort[(uint)(receiveDataLength / 2)];
-
-                            port.Read(receiveArray, 0, receiveDataLength);
-
+                            /* Make from received 8-bit array back the 16-bit */
                             for (int j = 0; j < (uint)(receiveDataLength / 2); j++)
                             {
-                                logAnlysCfg.samples[j] = BitConverter.ToUInt16(receiveArray, j * 2);
+                                logAnlysCfg.samples[j] = BitConverter.ToUInt16(completeArray, j * 2);
                             }
                             LogAnlys_form.add_message(new Message(Message.MsgRequest.LOG_ANLYS_DATA, "LOG_ANLYS_DATA"));
                             break;
-                        //const int blockSize = 2000;                         // SHOULD BE SET TO 100 !!!                    
-                        //int blockNum = receiveDataLength / blockSize;       // number of blocks to be received
-
-                        //byte[] receiveArray = new byte[blockSize];          // temporary block array used in FOR loop 
-                        //byte[] completeArray = new byte[receiveDataLength]; // complete array gradually filled by temp block array
-
-                        //for (int ix = 0; ix < blockNum; ix++)
-                        //{
-                        //    while (port.IsOpen && port.BytesToRead < blockSize)
-                        //    {
-                        //        wait_for_data(watchDog--);
-                        //    }
-
-                        //    port.Read(receiveArray, 0, blockSize);          // read the block of data into temporary block array                          
-                        //    Array.Copy(receiveArray, 0, completeArray, ix * blockSize, blockSize);  // adding the temp array data to completeArray from required shifted index
-
-                        //    Thread.Yield();                            
-                        //}
-                        ///* receiveDataLength is doubled because of 16-bit sampling, but sending 8-bit array */
-                        //logAnlysCfg.samples = new ushort[(uint)(receiveDataLength / 2)];
-                        ///* Make from received 8-bit array back the 16-bit */
-                        //for (int j = 0; j < (uint)(receiveDataLength / 2); j++)
-                        //{
-                        //    logAnlysCfg.samples[j] = BitConverter.ToUInt16(completeArray, j * 2);
-                        //}                            
-                        //LogAnlys_form.add_message(new Message(Message.MsgRequest.LOG_ANLYS_DATA, "LOG_ANLYS_DATA"));
-                        //break;
                         /* -------------------------------------------------------------------------------------------------------------------------------- */
                         /* -------------------------------------------------- COUNTER RECEIVED MESSAGES --------------------------------------------------- */
                         /* -------------------------------------------------------------------------------------------------------------------------------- */

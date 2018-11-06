@@ -759,6 +759,8 @@ command parseLogAnlysCmd(void){
 	uint8_t error=0;
 
 	cmdIn = giveNextCmd();
+	
+//	while(logAnlys.state == LOGA_DATA_SENDING);
 	/* In order to change any parameter, sampling has to be stopped. */
 	if((logAnlys.state == LOGA_SAMPLING) && (cmdIn != CMD_LOG_ANLYS_STOP)){
 		logAnlysStop(); 
@@ -865,10 +867,7 @@ command parseLogAnlysCmd(void){
 		break;		
 	}
 	
-	if((logAnlys.state == LOGA_WAIT_FOR_RESTART) 
-		&& (cmdIn != CMD_LOG_ANLYS_PRETRIG)
-	  && (cmdIn != CMD_LOG_ANLYS_SAMPLES_NUM)
-		&& (cmdIn != CMD_LOG_ANLYS_SAMPLING_FREQ))
+	if((logAnlys.state == LOGA_WAIT_FOR_RESTART) || (cmdIn == CMD_LOG_ANLYS_POSTTRIG))
 	{
 		logAnlysStart();
 	}

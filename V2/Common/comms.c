@@ -46,7 +46,7 @@ void sendShieldPresence(void);
 void sendSystemVersion(void);
 void assertPins(void);
 
-uint16_t b1[100], b2[100];
+uint8_t volatile testArray[100];	
 
 // Function definitions =======================================================
 //portTASK_FUNCTION(vPrintTask, pvParameters) {
@@ -321,22 +321,25 @@ void CommTask(void const *argument){
 				logAnlys.trigOccur = TRIG_NOT_OCCURRED;
 			}
 			/* Send user trigger associated with data */
-//			commsSendString(STR_LOG_ANLYS_USER_TRIGGER);				
-//			commsSendUint32(logAnlys.userTrigger);	
 			/* 16-bit GPIO register by DMA to 16-bit array. Array send 8-bit by 8-bit to PC. samplesNumber countes with 16-bit array. */
-			commsSendString(STR_LOG_ANLYS_DATA_LENGTH);				
-			commsSendUint32(logAnlys.samplesNumber * 2);	
+//			commsSendString(STR_LOG_ANLYS_DATA_LENGTH);				
+//			commsSendUint32(logAnlys.samplesNumber * 2);	
+//			commsSendString(STR_LOG_ANLYS_DATA);	
+//			commsSendBuff((uint8_t *)&logAnlys.samplesNumber,(logAnlys.samplesNumber * 2));					
 			
-			/* Send data */
-//			commsSendString(STR_LOG_ANLYS_DATA);
+			/* Send data */				
+			commsSendString(STR_LOG_ANLYS_DATA_LENGTH);				
+			commsSendUint32(logAnlys.samplesNumber * 2);				
+			commsSendString(STR_LOG_ANLYS_DATA);
+			HAL_UART_Transmit(&huart2, (uint8_t *)logAnlys.bufferMemory, logAnlys.samplesNumber * 2, 10000);			
+			logAnlys.state = LOGA_DATA_SENT;
 //			uint8_t blockNum = (logAnlys.samplesNumber * 2) / LOG_ANLYS_DEFAULT_DATA_LEN;		// be sure that the define is set to 100.
 //			for(int k = 0; k < blockNum; k++)
 //      {
-//				commsSendBuff((uint8_t *)&logAnlys.bufferMemory[k*LOG_ANLYS_DEFAULT_DATA_LEN], LOG_ANLYS_DEFAULT_DATA_LEN);
+//				//commsSendBuff((uint8_t *)&scopeBuffer[k*LOG_ANLYS_DEFAULT_DATA_LEN], LOG_ANLYS_DEFAULT_DATA_LEN);								
+//				HAL_UART_Transmit(&huart2, (uint8_t *)&scopeBuffer[k*LOG_ANLYS_DEFAULT_DATA_LEN], LOG_ANLYS_DEFAULT_DATA_LEN, 5000);
 //				taskYIELD();
-//      }					
-			commsSendString(STR_LOG_ANLYS_DATA);	
-			commsSendBuff((uint8_t *)logAnlys.bufferMemory,(logAnlys.samplesNumber * 2));		
+//      }		
 			#endif //USE_LOG_ANLYS
 			
 		// send system config
@@ -647,6 +650,10 @@ void sendCounterConf(){
 	/* Timer Interval pins (Events) */
 	commsSendString(CNT_IC_CH1_PIN);
 	commsSendString(CNT_IC_CH2_PIN);
+	
+	/* Scope Get Config is the last configuration demand - reconfig usart baud */
+//	huart2.Init.BaudRate = 2000000;
+//  HAL_UART_Init(&huart2);
 }
 #endif //USE_COUNTER
 
