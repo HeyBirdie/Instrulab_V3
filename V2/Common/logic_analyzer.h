@@ -19,7 +19,7 @@
 // Constant definitions =======================================================
 //#define LOG_ANLYS_DEFAULT_SAMPLING_FREQ 	1000
 //#define LOG_ANLYS_DEFAULT_PRETRIGGER 			0x8000    //[ms]
-#define LOG_ANLYS_DEFAULT_DATA_LEN 50   // SHOULD BE SET TO 100 !!!
+//#define LOG_ANLYS_DEFAULT_DATA_LEN 50   // SHOULD BE SET TO 100 !!!
 
 /* Enums */
 typedef enum{

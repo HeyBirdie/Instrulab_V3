@@ -127,13 +127,12 @@ void logAnlysDeinit(void){
 }	
 
 void logAnlysStart(void){
-	/* Start sampling */	
-	TIM_LogAnlys_Start();	
-	logAnlys.state = LOGA_SAMPLING;		
+	/* Start sampling */		
+	TIM_LogAnlys_Start();		
+	logAnlys.state = LOGA_SAMPLING;			
 	
-	/* Wait the pretrigger time - vTaskDelayUntil func. does not work !!! */
+	/* Wait the pretrigger time */
 	vTaskDelay(logAnlys.preTriggerTime/portTICK_RATE_MS);	
-	
 	__HAL_GPIO_EXTI_CLEAR_IT(0x3fc0);
 	
 	if(logAnlys.triggerMode == LOGA_MODE_AUTO){

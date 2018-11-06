@@ -760,7 +760,7 @@ command parseLogAnlysCmd(void){
 
 	cmdIn = giveNextCmd();
 	
-//	while(logAnlys.state == LOGA_DATA_SENDING);
+	while(logAnlys.state == LOGA_DATA_SENDING);
 	/* In order to change any parameter, sampling has to be stopped. */
 	if((logAnlys.state == LOGA_SAMPLING) && (cmdIn != CMD_LOG_ANLYS_STOP)){
 		logAnlysStop(); 
@@ -867,7 +867,11 @@ command parseLogAnlysCmd(void){
 		break;		
 	}
 	
-	if((logAnlys.state == LOGA_WAIT_FOR_RESTART) || (cmdIn == CMD_LOG_ANLYS_POSTTRIG))
+	if((logAnlys.state == LOGA_WAIT_FOR_RESTART) 
+		|| (cmdIn == CMD_LOG_ANLYS_POSTTRIG)
+	  || (cmdIn == CMD_LOG_ANLYS_TRIGGER_EVENT)
+		|| (cmdIn == CMD_LOG_ANLYS_TRIGGER_CHANNEL)
+		|| (cmdIn == CMD_LOG_ANLYS_TRIGGER_MODE))
 	{
 		logAnlysStart();
 	}

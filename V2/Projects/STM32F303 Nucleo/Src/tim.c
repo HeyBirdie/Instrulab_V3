@@ -1562,8 +1562,9 @@ void TIM_PostTrigger_ARR_PSC_Reconfig(uint32_t arrPsc)
 	__HAL_TIM_SET_PRESCALER(&htim4, psc);
 	
 	TIM4->EGR |= TIM_EGR_UG;
+	TIM4->CR1 &= ~(TIM_CR1_CEN); 
 //	TIM_LogAnlys_Stop();
-	//HAL_TIM_Base_Stop(&htim4);
+//	HAL_TIM_Base_Stop(&htim4);
 }
 
 /* F303RE nucleo - TIM1 */

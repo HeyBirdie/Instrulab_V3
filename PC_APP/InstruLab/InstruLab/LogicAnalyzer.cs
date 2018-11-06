@@ -115,7 +115,7 @@ namespace LEO
 
             device.logAnlysCfg.triggerChannel = 1;
 
-            SignalTimer = new System.Timers.Timer(50);
+            SignalTimer = new System.Timers.Timer(70);
             SignalTimer.Elapsed += new ElapsedEventHandler(Update_signal);
             SignalTimer.Start();
 
@@ -462,7 +462,7 @@ namespace LEO
 
         void calculateAndSend_AllParameters()
         {
-            //while (dataRecSemaphore == DATA_RECEPTION.WAITING) ;
+            //while (dataRecSemaphore == DATA_RECEPTION.WAITING);
             /* Send number of samples to be taken */
             sendCommandNumber(Commands.LOG_ANLYS_SAMPLES_NUM, dataLength);
             /* Calculate and send sampling frequency */
@@ -474,7 +474,7 @@ namespace LEO
 
         void calculateAndSend_PretrigPosttrig()
         {
-            //while (dataRecSemaphore == DATA_RECEPTION.WAITING) ;
+            //while (dataRecSemaphore == DATA_RECEPTION.WAITING);
             double samplingTime = dataLength / (double)samplingFreq;
             /* Calculate pretrigger in milliseconds */
             uint pretriggerTime = (uint)Math.Round(samplingTime * pretrig / 100 * 1000);
@@ -482,7 +482,7 @@ namespace LEO
             processFrequency(posttriggerFreq, posttrigPeriphClock);
 
             /* Send pretrigger */
-            sendCommandNumber(Commands.LOG_ANLYS_PRETRIG, pretriggerTime);
+            sendCommandNumber(Commands.LOG_ANLYS_PRETRIG, pretriggerTime + 10);
             /* Send posttrigger */
             sendCommandNumber(Commands.LOG_ANLYS_POSTTRIG, make32BitFromArrPsc((ushort)(syncPwmArr - 1), (ushort)(syncPwmPsc - 1)));
         }
@@ -885,7 +885,7 @@ namespace LEO
                 }
             }
         }
-        ushort[] tmpAr;
+
         public double[] valueAxis(double[] array, uint channel)
         {
             //ushort chan = (ushort)(channel - 1);
