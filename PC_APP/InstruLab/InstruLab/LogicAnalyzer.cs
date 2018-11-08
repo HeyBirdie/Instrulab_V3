@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Timers;
@@ -38,7 +39,8 @@ namespace LEO
         private static string[] logAnlysPins = new string[8];
         private static uint posttrigPeriphClock; // 
         private static uint timeBasePeriphClock;
-        private int triggerPointer;
+        private int triggerPointer = 500;
+        private int userPretrig = 50;
 
         public enum math_def { NONE, ANALOG };
 
@@ -64,6 +66,8 @@ namespace LEO
 
         public enum TRIGGER_MODE { AUTO, NORMAL, SINGLE, };
         TRIGGER_MODE triggerMode;
+        public enum DATA_RECEPTION { WAITING, RECEIVED };
+        DATA_RECEPTION dataRecSemaphore;
 
         double[] testArray = new double[1000];
         ushort[] testArrayRaw = new ushort[1000];
@@ -112,7 +116,7 @@ namespace LEO
 
             device.logAnlysCfg.triggerChannel = 1;
 
-            SignalTimer = new System.Timers.Timer(100);
+            SignalTimer = new System.Timers.Timer(70);
             SignalTimer.Elapsed += new ElapsedEventHandler(Update_signal);
             SignalTimer.Start();
 
@@ -265,7 +269,7 @@ namespace LEO
             if (last_measValid != measValid)
             {
                 update = true;
-                meas.calculateMeasurements(signals, 1, 0, 8, (int)(realSamplingFreq), device.logAnlysCfg.samples.Length, 1);
+                meas.calculateMeasurements(signals, 1, 0, 8, (int)(realSamplingFreq), (int)dataLength, 1);
                 last_measValid = measValid;
             }
 
@@ -459,6 +463,7 @@ namespace LEO
 
         void calculateAndSend_AllParameters()
         {
+            //while (dataRecSemaphore == DATA_RECEPTION.WAITING);
             /* Send number of samples to be taken */
             sendCommandNumber(Commands.LOG_ANLYS_SAMPLES_NUM, dataLength);
             /* Calculate and send sampling frequency */
@@ -470,14 +475,22 @@ namespace LEO
 
         void calculateAndSend_PretrigPosttrig()
         {
-            double samplingTime = dataLength / (double)samplingFreq;
+            //while (dataRecSemaphore == DATA_RECEPTION.WAITING);
+            double samplingTime = dataLength / ((double)samplingFreq*0.992);
             /* Calculate pretrigger in milliseconds */
             uint pretriggerTime = (uint)Math.Round(samplingTime * pretrig / 100 * 1000);
             double posttriggerFreq = 1 / (samplingTime * (1 - pretrig / (double)100));
-            processFrequency(posttriggerFreq, posttrigPeriphClock);
+            double realFreq = processFrequency(posttriggerFreq, posttrigPeriphClock);
+            /*
+            do {
+
+
+            } while (realFreq> posttriggerFreq)
+            */
+
 
             /* Send pretrigger */
-            sendCommandNumber(Commands.LOG_ANLYS_PRETRIG, pretriggerTime);
+            sendCommandNumber(Commands.LOG_ANLYS_PRETRIG, pretriggerTime + 10);
             /* Send posttrigger */
             sendCommandNumber(Commands.LOG_ANLYS_POSTTRIG, make32BitFromArrPsc((ushort)(syncPwmArr - 1), (ushort)(syncPwmPsc - 1)));
         }
@@ -553,13 +566,18 @@ namespace LEO
                     case Message.MsgRequest.LOG_ANLYS_TRIGGER_POINTER:
                         triggerPointer = message.GetNum();
                         break;
+                    //case Message.MsgRequest.LOG_ANLYS_USER_TRIGGER:
+                    //    /* user PRETRIG = user TRIGGER */
+                    //    userPretrig = message.GetNum();
+                    //    break;
                     case Message.MsgRequest.LOG_ANLYS_DATA:
+                        dataRecSemaphore = DATA_RECEPTION.RECEIVED;
                         retrieveData();
                         if (calcSignal_th != null && calcSignal_th.IsAlive)
                         {
                             calcSignal_th.Join();
                         }
-                        calcSignal_th = new Thread(() => meas.calculateMeasurements(signals, 1, 0, 8, (int)(realSamplingFreq), device.logAnlysCfg.samples.Length, 1));
+                        calcSignal_th = new Thread(() => meas.calculateMeasurements(signals, 1, 0, 8, (int)(realSamplingFreq), (int)dataLength, 1));
                         calcSignal_th.Start();
                         this.Invalidate();
                         break;
@@ -600,12 +618,18 @@ namespace LEO
                                 checkBox_trig_single.Text = "Single";
                                 break;
                             case TRIGGER_MODE.AUTO:
-                                logAnlys_next();
-                                Debug.WriteLine("AUTO_DATA_QUEST");
+                                if (dataRecSemaphore == DATA_RECEPTION.RECEIVED)
+                                {
+                                    dataRecSemaphore = DATA_RECEPTION.WAITING;
+                                    logAnlys_next();                                    
+                                }
                                 break;
                             case TRIGGER_MODE.NORMAL:
-                                logAnlys_next();
-                                Debug.WriteLine("NORMAL_DATA_QUEST");
+                                if (dataRecSemaphore == DATA_RECEPTION.RECEIVED)
+                                {
+                                    dataRecSemaphore = DATA_RECEPTION.WAITING;
+                                    logAnlys_next();                                    
+                                }
                                 break;
                         }
                     }
@@ -748,16 +772,16 @@ namespace LEO
                     col = Color.Green;
                     break;
                 case 4:
-                    col = Color.Black;
+                    col = Color.Magenta;
                     break;
                 case 5:
-                    col = Color.Magenta;
+                    col = Color.Black;
                     break;
                 case 6:
                     col = Color.DarkOrange;
                     break;
                 case 7:
-                    col = Color.Indigo;
+                    col = Color.DarkTurquoise;
                     break;
                 case 8:
                     col = Color.Maroon;
@@ -789,7 +813,15 @@ namespace LEO
             curve.Symbol.Fill.Color = Color.Red;
             curve.Symbol.Fill.IsVisible = true;
 
-
+            try
+            {
+                zedGraphControl_logAnlys.AxisChange();
+                zedGraphControl_logAnlys.Invalidate();
+            }
+            catch (Exception ex)
+            {
+                //dont need to catch exception -> graph will be updated later
+            }
         }
 
         public void paint_one_signal(double[] timeAxis, double[] valueAxis, uint channel, Color color)
@@ -810,31 +842,59 @@ namespace LEO
         {
             uint length = (uint)device.logAnlysCfg.samples.Length;
 
-            device.logAnlysCfg.maxTime = 1 / realSamplingFreq * (device.logAnlysCfg.samples.Length);
+            device.logAnlysCfg.maxTime = 1 / realSamplingFreq * (dataLength);
 
-            timeAxis = timAxis(new double[length]);
+            timeAxis = timAxis(new double[dataLength]);
             update_X_axe();
 
             signal_ch1 = valueAxis(new double[length], 8);
-            testArray = signal_ch1;
             signal_ch2 = valueAxis(new double[length], 7);
-            testArray = signal_ch2;
             signal_ch3 = valueAxis(new double[length], 6);
-            testArray = signal_ch3;
             signal_ch4 = valueAxis(new double[length], 5);
-            testArray = signal_ch4;
             signal_ch5 = valueAxis(new double[length], 4);
-            testArray = signal_ch5;
             signal_ch6 = valueAxis(new double[length], 3);
-            testArray = signal_ch6;
             signal_ch7 = valueAxis(new double[length], 2);
-            testArray = signal_ch7;
             signal_ch8 = valueAxis(new double[length], 1);
-            testArray = signal_ch8;
 
-            signals = new ushort[8, length];
+            double[] tmp = new double[dataLength];
 
-            for (int i = 0; i < length; i++)
+
+            Array.Copy(signal_ch1, (int)(200.0 + 400.0 * ((pretrig-50.0) / 100.0)), tmp, 0, dataLength);
+            signal_ch1 = new double[dataLength];
+            Array.Copy(tmp, 0, signal_ch1, 0, dataLength);
+
+            Array.Copy(signal_ch2, (int)(200.0 + 400.0 * ((pretrig - 50.0) / 100.0)), tmp, 0, dataLength);
+            signal_ch2 = new double[dataLength];
+            Array.Copy(tmp, 0, signal_ch2, 0, dataLength);
+
+            Array.Copy(signal_ch3, (int)(200.0 + 400.0 * ((pretrig - 50.0) / 100.0)), tmp, 0, dataLength);
+            signal_ch3 = new double[dataLength];
+            Array.Copy(tmp, 0, signal_ch3, 0, dataLength);
+
+            Array.Copy(signal_ch4, (int)(200.0 + 400.0 * ((pretrig - 50.0) / 100.0)), tmp, 0, dataLength);
+            signal_ch4 = new double[dataLength];
+            Array.Copy(tmp, 0, signal_ch4, 0, dataLength);
+
+            Array.Copy(signal_ch5, (int)(200.0 + 400.0 * ((pretrig - 50.0) / 100.0)), tmp, 0, dataLength);
+            signal_ch5 = new double[dataLength];
+            Array.Copy(tmp, 0, signal_ch5, 0, dataLength);
+
+            Array.Copy(signal_ch6, (int)(200.0 + 400.0 * ((pretrig - 50.0) / 100.0)), tmp, 0, dataLength);
+            signal_ch6 = new double[dataLength];
+            Array.Copy(tmp, 0, signal_ch6, 0, dataLength);
+
+            Array.Copy(signal_ch7, (int)(200.0 + 400.0 * ((pretrig - 50.0) / 100.0)), tmp, 0, dataLength);
+            signal_ch7 = new double[dataLength];
+            Array.Copy(tmp, 0, signal_ch7, 0, dataLength);
+
+            Array.Copy(signal_ch8, (int)(200.0 + 400.0 * ((pretrig - 50.0) / 100.0)), tmp, 0, dataLength);
+            signal_ch8 = new double[dataLength];
+            Array.Copy(tmp, 0, signal_ch8, 0, dataLength);
+
+
+            signals = new ushort[8, dataLength];
+
+            for (int i = 0; i < dataLength; i++)
             {
                 signals[0, i] = (ushort)(signal_ch1[i] % 2 == 0 ? 1 : 0);
                 signals[1, i] = (ushort)(signal_ch2[i] % 2 == 0 ? 1 : 0);
@@ -849,12 +909,12 @@ namespace LEO
 
             if (math != math_def.NONE)
             {
-                this.signal_math = new double[length];
+                this.signal_math = new double[dataLength];
 
                 switch (math)
                 {
                     case math_def.ANALOG:
-                        for (int i = 0; i < length; i++)
+                        for (int i = 0; i < dataLength; i++)
                         {
                             signal_math[i] = 0;
 
@@ -886,7 +946,6 @@ namespace LEO
             }
 
             tempArray = tempArray2;
-
 
             /* Extract zeroes and ones of required GPIO pin from received buffer. */
             for (int j = 0; j < array.Length; j++)
@@ -999,7 +1058,7 @@ namespace LEO
         private void trackBar_pretrig_Scroll(object sender, EventArgs e)
         {
             pretrig = (uint)trackBar_pretrig.Value;
-            this.maskedTextBox_pretrig.Text = pretrig.ToString();
+            this.maskedTextBox_pretrig.Text = pretrig.ToString();            
         }
 
         private void maskedTextBox_pretrig_KeyPress(object sender, KeyPressEventArgs e)
@@ -1032,6 +1091,7 @@ namespace LEO
                 }
                 this.trackBar_pretrig.Value = (int)(val);
                 pretrig = val;
+                //sendCommandNumber(Commands.LOG_ANLYS_USER_TRIGGER, pretrig);
             }
             catch (Exception ex)
             {
@@ -1045,7 +1105,7 @@ namespace LEO
 
         public void update_X_axe()
         {
-            double maxTime = 1 / realSamplingFreq * device.logAnlysCfg.samples.Length;
+            double maxTime = 1 / realSamplingFreq * dataLength;
             double interval = scale * maxTime;
             double posmin = (interval / 2);
             double posScale = (maxTime - interval) / maxTime;
@@ -1053,9 +1113,6 @@ namespace LEO
             minX = (double)(maxTime) * horPosition * posScale + posmin - interval / 2;
 
         }
-
-
-
 
         /* ------------------------------------------------------------------------------------------------------------------ */
         /* ---------------------------------------- below just callbacks from GUI ------------------------------------------ */
@@ -1136,9 +1193,15 @@ namespace LEO
             {
                 triggerMode = TRIGGER_MODE.SINGLE;
                 sendCommand(Commands.LOG_ANLYS_TRIGGER_MODE, Commands.LOG_ANLYS_TRIGGER_MODE_SINGLE);
-                logAnlys_next();
-                Debug.WriteLine("SINGLE_CLICK_QUEST");
+
+                if (dataRecSemaphore == DATA_RECEPTION.RECEIVED)
+                {
+                    dataRecSemaphore = DATA_RECEPTION.WAITING;
+                    logAnlys_next();
+                }
+
                 checkBox_trig_single.Text = "Stop";
+                label_logAnlys_status.ForeColor = Color.Gray;
                 label_logAnlys_status.Text = "Wait";
             }
             this.checkBox_trig_auto.Checked = false;
@@ -1150,8 +1213,14 @@ namespace LEO
             if (this.checkBox_trig_normal.Checked)
             {
                 triggerMode = TRIGGER_MODE.NORMAL;
-                sendCommand(Commands.LOG_ANLYS_TRIGGER_MODE, Commands.LOG_ANLYS_TRIGGER_MODE_NORMAL);                
-                Debug.WriteLine("NORMAL_CLICK_QUEST");
+                sendCommand(Commands.LOG_ANLYS_TRIGGER_MODE, Commands.LOG_ANLYS_TRIGGER_MODE_NORMAL);
+
+                if (dataRecSemaphore == DATA_RECEPTION.RECEIVED)
+                {
+                    dataRecSemaphore = DATA_RECEPTION.WAITING;
+                    logAnlys_next();
+                }
+                
                 this.checkBox_trig_auto.Checked = false;
                 this.checkBox_trig_single.Checked = false;
                 this.checkBox_trig_single.Text = "Stop";
@@ -1164,8 +1233,14 @@ namespace LEO
             if (this.checkBox_trig_auto.Checked)
             {
                 triggerMode = TRIGGER_MODE.AUTO;
-                sendCommand(Commands.LOG_ANLYS_TRIGGER_MODE, Commands.LOG_ANLYS_TRIGGER_MODE_AUTO);                 
-                Debug.WriteLine("AUTO_CLICK_QUEST");
+                sendCommand(Commands.LOG_ANLYS_TRIGGER_MODE, Commands.LOG_ANLYS_TRIGGER_MODE_AUTO);
+
+                if (dataRecSemaphore == DATA_RECEPTION.RECEIVED)
+                {
+                    dataRecSemaphore = DATA_RECEPTION.WAITING;
+                    logAnlys_next();
+                }
+
                 this.checkBox_trig_normal.Checked = false;
                 this.checkBox_trig_single.Checked = false;
                 this.checkBox_trig_single.Text = "Stop";

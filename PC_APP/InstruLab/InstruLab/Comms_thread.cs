@@ -37,7 +37,7 @@ namespace LEO
                     {
                         case Message.MsgRequest.FIND_DEVICES:
                             clearListOfDevices();
-                            find_devices(115200, 1, 0);
+                            find_devices(461538, 1, 0);  // 923076
                             break;
                         case Message.MsgRequest.CONNECT_DEVICE:
                             connect_device(messg.GetMessage());
@@ -93,8 +93,11 @@ namespace LEO
                         serialPort.ReadTimeout = 5000;
                         serialPort.WriteTimeout = 1000;
                         serialPort.Open();
+                        serialPort.Write(Commands.RESET_DEVICE + ";");                
+                        Thread.Sleep(50);
+                        serialPort.DiscardInBuffer();
                         serialPort.Write(Commands.IDNRequest+";");
-                        Thread.Sleep(250);
+                        Thread.Sleep(200);
 
                         char[] msg = new char[256];
                         int toRead = serialPort.BytesToRead;
@@ -104,7 +107,7 @@ namespace LEO
                         string deviceName = new string(msg, 4, toRead - 4);
 
                         Thread.Yield();
-                        if (msgInput.Equals(Commands.ACKNOWLEDGE))
+                        if (msgInput.Equals(Commands.ACKNOWLEDGE) && deviceName.Length>8)
                         {
                             bool inList=false;
                             Device newDevice = new Device(serialPort.PortName, deviceName, serialPort.BaudRate);

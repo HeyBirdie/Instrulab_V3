@@ -1287,6 +1287,7 @@ void TIM_GEN_PWM_ARR_Config(uint16_t arrVal, uint8_t chan){
 /* ************************************************************************************* */
 #ifdef USE_SYNC_PWM
 void TIM_SYNC_PWM_Init(void){		
+//	htim8.State = HAL_TIM_STATE_RESET;
 	MX_TIM8_SYNC_PWM_Init();
 	/* Very thanks to optimization 3, TIM Base Init function 
 		is not called from SYNC PWM Initi function. */
@@ -1487,8 +1488,6 @@ void LOG_ANLYS_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			
 			GPIO_DisableIRQ();
 			
-			logAnlys.state = LOGA_SAMPLING_DONE;
-			
 			/* Data sending */
 			if(logAnlys.trigOccur == TRIG_OCCURRED){
 				logAnlysPeriodElapsedCallback();					
@@ -1501,7 +1500,7 @@ void LOG_ANLYS_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 void LOG_ANLYS_TriggerEventOccuredCallback(void)
 {		
 	/* Trigger interrupt after posttriger timer elapses (Update Event). */
-	__HAL_TIM_ENABLE_IT(&htim4, TIM_IT_UPDATE);
+	logAnlys.triggerPointer = hdma_tim1_up.Instance->CNDTR;
 	logAnlys.trigOccur = TRIG_OCCURRED;
 }
 
@@ -1511,22 +1510,31 @@ void LOG_ANLYS_TriggerEventOccuredCallback(void)
 
 void TIM_LogAnlys_Init(void)
 {
+	htim1.State = HAL_TIM_STATE_RESET;
+	htim4.State = HAL_TIM_STATE_RESET;	
+	
 	MX_TIM1_LOG_ANLYS_Init();
 	MX_TIM4_LOG_ANLYS_Init();
 }
 
 void TIM_LogAnlys_Deinit(void)
-{	
-	RCC->APB2RSTR |= RCC_APB2RSTR_TIM1RST;	//	HAL_TIM_Base_DeInit(&htim1);
-	RCC->APB2RSTR &= ~RCC_APB2RSTR_TIM1RST;	//	HAL_TIM_Base_DeInit(&htim4);
+{		
+	HAL_TIM_Base_DeInit(&htim4);	
+	HAL_TIM_Base_DeInit(&htim1);	
+	
 	RCC->APB1RSTR |= RCC_APB1RSTR_TIM4RST;
 	RCC->APB1RSTR &= ~RCC_APB1RSTR_TIM4RST;	
+	RCC->APB2RSTR |= RCC_APB2RSTR_TIM1RST;	
+	RCC->APB2RSTR &= ~RCC_APB2RSTR_TIM1RST;	
+	
+	htim1.State = HAL_TIM_STATE_RESET;
+	htim4.State = HAL_TIM_STATE_RESET;	
 }
 
 void TIM_LogAnlys_Start(void)
 {		
 	/* Enable DMA transfers. */
-	HAL_DMA_Start(&hdma_tim1_up, (uint32_t)&(GPIOB->IDR), (uint32_t)logAnlys.bufferMemory, logAnlys.samplesNumber);		
+	HAL_DMA_Start(&hdma_tim1_up, (uint32_t)&(GPIOB->IDR), (uint32_t)logAnlys.bufferMemory, logAnlys.samplesNumber + MAX_ADC_CHANNELS * SCOPE_BUFFER_MARGIN);		
 	/* Start TIM1 to trigger DMA for data transfering with user required frequency. */
 	HAL_TIM_Base_Start(&htim1);	
 }
@@ -1537,10 +1545,11 @@ void TIM_LogAnlys_Stop(void)
 	TIM_SamplingStop();
 	GPIO_DisableIRQ();	
 	
-	HAL_TIM_Base_Stop(&htim4);
+	HAL_TIM_Base_Stop(&htim4);	
 	__HAL_TIM_SET_COUNTER(&htim4, 0x00);
 	/* Slave TIM1 is stopped by TIM4 upon Update Event
 	   and TIM4 is initialized in One Pulse Mode. */
+	logAnlys.trigOccur = TRIG_NOT_OCCURRED;
 }
 
 /* F303RE nucleo - TIM4 timing */
@@ -1548,9 +1557,14 @@ void TIM_PostTrigger_ARR_PSC_Reconfig(uint32_t arrPsc)
 {	
 	uint16_t arr = (uint16_t)arrPsc;
 	uint16_t psc = (uint16_t)(arrPsc >> 16);	
-	
+		
 	__HAL_TIM_SET_AUTORELOAD(&htim4, arr);
 	__HAL_TIM_SET_PRESCALER(&htim4, psc);
+	
+	TIM4->EGR |= TIM_EGR_UG;
+	TIM4->CR1 &= ~(TIM_CR1_CEN); 
+//	TIM_LogAnlys_Stop();
+//	HAL_TIM_Base_Stop(&htim4);
 }
 
 /* F303RE nucleo - TIM1 */
@@ -1566,7 +1580,8 @@ void TIM_SamplingFreq_ARR_PSC_Reconfig(uint32_t arrPsc)
 }
 
 void TIM_PostTrigger_SoftwareStart(void)
-{	/* Trigger interrupt after posttriger timer elapses (Update Event). */
+{	
+	/* Trigger interrupt after posttriger timer elapses (Update Event). */
 	__HAL_TIM_SET_COUNTER(&htim4, 0x00);
 	HAL_TIM_Base_Start(&htim4);
 }
@@ -1672,6 +1687,9 @@ void COUNTER_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 /* ---------------------------- Counter timer INIT functions ---------------------------- */
 /* ************************************************************************************** */
 void TIM_counter_etr_init(void){	
+	htim4.State = HAL_TIM_STATE_RESET;
+	htim2.State = HAL_TIM_STATE_RESET;	
+	
 	TIM_doubleClockVal();	
 	MX_TIM4_Init();	
 	MX_TIM2_ETRorREF_Init();	
@@ -1687,12 +1705,18 @@ void TIM_counter_ref_init(void){
 	RCC->APB1RSTR |= RCC_APB1RSTR_TIM4RST;
 	RCC->APB1RSTR &= ~RCC_APB1RSTR_TIM4RST;		
 	
+	htim4.State = HAL_TIM_STATE_RESET;
+	htim2.State = HAL_TIM_STATE_RESET;		
+	
 	TIM_doubleClockVal();
 	MX_TIM4_Init();
 	MX_TIM2_ETRorREF_Init();
 }
 
 void TIM_counter_ic_init(void){	
+	htim4.State = HAL_TIM_STATE_RESET;
+	htim2.State = HAL_TIM_STATE_RESET;	
+	
 	TIM_doubleClockVal();	
 	MX_TIM4_Init();
 	MX_TIM2_ICorTI_Init();
@@ -1705,7 +1729,10 @@ void TIM_counter_ti_init(void){
 	RCC->APB1RSTR &= ~RCC_APB1RSTR_TIM2RST;	
 
 	RCC->APB1RSTR |= RCC_APB1RSTR_TIM4RST;
-	RCC->APB1RSTR &= ~RCC_APB1RSTR_TIM4RST;		
+	RCC->APB1RSTR &= ~RCC_APB1RSTR_TIM4RST;	
+
+	htim4.State = HAL_TIM_STATE_RESET;
+	htim2.State = HAL_TIM_STATE_RESET;		
 	
 	TIM_doubleClockVal();	
 	MX_TIM4_Init();	

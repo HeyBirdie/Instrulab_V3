@@ -185,7 +185,7 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* huart)
 /* USER CODE BEGIN 1 */
 uint8_t UARTsendChar(char chr){
 	while (!(USART2->ISR & USART_ISR_TXE));
-	return (USART2->TDR = chr);
+	return (USART2->TDR = chr);	
 }
 
 uint8_t UARTsendBuff(char *chr, uint32_t len){

@@ -50,11 +50,11 @@ void LogAnlysTask(void const *argument)
 		xSemaphoreTakeRecursive(logAnlysMutex, portMAX_DELAY);
 		
 		if(message[0]=='1'){
-			logAnlys.state = LOGA_IDLE;
+//			logAnlys.state = LOGA_IDLE;
 			logAnlysInit();
 		}else if(message[0]=='2'){
 			logAnlysDeinit();
-			logAnlys.state = LOGA_IDLE;
+//			logAnlys.state = LOGA_IDLE;
 		}else if(message[0]=='3'){
 			logAnlysStart();
 		}else if(message[0]=='4'){
@@ -127,20 +127,18 @@ void logAnlysDeinit(void){
 }	
 
 void logAnlysStart(void){
-	/* Start sampling */	
-	TIM_LogAnlys_Start();	
-	logAnlys.state = LOGA_SAMPLING;		
+	/* Start sampling */		
+	TIM_LogAnlys_Start();		
+	logAnlys.state = LOGA_SAMPLING;			
 	
-	/* Wait the pretrigger time - vTaskDelayUntil func. does not work !!! */
-	/* vTaskDelayUntil(&xLastWakeTime, logAnlys.preTriggerTime/portTICK_RATE_MS); */
+	/* Wait the pretrigger time */
 	vTaskDelay(logAnlys.preTriggerTime/portTICK_RATE_MS);	
-	
 	__HAL_GPIO_EXTI_CLEAR_IT(0x3fc0);
 	
 	if(logAnlys.triggerMode == LOGA_MODE_AUTO){
 		/* In AUTO trigger mode the posttriger is started without event trigger. After posttrigger 
 			 time elapses the data is sent to PC even if the trigger does not occur. */
-		LOG_ANLYS_TriggerEventOccuredCallback();
+		LOG_ANLYS_TriggerEventOccuredCallback();		
 		TIM_PostTrigger_SoftwareStart();	
 	}
 	
@@ -151,7 +149,7 @@ void logAnlysStart(void){
 void logAnlysStop(void){
 	TIM_LogAnlys_Stop();
 	logAnlys.state = LOGA_WAIT_FOR_RESTART;
-}	
+}
 
 /* Configure TIM1 to trigger DMA with required frequency. */
 void logAnlysSetSamplingFreq(uint32_t arrPsc){
@@ -176,14 +174,20 @@ void logAnlysSetSamplesNum(uint16_t samplesNum){
 	xSemaphoreGiveRecursive(logAnlysMutex);
 }
 
+//void logAnlysUserTrigger(uint16_t userTrigger){
+//	xSemaphoreTakeRecursive(logAnlysMutex, portMAX_DELAY);
+//	logAnlys.userTrigger = userTrigger;
+//	xSemaphoreGiveRecursive(logAnlysMutex);	
+//}
+
 void logAnlysSetTriggerRising(void){
 	logAnlys.trigEdge = TRIG_EDGE_RISING;
-	GPIO_EnableTrigger();	
+//	GPIO_EnableTrigger();	
 }
 
 void logAnlysSetTriggerFalling(void){
 	logAnlys.trigEdge = TRIG_EDGE_FALLING;
-	GPIO_EnableTrigger();	
+//	GPIO_EnableTrigger();	
 }
 
 void logAnlysDisablePostTrigIRQ(void){
@@ -217,7 +221,7 @@ void logAnlysSetTriggerChannel(uint32_t chan){
 			logAnlys.trigConfig = TRIG_CHAN8;
 			break;
 	}
-//	GPIO_EnableTrigger();	
+//		GPIO_EnableTrigger();	
 }
 
 void logAnlysSetDefault(void){

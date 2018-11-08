@@ -179,7 +179,7 @@ namespace LEO
         string cntMessage;
 
         /* Logic analyzer vars */
-        int receiveDataLength;
+        int receiveDataLength;        
 
         int lastError = 0;
         public Device(string portName, string name, int speed)
@@ -304,7 +304,7 @@ namespace LEO
                 port.Write(Commands.RESET_DEVICE + ";");
                 Thread.Sleep(200);
                 load_config();
-                port.Close();
+                port.Close();                
                 port.ReadTimeout = 10000;
                 port.WriteTimeout = 1000;
                 port.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(this.serialPort_DataReceived);
@@ -705,7 +705,7 @@ namespace LEO
 
                         /* Without periphClocks reception */
                         //cntCfg.modes = new string(msg_char, 4, toRead - 29);
-                        //cntCfg.pins = new string(msg_char, 15, toRead - 11).Split(' ');
+                        //cntCfg.pins = new string(msg_char, 15, toRead - 11).Split(' ');                        
                     }
                     else
                     {
@@ -721,7 +721,7 @@ namespace LEO
 
         public void wait_for_data(int watch)
         {
-            Thread.Sleep(1);
+            Thread.Sleep(1);            
             if (watch <= 0)
             {
                  throw (new Exception("Reading timeout")); 
@@ -947,14 +947,24 @@ namespace LEO
                         /* -------------------------------------------------------------------------------------------------------------------------------- */
                         /* ---------------------------------------------- LOGIC ANALYZER RECEIVED MESSAGES ------------------------------------------------ */
                         /* -------------------------------------------------------------------------------------------------------------------------------- */
+                        //case Commands.LOG_ANLYS_USER_TRIGGER:
+                        //    while (port.BytesToRead < 4)
+                        //    {
+                        //        wait_for_data(watchDog--);
+                        //    }
+                        //    port.Read(inputData, 0, 4);
+                        //    int userTrigger = BitConverter.ToInt32(inputData, 0);
+                        //    Debug.WriteLine(userTrigger.ToString());
+                        //    LogAnlys_form.add_message(new Message(Message.MsgRequest.LOG_ANLYS_USER_TRIGGER, "LOG_ANLYS_USER_TRIGGER", userTrigger));
+                        //    break;
+
                         case Commands.LOG_ANLYS_TRIGGER_POINTER:
                             while (port.BytesToRead < 4)
                             {
                                 wait_for_data(watchDog--);
                             }
                             port.Read(inputData, 0, 4);
-                            int triggerPointer = trigP = BitConverter.ToInt32(inputData, 0);
-                            Debug.WriteLine(triggerPointer.ToString());
+                            int triggerPointer = trigP = BitConverter.ToInt32(inputData, 0);                            
                             LogAnlys_form.add_message(new Message(Message.MsgRequest.LOG_ANLYS_TRIGGER_POINTER, "LOG_ANLYS_TRIG_POINTER", triggerPointer));
                             break;
 
@@ -968,24 +978,54 @@ namespace LEO
                             break;
 
                         case Commands.LOG_ANLYS_DATA:
-                            while (port.IsOpen && port.BytesToRead < receiveDataLength)
+                            watchDog = 5000;
+                            //while (port.IsOpen && port.BytesToRead < receiveDataLength)
+                            //{
+                            //    wait_for_data(watchDog--);
+                            //}
+
+                            //if (!port.IsOpen)
+                            //{
+                            //    break;
+                            //}
+
+                            //byte[] receiveArray = new byte[receiveDataLength];
+                            //logAnlysCfg.samples = new ushort[(uint)(receiveDataLength / 2)];
+
+                            //port.Read(receiveArray, 0, receiveDataLength);
+
+                            //for (int j = 0; j < (uint)(receiveDataLength / 2); j++)
+                            //{
+                            //    logAnlysCfg.samples[j] = BitConverter.ToUInt16(receiveArray, j * 2);
+                            //}
+                            //LogAnlys_form.add_message(new Message(Message.MsgRequest.LOG_ANLYS_DATA, "LOG_ANLYS_DATA"));
+                            //break;
+                            const int blockSize = 50;                         // SHOULD BE SET TO 100 !!!                    
+                            int blockNum = receiveDataLength / blockSize;       // number of blocks to be received
+                                                                                //watchDog = 5000;
+                            byte[] receiveArray = new byte[blockSize];          // temporary block array used in FOR loop 
+                            byte[] completeArray = new byte[receiveDataLength]; // complete array gradually filled by temp block array
+
+                            for (int ix = 0; ix < blockNum; ix++)
                             {
-                                wait_for_data(watchDog--);
-                            }
+                                while (port.IsOpen && (port.BytesToRead < blockSize))
+                                {
+                                    wait_for_data(watchDog--);
+                                }
 
-                            if (!port.IsOpen) {
-                                break;
-                            }
+                                //port.Read(receiveArray, 0, blockSize);          // read the block of data into temporary block array                          
+                                //Array.Copy(receiveArray, 0, completeArray, ix * blockSize, blockSize);  // adding the temp array data to completeArray from required shifted index
+                                port.Read(completeArray, ix * blockSize, blockSize);
 
-                            byte[] receiveArray = new byte[receiveDataLength];
+                                Thread.Yield();
+                            }
+                            /* receiveDataLength is doubled because of 16-bit sampling, but sending 8-bit array */
                             logAnlysCfg.samples = new ushort[(uint)(receiveDataLength / 2)];
-
-                            port.Read(receiveArray, 0, receiveDataLength);
+                            /* Make from received 8-bit array back the 16-bit */
                             for (int j = 0; j < (uint)(receiveDataLength / 2); j++)
                             {
-                                logAnlysCfg.samples[j] = BitConverter.ToUInt16(receiveArray, j * 2);
+                                logAnlysCfg.samples[j] = BitConverter.ToUInt16(completeArray, j * 2);
                             }
-                            Debug.WriteLine("DATA");
                             LogAnlys_form.add_message(new Message(Message.MsgRequest.LOG_ANLYS_DATA, "LOG_ANLYS_DATA"));
                             break;
                         /* -------------------------------------------------------------------------------------------------------------------------------- */
@@ -1315,10 +1355,10 @@ namespace LEO
             close_logAnlys();
             
             /* Close Synch PWM generator if Scope opened (due to DMA2) */
-            if (SyncPwmOpened == FormOpened.SYNC_PWM_GENERATOR)
+            /*if (SyncPwmOpened == FormOpened.SYNC_PWM_GENERATOR)
             {
                 close_syncPwm_gen();                
-            }
+            }*/
             if (ADCFormOpened == FormOpened.VOLTMETER)
             {
                 close_volt();
@@ -1433,6 +1473,8 @@ namespace LEO
                 close_freq_analysis();
             }
 
+            close_logAnlys();
+
             if (Volt_form == null || Volt_form.IsDisposed)
             {
                 Volt_form = new Voltmeter(this);
@@ -1479,10 +1521,10 @@ namespace LEO
 
         public void open_syncPwm_gen()
         {
-            if (ADCFormOpened == FormOpened.SCOPE)
+            /*if (ADCFormOpened == FormOpened.SCOPE)
             {
                 close_scope();
-            }
+            }*/
 
             if (SyncPwm_form == null || SyncPwm_form.IsDisposed)
             {
@@ -1508,9 +1550,10 @@ namespace LEO
         public void open_logAnlys()
         {
             close_scope();
-            close_counter();            
+            close_counter();  
+            close_volt();
 
-            if(GenOpened == GenModeOpened.PWM)
+            if (GenOpened == GenModeOpened.PWM)
             {
                 close_gen();
             }            

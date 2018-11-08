@@ -19,6 +19,7 @@
 // Constant definitions =======================================================
 //#define LOG_ANLYS_DEFAULT_SAMPLING_FREQ 	1000
 //#define LOG_ANLYS_DEFAULT_PRETRIGGER 			0x8000    //[ms]
+//#define LOG_ANLYS_DEFAULT_DATA_LEN 50   // SHOULD BE SET TO 100 !!!
 
 /* Enums */
 typedef enum{
@@ -35,10 +36,10 @@ typedef enum{
 typedef enum{
 	LOGA_IDLE = 0,    			  // during and after initialization & after deinit
 	LOGA_SAMPLING,					  // sampling started
-	LOGA_SAMPLING_DONE,			  // postrigger terminated sampling
 	LOGA_DATA_SENDING,			  // data sending to PC
-	LOGA_WAIT_FOR_RESTART,	// data sent to PC & wating for start command from host
-	LOGA_WAIT_FOR_HOST,
+	LOGA_DATA_SENT,			  // data sending to PC
+	LOGA_WAIT_FOR_RESTART,	  // data sent to PC & wating for start command from host
+	LOGA_DONE,
 	LOGA_ERR
 }stateTypeDef;
 
@@ -70,6 +71,7 @@ typedef struct{
 	uint16_t preTriggerTime;
 	uint16_t *bufferMemory;
 	uint16_t samplesNumber;
+//	uint16_t userTrigger;  // user trigger chosen in PC app associated with the data
 	
 	stateTypeDef state;
 	enableTypeDef enable;
@@ -103,6 +105,7 @@ void logAnlysSetSamplesNum(uint16_t samplesNum);
 
 void logAnlysSetPosttrigger(uint32_t arrPsc);
 void logAnlysSetPretrigger(uint32_t timeInMilliseconds);
+//void logAnlysUserTrigger(uint16_t userTrigger);		// user trigger sent from app to mcu and then back to app with data
 
 void logAnlysSetTriggerChannel(uint32_t chan);
 void logAnlysSetTriggerRising(void);

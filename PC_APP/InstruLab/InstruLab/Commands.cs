@@ -179,15 +179,6 @@ namespace LEO
         public const string SYNC_PWM_STEP_ENABLE = "STEE";
         public const string SYNC_PWM_STEP_DISABLE = "STED";
 
-        //public const string SYNC_PWM_CHAN1_ENABLE = "SCE1";
-        //public const string SYNC_PWM_CHAN1_DISABLE = "SCD1";
-        //public const string SYNC_PWM_CHAN2_ENABLE = "SCE2";
-        //public const string SYNC_PWM_CHAN2_DISABLE = "SCD2";
-        //public const string SYNC_PWM_CHAN3_ENABLE = "SCE3";
-        //public const string SYNC_PWM_CHAN3_DISABLE = "SCD3";
-        //public const string SYNC_PWM_CHAN4_ENABLE = "SCE4";
-        //public const string SYNC_PWM_CHAN4_DISABLE = "SCD4";
-
         /******************************************************/
         /******************* LOGIC ANALYZER *******************/
         /******************************************************/
@@ -214,6 +205,7 @@ namespace LEO
         public const string LOG_ANLYS_TRIGGER_CHANNEL = "TRGC";    // can be 1 or 2
 
         /* Data reception */
+        public const string LOG_ANLYS_USER_TRIGGER = "LAUT";
         public const string LOG_ANLYS_TRIGGER_POINTER = "LATP";
         public const string LOG_ANLYS_DATA_LENGTH = "LADL";
         public const string LOG_ANLYS_DATA = "LADT";
