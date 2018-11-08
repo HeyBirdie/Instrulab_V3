@@ -160,11 +160,13 @@ void DMA1_Channel7_IRQHandler(void)
 extern DMA_HandleTypeDef hdma_tim1_up;
 
 void EXTI15_10_IRQHandler(void){
+	TIM_PostTrigger_SoftwareStart();
 	logAnlys.triggerPointer = hdma_tim1_up.Instance->CNDTR;	
 	LOG_ANLYS_handle_interrupt(EXTI->PR & 0x3fc0);
 }
 
 void EXTI9_5_IRQHandler(void){
+	TIM_PostTrigger_SoftwareStart();
 	logAnlys.triggerPointer = hdma_tim1_up.Instance->CNDTR;	
 	LOG_ANLYS_handle_interrupt(EXTI->PR & 0x3fc0); //mask the pending requests to get interrupts from selected pins only
 }
@@ -231,7 +233,11 @@ void LOG_ANLYS_handle_interrupt(uint32_t pr){
 	
 	if(isRightPin == 1){		
 		logAnlys.trigOccur = TRIG_OCCURRED;
-		TIM_PostTrigger_SoftwareStart();
+		//TIM_PostTrigger_SoftwareStart();
+	}else{
+		//stop TIM4 and reset
+		HAL_TIM_Base_Stop(&htim4);
+		__HAL_TIM_SET_COUNTER(&htim4, 0x00);		
 	}
 }
 

@@ -1355,10 +1355,10 @@ namespace LEO
             close_logAnlys();
             
             /* Close Synch PWM generator if Scope opened (due to DMA2) */
-            if (SyncPwmOpened == FormOpened.SYNC_PWM_GENERATOR)
+            /*if (SyncPwmOpened == FormOpened.SYNC_PWM_GENERATOR)
             {
                 close_syncPwm_gen();                
-            }
+            }*/
             if (ADCFormOpened == FormOpened.VOLTMETER)
             {
                 close_volt();
@@ -1473,6 +1473,8 @@ namespace LEO
                 close_freq_analysis();
             }
 
+            close_logAnlys();
+
             if (Volt_form == null || Volt_form.IsDisposed)
             {
                 Volt_form = new Voltmeter(this);
@@ -1519,10 +1521,10 @@ namespace LEO
 
         public void open_syncPwm_gen()
         {
-            if (ADCFormOpened == FormOpened.SCOPE)
+            /*if (ADCFormOpened == FormOpened.SCOPE)
             {
                 close_scope();
-            }
+            }*/
 
             if (SyncPwm_form == null || SyncPwm_form.IsDisposed)
             {
@@ -1548,9 +1550,10 @@ namespace LEO
         public void open_logAnlys()
         {
             close_scope();
-            close_counter();            
+            close_counter();  
+            close_volt();
 
-            if(GenOpened == GenModeOpened.PWM)
+            if (GenOpened == GenModeOpened.PWM)
             {
                 close_gen();
             }            

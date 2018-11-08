@@ -329,9 +329,9 @@ void CommTask(void const *argument){
 			
 			/* Send data */				
 			commsSendString(STR_LOG_ANLYS_DATA_LENGTH);				
-			commsSendUint32(logAnlys.samplesNumber * 2);				
+			commsSendUint32(logAnlys.samplesNumber * 2 + SCOPE_BUFFER_MARGIN * MAX_ADC_CHANNELS * 2);				
 			commsSendString(STR_LOG_ANLYS_DATA);
-			HAL_UART_Transmit(&huart2, (uint8_t *)logAnlys.bufferMemory, logAnlys.samplesNumber * 2, 10000);			
+			HAL_UART_Transmit(&huart2, (uint8_t *)logAnlys.bufferMemory, logAnlys.samplesNumber * 2 + SCOPE_BUFFER_MARGIN * MAX_ADC_CHANNELS * 2, 10000);			
 			logAnlys.state = LOGA_DATA_SENT;
 //			uint8_t blockNum = (logAnlys.samplesNumber * 2) / LOG_ANLYS_DEFAULT_DATA_LEN;		// be sure that the define is set to 100.
 //			for(int k = 0; k < blockNum; k++)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Timers;
@@ -268,7 +269,7 @@ namespace LEO
             if (last_measValid != measValid)
             {
                 update = true;
-                meas.calculateMeasurements(signals, 1, 0, 8, (int)(realSamplingFreq), device.logAnlysCfg.samples.Length, 1);
+                meas.calculateMeasurements(signals, 1, 0, 8, (int)(realSamplingFreq), (int)dataLength, 1);
                 last_measValid = measValid;
             }
 
@@ -475,11 +476,18 @@ namespace LEO
         void calculateAndSend_PretrigPosttrig()
         {
             //while (dataRecSemaphore == DATA_RECEPTION.WAITING);
-            double samplingTime = dataLength / (double)samplingFreq;
+            double samplingTime = dataLength / ((double)samplingFreq*0.992);
             /* Calculate pretrigger in milliseconds */
             uint pretriggerTime = (uint)Math.Round(samplingTime * pretrig / 100 * 1000);
             double posttriggerFreq = 1 / (samplingTime * (1 - pretrig / (double)100));
-            processFrequency(posttriggerFreq, posttrigPeriphClock);
+            double realFreq = processFrequency(posttriggerFreq, posttrigPeriphClock);
+            /*
+            do {
+
+
+            } while (realFreq> posttriggerFreq)
+            */
+
 
             /* Send pretrigger */
             sendCommandNumber(Commands.LOG_ANLYS_PRETRIG, pretriggerTime + 10);
@@ -569,7 +577,7 @@ namespace LEO
                         {
                             calcSignal_th.Join();
                         }
-                        calcSignal_th = new Thread(() => meas.calculateMeasurements(signals, 1, 0, 8, (int)(realSamplingFreq), device.logAnlysCfg.samples.Length, 1));
+                        calcSignal_th = new Thread(() => meas.calculateMeasurements(signals, 1, 0, 8, (int)(realSamplingFreq), (int)dataLength, 1));
                         calcSignal_th.Start();
                         this.Invalidate();
                         break;
@@ -804,9 +812,16 @@ namespace LEO
             curve.Symbol.Size = 15;
             curve.Symbol.Fill.Color = Color.Red;
             curve.Symbol.Fill.IsVisible = true;
-            
-            zedGraphControl_logAnlys.AxisChange();
-            zedGraphControl_logAnlys.Invalidate();
+
+            try
+            {
+                zedGraphControl_logAnlys.AxisChange();
+                zedGraphControl_logAnlys.Invalidate();
+            }
+            catch (Exception ex)
+            {
+                //dont need to catch exception -> graph will be updated later
+            }
         }
 
         public void paint_one_signal(double[] timeAxis, double[] valueAxis, uint channel, Color color)
@@ -827,31 +842,59 @@ namespace LEO
         {
             uint length = (uint)device.logAnlysCfg.samples.Length;
 
-            device.logAnlysCfg.maxTime = 1 / realSamplingFreq * (device.logAnlysCfg.samples.Length);
+            device.logAnlysCfg.maxTime = 1 / realSamplingFreq * (dataLength);
 
-            timeAxis = timAxis(new double[length]);
+            timeAxis = timAxis(new double[dataLength]);
             update_X_axe();
 
             signal_ch1 = valueAxis(new double[length], 8);
-            testArray = signal_ch1;
             signal_ch2 = valueAxis(new double[length], 7);
-            testArray = signal_ch2;
             signal_ch3 = valueAxis(new double[length], 6);
-            testArray = signal_ch3;
             signal_ch4 = valueAxis(new double[length], 5);
-            testArray = signal_ch4;
             signal_ch5 = valueAxis(new double[length], 4);
-            testArray = signal_ch5;
             signal_ch6 = valueAxis(new double[length], 3);
-            testArray = signal_ch6;
             signal_ch7 = valueAxis(new double[length], 2);
-            testArray = signal_ch7;
             signal_ch8 = valueAxis(new double[length], 1);
-            testArray = signal_ch8;
 
-            signals = new ushort[8, length];
+            double[] tmp = new double[dataLength];
 
-            for (int i = 0; i < length; i++)
+
+            Array.Copy(signal_ch1, (int)(200.0 + 400.0 * ((pretrig-50.0) / 100.0)), tmp, 0, dataLength);
+            signal_ch1 = new double[dataLength];
+            Array.Copy(tmp, 0, signal_ch1, 0, dataLength);
+
+            Array.Copy(signal_ch2, (int)(200.0 + 400.0 * ((pretrig - 50.0) / 100.0)), tmp, 0, dataLength);
+            signal_ch2 = new double[dataLength];
+            Array.Copy(tmp, 0, signal_ch2, 0, dataLength);
+
+            Array.Copy(signal_ch3, (int)(200.0 + 400.0 * ((pretrig - 50.0) / 100.0)), tmp, 0, dataLength);
+            signal_ch3 = new double[dataLength];
+            Array.Copy(tmp, 0, signal_ch3, 0, dataLength);
+
+            Array.Copy(signal_ch4, (int)(200.0 + 400.0 * ((pretrig - 50.0) / 100.0)), tmp, 0, dataLength);
+            signal_ch4 = new double[dataLength];
+            Array.Copy(tmp, 0, signal_ch4, 0, dataLength);
+
+            Array.Copy(signal_ch5, (int)(200.0 + 400.0 * ((pretrig - 50.0) / 100.0)), tmp, 0, dataLength);
+            signal_ch5 = new double[dataLength];
+            Array.Copy(tmp, 0, signal_ch5, 0, dataLength);
+
+            Array.Copy(signal_ch6, (int)(200.0 + 400.0 * ((pretrig - 50.0) / 100.0)), tmp, 0, dataLength);
+            signal_ch6 = new double[dataLength];
+            Array.Copy(tmp, 0, signal_ch6, 0, dataLength);
+
+            Array.Copy(signal_ch7, (int)(200.0 + 400.0 * ((pretrig - 50.0) / 100.0)), tmp, 0, dataLength);
+            signal_ch7 = new double[dataLength];
+            Array.Copy(tmp, 0, signal_ch7, 0, dataLength);
+
+            Array.Copy(signal_ch8, (int)(200.0 + 400.0 * ((pretrig - 50.0) / 100.0)), tmp, 0, dataLength);
+            signal_ch8 = new double[dataLength];
+            Array.Copy(tmp, 0, signal_ch8, 0, dataLength);
+
+
+            signals = new ushort[8, dataLength];
+
+            for (int i = 0; i < dataLength; i++)
             {
                 signals[0, i] = (ushort)(signal_ch1[i] % 2 == 0 ? 1 : 0);
                 signals[1, i] = (ushort)(signal_ch2[i] % 2 == 0 ? 1 : 0);
@@ -866,12 +909,12 @@ namespace LEO
 
             if (math != math_def.NONE)
             {
-                this.signal_math = new double[length];
+                this.signal_math = new double[dataLength];
 
                 switch (math)
                 {
                     case math_def.ANALOG:
-                        for (int i = 0; i < length; i++)
+                        for (int i = 0; i < dataLength; i++)
                         {
                             signal_math[i] = 0;
 
@@ -1062,7 +1105,7 @@ namespace LEO
 
         public void update_X_axe()
         {
-            double maxTime = 1 / realSamplingFreq * device.logAnlysCfg.samples.Length;
+            double maxTime = 1 / realSamplingFreq * dataLength;
             double interval = scale * maxTime;
             double posmin = (interval / 2);
             double posScale = (maxTime - interval) / maxTime;

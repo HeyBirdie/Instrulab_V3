@@ -437,6 +437,7 @@ namespace LEO
 
         private void Update_signal(object sender, ElapsedEventArgs e)
         {
+
             double sum;
             if (Device.GenMode == Device.GenModeOpened.DAC)
             {
@@ -479,6 +480,10 @@ namespace LEO
                         }
                     }
                     /************* PWM gen END code ***************/
+
+                    takeGenSemaphore(8000);
+                    calculate_signal_lengths();
+                    giveGenSemaphore();
                 }
                 else
                 {
@@ -504,9 +509,7 @@ namespace LEO
                     gen_get_freq();
                 }
 
-                takeGenSemaphore(8000);
-                calculate_signal_lengths();
-                generate_signals();
+                
                                 
                 /************* PWM gen START code **************/
                 if (Device.GenMode == Device.GenModeOpened.PWM)
@@ -516,6 +519,8 @@ namespace LEO
                 }
                 /************* PWM gen END code ***************/
 
+                takeGenSemaphore(8000);
+                generate_signals();
                 paint_signals();
                 giveGenSemaphore();
 

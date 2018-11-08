@@ -1534,7 +1534,7 @@ void TIM_LogAnlys_Deinit(void)
 void TIM_LogAnlys_Start(void)
 {		
 	/* Enable DMA transfers. */
-	HAL_DMA_Start(&hdma_tim1_up, (uint32_t)&(GPIOB->IDR), (uint32_t)logAnlys.bufferMemory, logAnlys.samplesNumber);		
+	HAL_DMA_Start(&hdma_tim1_up, (uint32_t)&(GPIOB->IDR), (uint32_t)logAnlys.bufferMemory, logAnlys.samplesNumber + MAX_ADC_CHANNELS * SCOPE_BUFFER_MARGIN);		
 	/* Start TIM1 to trigger DMA for data transfering with user required frequency. */
 	HAL_TIM_Base_Start(&htim1);	
 }
