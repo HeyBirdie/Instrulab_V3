@@ -1476,14 +1476,15 @@ void TIM_ARR_PSC_Reconfig(uint32_t arrPsc)
 /* ************************************************************************************** */
 void LOG_ANLYS_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {	
-  if(__HAL_TIM_GET_FLAG(htim, TIM_FLAG_UPDATE) != RESET)
-  {		
-    if(__HAL_TIM_GET_IT_SOURCE(htim, TIM_IT_UPDATE) != RESET)
-    {
+//  if(__HAL_TIM_GET_FLAG(htim, TIM_FLAG_UPDATE) != RESET)
+//  {		
+//    if(__HAL_TIM_GET_IT_SOURCE(htim, TIM_IT_UPDATE) != RESET)
+//    {
 			__HAL_TIM_CLEAR_FLAG(htim, TIM_FLAG_UPDATE);
 			
 			/* Stop timer trigering the DMA for data transfer */
-			HAL_TIM_Base_Stop(&htim1);
+			//HAL_TIM_Base_Stop(&htim1);
+			TIM4->CR1 &= ~(TIM_CR1_CEN);
 			HAL_DMA_Abort(&hdma_tim1_up);		
 			
 			GPIO_DisableIRQ();
@@ -1492,8 +1493,8 @@ void LOG_ANLYS_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			if(logAnlys.trigOccur == TRIG_OCCURRED){
 				logAnlysPeriodElapsedCallback();					
 			}				
-    }
-  }
+//    }
+//  }
 }
 
 /* Unable the trigger in this interrupt callback */
@@ -1583,7 +1584,8 @@ void TIM_PostTrigger_SoftwareStart(void)
 {	
 	/* Trigger interrupt after posttriger timer elapses (Update Event). */
 	__HAL_TIM_SET_COUNTER(&htim4, 0x00);
-	HAL_TIM_Base_Start(&htim4);
+	TIM4->CR1 |= TIM_CR1_CEN;
+//	HAL_TIM_Base_Start(&htim4);
 }
 
 void GPIO_DisableIRQ(void){

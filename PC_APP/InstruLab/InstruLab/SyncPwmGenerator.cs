@@ -14,7 +14,7 @@ namespace LEO
     {
         Device device;
         int semaphoreTimeout = 4000;        
-        const int messageDelay = 0;
+        const int messageDelay = 1;
 
         System.Timers.Timer GUITimer;
         static Semaphore syncPwmSemaphore = new Semaphore(1, 1);

@@ -475,19 +475,38 @@ namespace LEO
 
         void calculateAndSend_PretrigPosttrig()
         {
-            //while (dataRecSemaphore == DATA_RECEPTION.WAITING);
-            double samplingTime = dataLength / ((double)samplingFreq*0.992);
+            double hausNumero = 1.05;
+            //while (dataRecSemaphore == DATA_RECEPTION.WAITING);                        
+            double samplingTime = dataLength / ((double)realSamplingFreq); // 0.992
             /* Calculate pretrigger in milliseconds */
             uint pretriggerTime = (uint)Math.Round(samplingTime * pretrig / 100 * 1000);
-            double posttriggerFreq = 1 / (samplingTime * (1 - pretrig / (double)100));
-            double realFreq = processFrequency(posttriggerFreq, posttrigPeriphClock);
-            /*
-            do {
 
+            if (realSamplingFreq > 1700000 && realSamplingFreq < 4000000)
+            {
+                hausNumero = 1.07;
+            }
+            else if (realSamplingFreq > 4000000 && realSamplingFreq < 8000000)
+            {
+                if(dataLength >= 2000 && dataLength < 5000)
+                {
+                    hausNumero = 1.2;
+                }
+                else if (dataLength >= 5000 && dataLength <= 10000)
+                {
+                    hausNumero = 1.1;
+                }                
+            }
+            else if (realSamplingFreq > 8000000 && realSamplingFreq < 12000000)
+            {
+                hausNumero = 1.55;
+            }
+            else if (realSamplingFreq > 12000000 && realSamplingFreq < 24000000)
+            {
+                hausNumero = 2.5;
+            }
 
-            } while (realFreq> posttriggerFreq)
-            */
-
+            double posttriggerFreq = 1 / (samplingTime * hausNumero * (1 - pretrig / (double)100));
+            processFrequency(posttriggerFreq, posttrigPeriphClock);
 
             /* Send pretrigger */
             sendCommandNumber(Commands.LOG_ANLYS_PRETRIG, pretriggerTime + 10);
@@ -858,8 +877,7 @@ namespace LEO
 
             double[] tmp = new double[dataLength];
 
-
-            Array.Copy(signal_ch1, (int)(200.0 + 400.0 * ((pretrig-50.0) / 100.0)), tmp, 0, dataLength);
+            Array.Copy(signal_ch1, (int)(200.0 + 400.0 * ((pretrig - 50.0) / 100.0)), tmp, 0, dataLength);
             signal_ch1 = new double[dataLength];
             Array.Copy(tmp, 0, signal_ch1, 0, dataLength);
 
@@ -931,7 +949,7 @@ namespace LEO
 
         public double[] valueAxis(double[] array, uint channel)
         {
-            //ushort chan = (ushort)(channel - 1);
+           //ushort chan = (ushort)(channel - 1);
             ushort chan = (ushort)(8 - channel);
 
             ushort[] tempArray = new ushort[array.Length];
