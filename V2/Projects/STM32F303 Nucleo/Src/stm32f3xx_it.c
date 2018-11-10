@@ -233,10 +233,12 @@ void LOG_ANLYS_handle_interrupt(uint32_t pr){
 	
 	if(isRightPin == 1){		
 		logAnlys.trigOccur = TRIG_OCCURRED;
-		//TIM_PostTrigger_SoftwareStart();
-	}else{
-		//stop TIM4 and reset
-		HAL_TIM_Base_Stop(&htim4);
+//		TIM_PostTrigger_SoftwareStart();
+	}
+	else{
+		//stop TIM4 and reset		
+		//HAL_TIM_Base_Stop(&htim4);
+		TIM4->CR1 &= ~(TIM_CR1_CEN);
 		__HAL_TIM_SET_COUNTER(&htim4, 0x00);		
 	}
 }

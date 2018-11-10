@@ -1352,7 +1352,10 @@ namespace LEO
 
         public void open_scope()
         {
-            close_logAnlys();
+            if(LogAnlysOpened == FormOpened.LOG_ANLYS)
+            {
+                close_logAnlys();
+            }            
             
             /* Close Synch PWM generator if Scope opened (due to DMA2) */
             /*if (SyncPwmOpened == FormOpened.SYNC_PWM_GENERATOR)
@@ -1434,7 +1437,10 @@ namespace LEO
 
         public void open_pwm_gen()
         {
-            close_logAnlys();
+            if (LogAnlysOpened == FormOpened.LOG_ANLYS)
+            {
+                close_logAnlys();
+            }
 
             if (DACFormOpened == FormOpened.VOLT_SOURCE)
             {
@@ -1498,7 +1504,11 @@ namespace LEO
 
         public void open_counter()
         {
-            close_logAnlys();            
+
+            if (LogAnlysOpened == FormOpened.LOG_ANLYS)
+            {
+                close_logAnlys();
+            }
 
             if (Counter_form == null || Counter_form.IsDisposed)
             {
@@ -1549,7 +1559,11 @@ namespace LEO
 
         public void open_logAnlys()
         {
-            close_scope();
+            if (ADCFormOpened == FormOpened.SCOPE)
+            {
+                close_scope();
+            }
+
             close_counter();  
             close_volt();
 
