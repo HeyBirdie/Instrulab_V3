@@ -1116,9 +1116,9 @@ void TIMScopeDisable(){
 }	
 uint32_t getMaxScopeSamplingFreq(uint8_t ADCRes){
 	if(ADCRes==12){
-		return 4800000;
+		return MAX_SAMPLING_FREQ_12B;
 	}else if(ADCRes==8){
-		return 6000000;
+		return MAX_SAMPLING_FREQ_8B;
 	}
 	return HAL_RCC_GetPCLK2Freq()/(ADCRes+2);
 }

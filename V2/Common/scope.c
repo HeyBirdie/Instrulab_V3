@@ -470,7 +470,7 @@ uint8_t scopeSetSamplingFreq(uint32_t freq){
 	uint8_t result=SCOPE_INVALID_SAMPLING_FREQ;
 	xSemaphoreTakeRecursive(scopeMutex, portMAX_DELAY);
 	
-	if (freq<=MAX_SAMPLING_FREQ){
+	if (freq<=MAX_SAMPLING_FREQ_12B){
 		scope.settings.samplingFrequency = freq;
 	
 	}else{

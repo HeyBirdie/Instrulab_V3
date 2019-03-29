@@ -77,11 +77,13 @@ namespace LEO
         private Queue<Message> gen_q = new Queue<Message>();
         Message messg;
 
-        const int DATA_BLOCK = 32;
+        const int DATA_BLOCK = 64;
         int toSend = 0;
         int sent = 0;
         int index = 0;
         int actualSend = 0;
+        int percentSent = 0;
+        private int signal_leng_being_send = 0;
         private bool generating = false;
         private bool loading = false; //loading from file
         private bool sending = false; //sending to device
@@ -371,6 +373,7 @@ namespace LEO
                                 if (sendingChannel == 1 && actual_channels == 2)
                                 {
                                     toSend = signal_ch2.Length;
+                                    signal_leng_being_send = signal_leng_ch2;
                                     sent = 0;
                                     index = 0;
                                     actualSend = 0;
@@ -1149,7 +1152,7 @@ namespace LEO
             {
                 this.button_gen_control.Enabled = false;
                 label_status.BackColor = Color.Yellow;
-                label_status_gen.Text = "Updating";
+                label_status_gen.Text = "Updating " + percentSent + "%";
             }
             else {
                 this.button_gen_control.Enabled = true;
@@ -1425,6 +1428,8 @@ namespace LEO
             index += actualSend;
             device.send(";");
             device.giveCommsSemaphore();
+            percentSent = sent * 100 / signal_leng_being_send;
+            this.Invalidate();
         }
 
 
@@ -2280,6 +2285,7 @@ namespace LEO
                 }
 
                 toSend = signal_ch1.Length;
+                signal_leng_being_send = signal_leng_ch1;
                 sent = 0;
                 index = 0;
                 actualSend = 0;
