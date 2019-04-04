@@ -23,3 +23,6 @@ D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\Little Embedded 
 D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\Little Embedded Oscilloscope.application
 D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\Little Embedded Oscilloscope.exe
 D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\Little Embedded Oscilloscope.pdb
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\bin\Debug\Little Embedded Oscilloscope.exe.CodeAnalysisLog.xml
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\bin\Debug\Little Embedded Oscilloscope.exe.lastcodeanalysissucceeded
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\InstruLab.csprojResolveAssemblyReference.cache

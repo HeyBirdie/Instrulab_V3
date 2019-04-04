@@ -105,6 +105,20 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(D8_GPIO, &GPIO_InitStruct);
+	
+	
+		/*Configure GPIO pin : D7_Pin */
+  GPIO_InitStruct.Pin = PA13_PIN;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(PA13_GPIO, &GPIO_InitStruct);
+	
+	/*Configure GPIO pin : D7_Pin */
+  
+	GPIO_InitStruct.Pin = PA14_PIN;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(PA14_GPIO, &GPIO_InitStruct);
 
 //  /*Configure GPIO pin : LD2_Pin */
 //  GPIO_InitStruct.Pin = LD2_Pin;
@@ -137,6 +151,15 @@ void detectScopeShield(void){
 		HAL_Delay(5);
 		if(HAL_GPIO_ReadPin(D7_GPIO, D7_PIN) == GPIO_PIN_SET){
 			ScopeShieldConnected = 1;
+		}
+	}
+	HAL_GPIO_WritePin(PA14_GPIO,PA14_PIN, GPIO_PIN_RESET);
+	HAL_Delay(1);
+	if(HAL_GPIO_ReadPin(PA13_GPIO, PA13_PIN) == GPIO_PIN_RESET){
+		HAL_GPIO_WritePin(PA14_GPIO, PA14_PIN, GPIO_PIN_SET);
+		HAL_Delay(5);
+		if(HAL_GPIO_ReadPin(PA13_GPIO, PA13_PIN) == GPIO_PIN_SET){
+			ScopeShieldConnected = 2;
 		}
 	}
 }

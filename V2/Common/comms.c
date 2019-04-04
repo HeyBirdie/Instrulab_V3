@@ -129,8 +129,10 @@ void CommTask(void const *argument){
 			commsSendString(STR_ACK);
 			commsSendString(IDN_STRING);
 			#ifdef USE_SHIELD
-			if(isScopeShieldConnected()){
+			if(isScopeShieldConnected()==1){
 				commsSendString(SHIELD_STRING);
+			}else if(isScopeShieldConnected()==2){
+				commsSendString(SHIELD_STRING_2);
 			}
 			#endif			
 			
