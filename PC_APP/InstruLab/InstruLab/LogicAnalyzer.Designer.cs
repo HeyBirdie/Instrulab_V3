@@ -769,6 +769,7 @@
             // radioButton_decode_UART
             // 
             this.radioButton_decode_UART.AutoSize = true;
+            this.radioButton_decode_UART.Enabled = false;
             this.radioButton_decode_UART.Location = new System.Drawing.Point(9, 50);
             this.radioButton_decode_UART.Margin = new System.Windows.Forms.Padding(2);
             this.radioButton_decode_UART.Name = "radioButton_decode_UART";
@@ -1103,6 +1104,7 @@
             // 
             this.radioButton_20m.Appearance = System.Windows.Forms.Appearance.Button;
             this.radioButton_20m.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.radioButton_20m.Enabled = false;
             this.radioButton_20m.Location = new System.Drawing.Point(58, 101);
             this.radioButton_20m.Margin = new System.Windows.Forms.Padding(1);
             this.radioButton_20m.Name = "radioButton_20m";

@@ -1,0 +1,27 @@
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\bin\Release\Little Embedded Oscilloscope.exe.config
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\bin\Release\Little Embedded Oscilloscope.exe.manifest
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\bin\Release\Little Embedded Oscilloscope.application
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\bin\Release\Little Embedded Oscilloscope.exe
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\bin\Release\Little Embedded Oscilloscope.pdb
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\bin\Release\ZedGraph.dll
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Release\InstruLab.csprojResolveAssemblyReference.cache
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Release\LEO.AboutBox.resources
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Release\LEO.ArbDialog.resources
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Release\LEO.BodePlot.resources
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Release\LEO.Counter.resources
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Release\LEO.feedback.resources
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Release\LEO.Instrulab.resources
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Release\LEO.Generator.resources
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Release\LEO.LogicAnalyzer.resources
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Release\LEO.Properties.Resources.resources
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Release\LEO.SyncPwmGenerator.resources
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Release\LEO.Scope.resources
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Release\LEO.VoltageSource.resources
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Release\LEO.Voltmeter.resources
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Release\InstruLab.csproj.GenerateResource.Cache
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Release\InstruLab.csproj.CoreCompileInputs.cache
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Release\Little Embedded Oscilloscope.TrustInfo.xml
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Release\Little Embedded Oscilloscope.exe.manifest
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Release\Little Embedded Oscilloscope.application
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Release\Little Embedded Oscilloscope.exe
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Release\Little Embedded Oscilloscope.pdb

@@ -18,11 +18,12 @@
 
 #define IDN_STRING "STM32F303-Nucleo" //max 30 chars
 #define SHIELD_STRING " + Shield LEO V0.1"
+#define SHIELD_STRING_2 " + Shield LEO V0.2"
 #define MCU "STM32F303RE"
 
 // Communication constatnts ===================================================
 #define COMM_BUFFER_SIZE 256
-#define COMM_TX_BUFFER_SIZE 256
+//#define COMM_TX_BUFFER_SIZE 256
 #define COMMS_BULK_SIZE 200
 //#define UART_SPEED 115200
 #define UART_SPEED 460800
@@ -42,12 +43,18 @@
 #define D8_GPIO GPIOA
 #define D8_PIN GPIO_PIN_9
 
+#define PA13_GPIO GPIOA
+#define PA13_PIN GPIO_PIN_13
+#define PA14_GPIO GPIOA
+#define PA14_PIN GPIO_PIN_14
+
 
 // Scope constatnts ===========================================================
-#define MAX_SAMPLING_FREQ 4000000 //smps
+#define MAX_SAMPLING_FREQ_12B 4000000 //smps
+#define MAX_SAMPLING_FREQ_8B 4800000 //smps
 #define MAX_ADC_CHANNELS 4
 
-#define MAX_SCOPE_BUFF_SIZE 40000//50000 //in bytes
+#define MAX_SCOPE_BUFF_SIZE 40000//40000 //in bytes
 #define SCOPE_BUFFER_MARGIN 100
 
 #define SCOPE_CH1_PIN_STR "A5__" //must be 4 chars
@@ -63,22 +70,22 @@
 #define RANGE_2_LOW -SCOPE_VREF
 #define RANGE_2_HI SCOPE_VREF*2
 #define RANGE_3_LOW 0
-#define RANGE_3_HI 0
+#define RANGE_3_HI SCOPE_VREF*2
 #define RANGE_4_LOW 0
 #define RANGE_4_HI 0
 
 #ifdef USE_SHIELD
-	#define HIGH_RANGE 16820 //without calibration 16666
-	#define MID_RANGE  3258  //without calibration 3300
-	#define LOW_RANGE  161   //without calibration 166
+	#define HIGH_RANGE 16666 //without calibration 16666  16820
+	#define MID_RANGE  3300  //without calibration 3300  3258
+	#define LOW_RANGE  330   //without calibration 166
 
 	#define SHIELD_RANGE_1_LOW 0
 	#define SHIELD_RANGE_1_HI 2*MID_RANGE
 	#define SHIELD_RANGE_2_LOW -MID_RANGE
 	#define SHIELD_RANGE_2_HI MID_RANGE
-	#define SHIELD_RANGE_3_LOW -HIGH_RANGE+150
+	#define SHIELD_RANGE_3_LOW -HIGH_RANGE//+150
 	#define SHIELD_RANGE_3_HI HIGH_RANGE
-	#define SHIELD_RANGE_4_LOW -LOW_RANGE-9
+	#define SHIELD_RANGE_4_LOW -LOW_RANGE//-9
 	#define SHIELD_RANGE_4_HI LOW_RANGE
 #endif
 
@@ -122,11 +129,11 @@ static const uint8_t NUM_OF_ANALOG_INPUTS[MAX_ADC_CHANNELS]={ADC1_NUM_CHANNELS,A
 
 #define GEN_VREF 3300
 #define GEN_VDDA 3300
-#define GEN_VREF_INT 1200
+#define GEN_VREF_INT 1210
 
 #ifdef USE_SHIELD
-	#define SHIELD_GEN_HIGH   4898-5  //without calibration 5000
-	#define SHIELD_GEN_LOW   -4898-5  //without calibration -5000
+	#define SHIELD_GEN_HIGH   5000 //without calibration 5000  4898-5
+	#define SHIELD_GEN_LOW   -5000 //without calibration -5000  -4898-5
 #endif
 
 #define GEN_CH1_PIN_STR "A2__" //must be 4 chars

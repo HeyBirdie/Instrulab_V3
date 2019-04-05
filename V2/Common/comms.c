@@ -29,9 +29,9 @@
 xQueueHandle messageQueue;
 static xSemaphoreHandle commsMutex;
 static uint8_t commBuffMem[COMM_BUFFER_SIZE];
-static uint8_t commTXBuffMem[COMM_TX_BUFFER_SIZE];
+//static uint8_t commTXBuffMem[COMM_TX_BUFFER_SIZE];
 static commBuffer comm;
-commBuffer commTX;
+//commBuffer commTX;
 char cntMessage[30];
 void sendSystConf(void);
 void sendCommsConf(void);
@@ -129,8 +129,10 @@ void CommTask(void const *argument){
 			commsSendString(STR_ACK);
 			commsSendString(IDN_STRING);
 			#ifdef USE_SHIELD
-			if(isScopeShieldConnected()){
+			if(isScopeShieldConnected()==1){
 				commsSendString(SHIELD_STRING);
+			}else if(isScopeShieldConnected()==2){
+				commsSendString(SHIELD_STRING_2);
 			}
 			#endif			
 			
@@ -413,7 +415,7 @@ void CommTask(void const *argument){
 			sendSystemVersion();
 			
 		}else if (message[0]=='Q'){
-			flushBuff(0);
+//			flushBuff(0);
 			
 		}else if (message[0] == 'I'){
 			xQueueReceive(messageQueue, message, portMAX_DELAY);
@@ -449,11 +451,11 @@ void commsInit(void){
 	comm.writePointer = 0;
 	comm.readPointer = 0;
 	comm.state = BUFF_EMPTY;
-	commTX.memory = commTXBuffMem;
-	commTX.bufferSize = COMM_TX_BUFFER_SIZE;
-	commTX.writePointer = 0;
-	commTX.readPointer = 0;
-	commTX.state = BUFF_EMPTY;
+//	commTX.memory = commTXBuffMem;
+//	commTX.bufferSize = COMM_TX_BUFFER_SIZE;
+//	commTX.writePointer = 0;
+//	commTX.readPointer = 0;
+//	commTX.state = BUFF_EMPTY;
 	//HAL_UART_Receive_DMA(&huart2,comm.memory,comm.bufferSize);
 }
 
@@ -611,7 +613,7 @@ void sendSystemVersion(){
 void sendScopeConf(){
 	uint8_t i;
 	commsSendString("OSCP");
-	commsSendUint32(MAX_SAMPLING_FREQ);
+	commsSendUint32(MAX_SAMPLING_FREQ_12B);
 	commsSendUint32(MAX_SCOPE_BUFF_SIZE);
 	commsSendUint32(MAX_ADC_CHANNELS);
 	for (i=0;i<MAX_ADC_CHANNELS;i++){

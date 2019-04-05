@@ -20,7 +20,7 @@ void commsSendString(char *chr);
 //void commsSendUint32DMA(uint32_t num);
 //void commsSendBuffDMA(uint8_t *buff, uint16_t len);
 //void commsSendStringDMA(char *chr);
-void flushBuff(uint16_t threshold);
+//void flushBuff(uint16_t threshold);
 //void XferComplete(DMA_HandleTypeDef *hdma);
 void commsRecieveUSB(uint8_t chr);
 void commsRecieveUART(uint8_t chr);

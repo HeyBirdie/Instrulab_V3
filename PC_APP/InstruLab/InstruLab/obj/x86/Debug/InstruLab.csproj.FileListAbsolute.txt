@@ -1,14 +1,9 @@
-D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\bin\Debug\Little Embedded Oscilloscope.exe.config
-D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\bin\Debug\Little Embedded Oscilloscope.exe.manifest
-D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\bin\Debug\Little Embedded Oscilloscope.application
-D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\bin\Debug\Little Embedded Oscilloscope.exe
 D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\LEO.AboutBox.resources
 D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\LEO.ArbDialog.resources
 D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\LEO.BodePlot.resources
 D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\LEO.Counter.resources
 D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\LEO.feedback.resources
 D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\LEO.Instrulab.resources
-D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\LEO.Generator.resources
 D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\LEO.LogicAnalyzer.resources
 D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\LEO.Properties.Resources.resources
 D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\LEO.SyncPwmGenerator.resources
@@ -16,36 +11,19 @@ D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\LEO.Scope.resour
 D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\LEO.VoltageSource.resources
 D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\LEO.Voltmeter.resources
 D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\InstruLab.csproj.GenerateResource.Cache
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\bin\Debug\Little Embedded Oscilloscope.exe.config
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\bin\Debug\Little Embedded Oscilloscope.exe.manifest
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\bin\Debug\Little Embedded Oscilloscope.application
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\bin\Debug\Little Embedded Oscilloscope.exe
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\bin\Debug\Little Embedded Oscilloscope.pdb
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\LEO.Generator.resources
 D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\InstruLab.csproj.CoreCompileInputs.cache
 D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\Little Embedded Oscilloscope.TrustInfo.xml
 D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\Little Embedded Oscilloscope.exe.manifest
 D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\Little Embedded Oscilloscope.application
 D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\Little Embedded Oscilloscope.exe
 D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\Little Embedded Oscilloscope.pdb
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\bin\Debug\Little Embedded Oscilloscope.exe.CodeAnalysisLog.xml
+D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\bin\Debug\Little Embedded Oscilloscope.exe.lastcodeanalysissucceeded
 D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\InstruLab.csprojResolveAssemblyReference.cache
-D:\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\bin\Debug\Little Embedded Oscilloscope.pdb
-C:\Users\Maeval\Documents\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\bin\Debug\Little Embedded Oscilloscope.exe.config
-C:\Users\Maeval\Documents\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\bin\Debug\Little Embedded Oscilloscope.exe.manifest
-C:\Users\Maeval\Documents\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\bin\Debug\Little Embedded Oscilloscope.application
-C:\Users\Maeval\Documents\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\bin\Debug\Little Embedded Oscilloscope.exe
-C:\Users\Maeval\Documents\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\bin\Debug\Little Embedded Oscilloscope.pdb
-C:\Users\Maeval\Documents\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\InstruLab.csprojResolveAssemblyReference.cache
-C:\Users\Maeval\Documents\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\LEO.AboutBox.resources
-C:\Users\Maeval\Documents\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\LEO.ArbDialog.resources
-C:\Users\Maeval\Documents\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\LEO.BodePlot.resources
-C:\Users\Maeval\Documents\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\LEO.Counter.resources
-C:\Users\Maeval\Documents\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\LEO.feedback.resources
-C:\Users\Maeval\Documents\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\LEO.Instrulab.resources
-C:\Users\Maeval\Documents\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\LEO.Generator.resources
-C:\Users\Maeval\Documents\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\LEO.LogicAnalyzer.resources
-C:\Users\Maeval\Documents\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\LEO.Properties.Resources.resources
-C:\Users\Maeval\Documents\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\LEO.SyncPwmGenerator.resources
-C:\Users\Maeval\Documents\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\LEO.Scope.resources
-C:\Users\Maeval\Documents\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\LEO.VoltageSource.resources
-C:\Users\Maeval\Documents\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\LEO.Voltmeter.resources
-C:\Users\Maeval\Documents\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\InstruLab.csproj.GenerateResource.Cache
-C:\Users\Maeval\Documents\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\Little Embedded Oscilloscope.TrustInfo.xml
-C:\Users\Maeval\Documents\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\Little Embedded Oscilloscope.exe.manifest
-C:\Users\Maeval\Documents\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\Little Embedded Oscilloscope.application
-C:\Users\Maeval\Documents\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\Little Embedded Oscilloscope.exe
-C:\Users\Maeval\Documents\GitHub\Instrulab_V3\PC_APP\InstruLab\InstruLab\obj\x86\Debug\Little Embedded Oscilloscope.pdb
+
