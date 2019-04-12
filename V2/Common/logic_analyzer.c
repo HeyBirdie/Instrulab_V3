@@ -1,4 +1,4 @@
-/*
+/**
   *****************************************************************************
   * @file    logic_analyzer.c
   * @author  HeyBirdie
@@ -20,16 +20,23 @@
 
 
 // External variables definitions =============================================
+/** @defgroup Logic analyzer Private Variables
+  * @{
+  */
 xQueueHandle logAnlysMessageQueue;
 xSemaphoreHandle logAnlysMutex;
 
 volatile logAnlysTypeDef logAnlys;
+/**
+  * @}
+  */
 
 //portTickType xLastWakeTime;
 // Function definitions =======================================================
 /**
-  * @brief  Logic analyzer task.
-  * task is getting messages from other tasks and takes care about counter functions
+  * @brief  Logic analyzer task function.
+  * 				Task is getting messages from other tasks, sends messages 
+	*					to communication (comms) and takes care of logic analyzer functions.
   * @param  Task handler, parameters pointer
   * @retval None
   */
@@ -74,18 +81,46 @@ void LogAnlysTask(void const *argument)
 /* ************************************************************************************** */
 /* ---------------------- Logic analyzer basic settings via queue ----------------------- */
 /* ************************************************************************************** */
+/**
+  * @brief  Logic analyzer initialization request. 				  
+	*					Sends the request to the queue of Logic analyzer task.
+	*					(Command sent from host and parsed in cmd_parser.c where this function is called from.)
+  * @param  None
+  * @retval None
+  */
 void logAnlysSendInit(void){
 	xQueueSendToBack(logAnlysMessageQueue, "1InitLogAnlys", portMAX_DELAY);
 }
 
+/**
+  * @brief  Logic analyzer deinitialization request. 				  
+	*					Sends the request to the queue of Logic analyzer task.
+	*					(Command sent from host and parsed in cmd_parser.c where this function is called from.)
+  * @param  None
+  * @retval None
+  */
 void logAnlysSendDeinit(void){
 	xQueueSendToBack(logAnlysMessageQueue, "2DeinitLogAnlys", portMAX_DELAY);
 }
 
+/**
+  * @brief  Logic analyzer start sampling request. 				  
+	*					Sends the request to the queue of Logic analyzer task.
+	*					(Command sent from host and parsed in cmd_parser.c where this function is called from.)
+  * @param  None
+  * @retval None
+  */
 void logAnlysSendStart(void){
 	xQueueSendToBack(logAnlysMessageQueue, "3StartLogAnlys", portMAX_DELAY);
 }
 
+/**
+  * @brief  Logic analyzer stop sampling request. 				  
+	*					Sends the request to the queue of Logic analyzer task.
+	*					(Command sent from host and parsed in cmd_parser.c where this function is called from.)
+  * @param  None
+  * @retval None
+  */
 void logAnlysSendStop(void){
 	xQueueSendToBack(logAnlysMessageQueue, "4StopLogAnlys", portMAX_DELAY);
 }
@@ -103,6 +138,13 @@ void logAnlysSendStop(void){
 /* ************************************************************************************** */
 /* TIM4 overflow (Update Event after posttrigger) 
 	 occured after trigger event that started TIM4. */
+/**
+  * @brief  Period elapsed callback of posttrigger time which represents sampling time after the trigger occurs.  				  
+	*					Sends the info to the queue of Logic analyzer task.
+	*					Called from LOG_ANLYS_PeriodElapsedCallback() (ISR) in tim.c.
+  * @param  None
+  * @retval None
+  */
 void logAnlysPeriodElapsedCallback(void){
 	portBASE_TYPE xHigherPriorityTaskWoken;
 //	xSemaphoreTakeFromISR(logAnlysMutex, &xHigherPriorityTaskWoken);	
@@ -113,6 +155,12 @@ void logAnlysPeriodElapsedCallback(void){
 /* ************************************************************************************** */
 /* --------------------------- Logic analyzer basic settings ---------------------------- */
 /* ************************************************************************************** */
+/**
+  * @brief  Initialization function of Logic analyzer.  				  
+	*					Called from Logic analyzer task.
+  * @param  None
+  * @retval None
+  */
 void logAnlysInit(void){
 	/* Log. analyzer uses TIM4 as well as Universal counter. Therefore, there
 		 has to be some clue for msp_init function to decide which functionality
@@ -121,11 +169,23 @@ void logAnlysInit(void){
 	TIM_LogAnlys_Init();
 }	
 
+/**
+  * @brief  Deinitialization function of Logic analyzer.  				  
+	*					Called from Logic analyzer task.
+  * @param  None
+  * @retval None
+  */
 void logAnlysDeinit(void){
 	TIM_LogAnlys_Deinit();
 	logAnlys.enable = LOGA_DISABLED;
 }	
 
+/**
+  * @brief  Start Logic analyzer function.  				  
+	*					Called from Logic analyzer task.
+  * @param  None
+  * @retval None
+  */
 void logAnlysStart(void){
 	/* Start sampling */		
 	TIM_LogAnlys_Start();		
@@ -146,21 +206,48 @@ void logAnlysStart(void){
 	GPIO_EnableTrigger();	
 }	
 
+/**
+  * @brief  Stop Logic analyzer function.  				  
+	*					Called from Logic analyzer task.
+  * @param  None
+  * @retval None
+  */
 void logAnlysStop(void){
 	TIM_LogAnlys_Stop();
 	logAnlys.state = LOGA_WAIT_FOR_RESTART;
 }
 
 /* Configure TIM1 to trigger DMA with required frequency. */
+/**
+  * @brief  Sets sampling frequency of Logic analyzer. 
+	*					This function sets timer frequency for triggering DMA in order to trasfer data from GPIOs to RAM. 
+	*					Called directly from parser (cmd_parser.c).
+	* @param  arrPsc: 16-bit ARR and 16-bit PSC register values of timer in one 32-bit
+  * @retval None
+  */
 void logAnlysSetSamplingFreq(uint32_t arrPsc){
 	TIM_SamplingFreq_ARR_PSC_Reconfig(arrPsc);
 }
 	
 /* Configure TIM4 to stop TIM1 */
+/**
+  * @brief  Sets posttrigger time of Logic analyzer. 
+	*					This function configures and starts one timer which after timout stops the sampling timer in order to stop transferring the data.
+	*					Called directly from parser (cmd_parser.c). 
+	* @param  arrPsc: 16-bit ARR and 16-bit PSC register values of timer in one 32-bit
+  * @retval None
+  */
 void logAnlysSetPosttrigger(uint32_t arrPsc){
 	TIM_PostTrigger_ARR_PSC_Reconfig(arrPsc);
 }
 
+/**
+  * @brief  Sets pretrigger time of Logic analyzer. 
+	*					This function configures pretrigger time which represents the time before the trigger on selected channel occurs.
+	*					Called directly from parser (cmd_parser.c). 
+	* @param  timeInMilliseconds: time in milliseconds
+  * @retval None
+  */
 void logAnlysSetPretrigger(uint32_t timeInMilliseconds){
 	xSemaphoreTakeRecursive(logAnlysMutex, portMAX_DELAY);
 	/* logAnlys task to sleep for defined time in milliseconds */
@@ -168,6 +255,12 @@ void logAnlysSetPretrigger(uint32_t timeInMilliseconds){
 	xSemaphoreGiveRecursive(logAnlysMutex);
 }
 
+/**
+  * @brief  Sets data length (samples number) of Logic analyzer. 
+	*					Called directly from parser (cmd_parser.c).
+	* @param  samplesNum: 16-bit value
+  * @retval None
+  */
 void logAnlysSetSamplesNum(uint16_t samplesNum){	
 	xSemaphoreTakeRecursive(logAnlysMutex, portMAX_DELAY);
 	logAnlys.samplesNumber = samplesNum;
@@ -180,20 +273,44 @@ void logAnlysSetSamplesNum(uint16_t samplesNum){
 //	xSemaphoreGiveRecursive(logAnlysMutex);	
 //}
 
+/**
+  * @brief  Configures the trigger edge sensitivity to rising. 
+	*					Called directly from parser (cmd_parser.c).
+	* @param  None
+  * @retval None
+  */
 void logAnlysSetTriggerRising(void){
 	logAnlys.trigEdge = TRIG_EDGE_RISING;
 //	GPIO_EnableTrigger();	
 }
 
+/**
+  * @brief  Configures the trigger edge sensitivity to falling. 
+	*					Called directly from parser (cmd_parser.c).
+	* @param  None
+  * @retval None
+  */
 void logAnlysSetTriggerFalling(void){
 	logAnlys.trigEdge = TRIG_EDGE_FALLING;
 //	GPIO_EnableTrigger();	
 }
 
+/**
+  * @brief  Disables the interrupt request from trigger (GPIO).  
+	* @param  None
+  * @retval None
+  * @state  NOT USED
+  */
 void logAnlysDisablePostTrigIRQ(void){
 	GPIO_DisableIRQ();
 }
 
+/**
+  * @brief  Sets trigger channel.  
+	*					Called directly from parser (cmd_parser.c)
+	* @param  chan: channel number between 1 and 8
+  * @retval None
+  */
 void logAnlysSetTriggerChannel(uint32_t chan){
 	switch(chan){
 		case 1:
@@ -224,6 +341,13 @@ void logAnlysSetTriggerChannel(uint32_t chan){
 //		GPIO_EnableTrigger();	
 }
 
+/**
+	* @brief  Sets default Logic analyzer structure values such as:  
+	*					pretrigger time, samples number, trigger edge, trigger mode, pointer to samples buffer
+	*					Called at the beginning of Logic analyzer task.
+	* @param  None
+  * @retval None
+  */
 void logAnlysSetDefault(void){
 /* By default: dataLength = 1 Ksamples, samplingFreq = 10 Ksmpls / s, trigger = 50 %
 	 Therefore, 100 ms * 50 % = 50 ms. It applies that postTrigger is set with period 

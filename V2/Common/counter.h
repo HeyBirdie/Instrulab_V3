@@ -16,8 +16,22 @@
 #include "stm32f3xx_hal.h"
 
 /* the buffer size of input capture mode has to be set at least to number 2 (two edges captured) */
+/** @defgroup Counter defines.
+  * @{
+  */
 #define IC12_BUFFER_SIZE	110
-
+/**
+  * @}
+  */
+	
+/* Enums */
+/** @defgroup Counter enums.
+  * @{
+  */
+	
+	/**
+  * @brief  Counter modes 1. 
+  */
 typedef enum{
 	ETR = 0,
 	IC,
@@ -25,6 +39,9 @@ typedef enum{
 	REF
 }counterMode;
 
+	/**
+  * @brief  Counter modes 2. 
+  */
 typedef enum{
 	COUNTER_IDLE = 0,
 	COUNTER_ETR,
@@ -33,46 +50,78 @@ typedef enum{
 	COUNTER_REF		
 }counterState;
 
+	/**
+  * @brief  Reciprocal mode ISR pass through flag. 
+  */
 typedef enum{
 	COUNTER_IRQ_IC = 0,
 	COUNTER_IRQ_IC_PASS
 }counterIcChannel;
 
+	/**
+  * @brief  Reciprocal mode DC ch1/ch2 enabled/disabled flag. 
+  */
 typedef enum{
 	DUTY_CYCLE_DISABLED = 0,
 	DUTY_CYCLE_CH1_ENABLED,
 	DUTY_CYCLE_CH2_ENABLED
 }counterIcDutyCycle;
 
+	/**
+  * @brief  Direct mode (ETR) sample count change request from host flag. 
+  */
 typedef enum{	
 	SAMPLE_COUNT_CHANGED = 0,
 	SAMPLE_COUNT_NOT_CHANGED
 }counterRefSmplCntChange;
 
+	/**
+  * @brief  Time interval (TI) measurement edge rising falling selection. 
+  */
 typedef enum{	
 	EVENT_RISING = 0,
 	EVENT_FALLING
 }counterEventTypeDef;
 
+	/**
+  * @brief  Time interval (TI) measurement flag. 
+  */
 typedef enum{
 	CLEAR = 0,
 	TIMEOUT,
 	SEND_TI_DATA
 }counterTiStateTypeDef;
 
+	/**
+  * @brief  Time interval (TI) measurement FAST event mode selection. 
+  */
 typedef enum{
 	TI_MODE_EVENT_SEQUENCE_INDEP = 0,
 	TI_MODE_FAST_EVENT_SEQUENCE_DEP
 }counterTiModeTypeDef;
 
+	/**
+  * @brief  BIN semaphore used for IC and TI modes due to UART communication troubles. 
+  */
 typedef enum{
 	BIN0 = 0,
 	BIN1
 }counterBin;
 
-/* ETR struct (High frequency meas.) is also used for REF mode as only 
-	 the difference is in clock feeding of timer 4 and in the data sent 
-	 to PC app */
+/**
+  * @}
+  */
+
+/* Structs */
+/** @defgroup Counter structure definitions
+  * @{
+  */
+/* */
+	/**
+  * @brief  Direct (ETR) and reference measurement (REF) mode common struct.
+	* The ETR struct (High frequency meas.) is also used for REF (precise meas.) mode as only 
+	* the difference is in clock feeding of timer 4 and in the data sent to PC app.
+  */
 typedef struct{
 	uint16_t arr;		// TIM4 ARR
 	uint16_t psc;		// TIM4 PSC
@@ -84,7 +133,10 @@ typedef struct{
 	double freq;
 }counterEtrTypeDef;
 
-/* IC mode (Low frequency) struct */
+	/**
+  * @brief  Reciprocal (IC) and time measurement (TI) mode common struct. 
+	* IC mode (Low frequency)
+  */
 typedef struct{
 	uint32_t arr;		// TIM2 ARR
 	uint16_t psc;		// TIM2 PSC
@@ -103,7 +155,9 @@ typedef struct{
 	uint32_t tiTimeout; // TI timeout part of IC struct
 }counterIcTypeDef;
 
-/* Common struct */
+	/**
+  * @brief  Counter common struct. 
+  */
 typedef struct{
 	counterIcTypeDef counterIc;
 	counterEtrTypeDef counterEtr;	
@@ -121,8 +175,14 @@ typedef struct{
 	counterBin bin;
 	counterBin abba; 		// TI mode events sequence t_AB or t_BA
 }counterTypeDef;
+/**
+  * @}
+  */
 
 // Exported functions =========================================================
+/** @defgroup Counter function prototypes
+  * @{
+  */
 void CounterTask(void const *argument);
 
 /* Counter general functions */
@@ -183,12 +243,16 @@ void COUNTER_IC_TIM_Elapse(void);
 void counterPeriodElapsedCallback(TIM_HandleTypeDef *htim);
 
 extern volatile counterTypeDef counter;
-extern uint32_t tim2clk, tim4clk, startTime;
+extern uint32_t tim2clk, tim4clk;
 
 extern DMA_HandleTypeDef hdma_tim2_up;
 extern DMA_HandleTypeDef hdma_tim2_ch1;
 extern DMA_HandleTypeDef hdma_tim2_ch2_ch4;
 
+/**
+  * @}
+  */
+	
 #endif /* COUNTER_H_ */
 
 #endif //USE_COUNTER
