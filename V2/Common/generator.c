@@ -1,6 +1,6 @@
-/*
+/**
   *****************************************************************************
-  * @file    scope.c
+  * @file    generator.c
   * @author  Y3288231
   * @date    Dec 15, 2014
   * @brief   This file contains oscilloscope functions

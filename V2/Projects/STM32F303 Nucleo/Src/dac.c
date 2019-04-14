@@ -1,8 +1,8 @@
 /**
   ******************************************************************************
-  * File Name          : DAC.c
-  * Date               : 18/01/2015 10:00:30
-  * Description        : This file provides code for the configuration
+  * @file          : DAC.c
+  * @date          : 18/01/2015 10:00:30
+  * @brief         : This file provides code for the configuration
   *                      of the DAC instances.
   ******************************************************************************
   *

@@ -1,8 +1,8 @@
 /**
   ******************************************************************************
-  * File Name          : gpio.h
-  * Date               : 18/01/2015 10:00:29
-  * Description        : This file contains all the functions prototypes for 
+  * @file          : gpio.h
+  * @date          : 18/01/2015 10:00:29
+  * @brief         : This file contains all the functions prototypes for 
   *                      the gpio  
   ******************************************************************************
   *
