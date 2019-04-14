@@ -21,8 +21,12 @@
 //#define LOG_ANLYS_DEFAULT_PRETRIGGER 			0x8000    //[ms]
 //#define LOG_ANLYS_DEFAULT_DATA_LEN 50   // SHOULD BE SET TO 100 !!!
 
+/** @addtogroup Logic_Analyzer Logic Analyzer
+  * @{
+  */
+
 /* Enums */
-/** @defgroup Logic analyzer enums.
+/** @defgroup Logic_Analyzer_Enums Logic analyzer enums.
   * @{
   */
 	
@@ -91,12 +95,12 @@ typedef enum{
   */
 
 /* Structs */
-/** @defgroup Logic analyzer structure definition
+/** @defgroup Logic_Analyzer_Struct LA Structure Definition
   * @{
   */
 
 	/**
-  * @brief  Counter common struct. 
+  * @brief  Logic Analyzer Struct
   */
 typedef struct{		
 	uint32_t triggerPointer;
@@ -121,7 +125,7 @@ typedef struct{
 extern volatile logAnlysTypeDef logAnlys;
 
 // Functions Prototypes ==============================================
-/** @defgroup Logic analyzer function prototypes
+/** @defgroup Logic_Analyzer_Prototypes LA Function Prototypes
   * @{
   */
 void LogAnlysTask(void const *argument);
@@ -164,3 +168,7 @@ void triggerEventOccuredCallback(void);
 
 #endif //USE_LOG_ANLYS
 
+/**
+  * @}
+  */
+	

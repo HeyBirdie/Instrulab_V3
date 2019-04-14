@@ -15,12 +15,12 @@
 #include "logic_analyzer.h"
 #include "tim.h"
 #include "scope.h"
-#include "FreeRTOSConfig.h"
-#include "portmacro.h"
 
-
+/** @defgroup Logic_Analyzer Logic Analyzer
+  * @{
+  */
 // External variables definitions =============================================
-/** @defgroup Logic analyzer Private Variables
+/** @defgroup Logic_Analyzer_Private_Variables LA Private Variables
   * @{
   */
 xQueueHandle logAnlysMessageQueue;
@@ -31,6 +31,9 @@ volatile logAnlysTypeDef logAnlys;
   * @}
   */
 
+/** @defgroup Logic_Analyzer_Functions LA Functions
+  * @{
+  */
 //portTickType xLastWakeTime;
 // Function definitions =======================================================
 /**
@@ -197,8 +200,8 @@ void logAnlysStart(void){
 	
 	if(logAnlys.triggerMode == LOGA_MODE_AUTO){
 		/* In AUTO trigger mode the posttriger is started without event trigger. After posttrigger 
-			 time elapses the data is sent to PC even if the trigger does not occur. */
-		LOG_ANLYS_TriggerEventOccuredCallback();		
+			 time elapses the data is sent to PC even if the trigger did not occur. */
+		LOG_ANLYS_TriggerEventOccured();		
 		TIM_PostTrigger_SoftwareStart();	
 	}
 	
@@ -361,7 +364,11 @@ void logAnlysSetDefault(void){
 	logAnlys.bufferMemory = (uint16_t *)scopeBuffer;
 }
 
-
+/**
+  * @}
+  */
 	#endif //USE_LOG_ANLYS
-		
+/**
+  * @}
+  */		
 
