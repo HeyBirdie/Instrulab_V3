@@ -15,8 +15,12 @@
 #include <stdint.h>
 #include "stm32f3xx_hal.h"
 
+/** @addtogroup Counter
+  * @{
+  */
+
 /* the buffer size of input capture mode has to be set at least to number 2 (two edges captured) */
-/** @defgroup Counter defines.
+/** @defgroup Counter_Defines Counter Defines.
   * @{
   */
 #define IC12_BUFFER_SIZE	110
@@ -25,7 +29,7 @@
   */
 	
 /* Enums */
-/** @defgroup Counter enums.
+/** @defgroup Counter_Enums Counter Enums.
   * @{
   */
 	
@@ -112,11 +116,9 @@ typedef enum{
   * @}
   */
 
-/* Structs */
-/** @defgroup Counter structure definitions
+/** @defgroup Counter_Struct_Definition Counter Structure Definitions
   * @{
   */
-/* */
 	/**
   * @brief  Direct (ETR) and reference measurement (REF) mode common struct.
 	* The ETR struct (High frequency meas.) is also used for REF (precise meas.) mode as only 
@@ -179,8 +181,7 @@ typedef struct{
   * @}
   */
 
-// Exported functions =========================================================
-/** @defgroup Counter function prototypes
+/** @defgroup Counter_Prototypes Function Prototypes
   * @{
   */
 void CounterTask(void const *argument);
@@ -257,4 +258,7 @@ extern DMA_HandleTypeDef hdma_tim2_ch2_ch4;
 
 #endif //USE_COUNTER
 
-
+/**
+  * @}
+  */
+	

@@ -19,7 +19,7 @@
 /** @defgroup Logic_Analyzer Logic Analyzer
   * @{
   */
-// External variables definitions =============================================
+	
 /** @defgroup Logic_Analyzer_Private_Variables LA Private Variables
   * @{
   */
@@ -27,15 +27,15 @@ xQueueHandle logAnlysMessageQueue;
 xSemaphoreHandle logAnlysMutex;
 
 volatile logAnlysTypeDef logAnlys;
+//portTickType xLastWakeTime;
 /**
   * @}
   */
 
-/** @defgroup Logic_Analyzer_Functions LA Functions
+/** @defgroup Logic_Analyzer_Function_Definitions LA Function Definitions
   * @{
   */
-//portTickType xLastWakeTime;
-// Function definitions =======================================================
+
 /**
   * @brief  Logic analyzer task function.
   * 				Task is getting messages from other tasks, sends messages 

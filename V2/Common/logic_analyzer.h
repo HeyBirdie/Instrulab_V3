@@ -21,12 +21,12 @@
 //#define LOG_ANLYS_DEFAULT_PRETRIGGER 			0x8000    //[ms]
 //#define LOG_ANLYS_DEFAULT_DATA_LEN 50   // SHOULD BE SET TO 100 !!!
 
-/** @addtogroup Logic_Analyzer Logic Analyzer
+/** @addtogroup Logic_Analyzer
   * @{
   */
 
 /* Enums */
-/** @defgroup Logic_Analyzer_Enums Logic analyzer enums.
+/** @defgroup Logic_Analyzer_Enums Logic analyzer enums
   * @{
   */
 	
@@ -94,8 +94,7 @@ typedef enum{
   * @}
   */
 
-/* Structs */
-/** @defgroup Logic_Analyzer_Struct LA Structure Definition
+/** @defgroup Logic_Analyzer_Struct_Definition LA Structure Definition
   * @{
   */
 
@@ -124,7 +123,6 @@ typedef struct{
 // Externs ===========================================================
 extern volatile logAnlysTypeDef logAnlys;
 
-// Functions Prototypes ==============================================
 /** @defgroup Logic_Analyzer_Prototypes LA Function Prototypes
   * @{
   */

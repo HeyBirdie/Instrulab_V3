@@ -17,9 +17,11 @@
 #include "stdlib.h"
 #include "portmacro.h"
 
+/** @defgroup Counter Counter
+  * @{
+  */
 
-// External variables definitions =============================================
-/** @defgroup Counter Private Variables
+/** @defgroup Counter_Private_Variables Counter Private Variables
   * @{
   */
 xQueueHandle counterMessageQueue;
@@ -35,7 +37,9 @@ volatile counterTypeDef counter;
 static uint32_t ic1PassNum = 1;
 static uint32_t ic2PassNum = 1;
 
-// Function definitions ========================================================
+/** @defgroup Counter_Function_Definitions Counter Function Definitions
+  * @{
+  */
 /**
   * @brief  Counter task function.
   * 				Task is getting messages from other tasks and takes care about counter functions.
@@ -913,5 +917,12 @@ void counterIc2BufferConfig(uint16_t ic2buffSize)
   * @}
   */
 
+/**
+  * @}
+  */
+
 	#endif //USE_COUNTER
 
+/**
+  * @}
+  */

@@ -46,6 +46,10 @@
 #include "task.h"
 #include "semphr.h"
 
+/** @defgroup Timers Timers
+  * @{
+  */
+
 /** @defgroup Scope Scope
   * @{
   */
@@ -134,7 +138,7 @@ void COUNTER_IC2_DMA_CpltCallback(DMA_HandleTypeDef *dmah);
 /** @addtogroup Scope
   * @{
   */
-/** @defgroup Scope_TIM_Inits Scope TIM Initialization Functions
+/** @defgroup Scope_TIM_Inits Scope TIMers Initialization Functions
   * @{
   */	
 #ifdef USE_SCOPE
@@ -171,11 +175,11 @@ void MX_TIM15_Init(void)
   * @{
   */
 
-/** @defgroup Arbitrary_DAC_TIM_Inits Arbitrary DAC Generator Initialization Functions
+/** @defgroup Arbitrary_DAC_TIM_Inits Arbitrary DAC Generator TIMers Initialization Functions
   * @{
   */	
 /**             
-  * @brief  TIM6 Configuration
+  * @brief  TIM6 Configuration.
   * @note   TIM6 configuration is based on APB1 frequency
   * @note   TIM6 Update event occurs each TIM6CLK/256   
   * @param  None
@@ -209,7 +213,7 @@ void MX_TIM6_Init(void)
 
 
 /**             
-  * @brief  TIM6 Configuration
+  * @brief  TIM6 Configuration.
   * @note   TIM6 configuration is based on APB1 frequency
   * @note   TIM6 Update event occurs each TIM6CLK/256   
   * @param  None
@@ -250,9 +254,8 @@ void MX_TIM7_Init(void)
   * @{
   */	
 #ifdef USE_GEN_PWM
-/* TIM1 PWM init function */
 /**             
-  * @brief  TIM1 Configuration
+  * @brief  TIM1 Configuration.
   * @note   TIM1 generates PWM on a given channel.
   * @param  None
   * @retval None
@@ -309,9 +312,8 @@ static void MX_TIM1_GEN_PWM_Init(void)
   HAL_TIM_Base_MspInit(&htim1);
 }
 
-/* TIM3 PWM init function */
 /**             
-  * @brief  TIM3 Configuration
+  * @brief  TIM3 Configuration.
   * @note   TIM3 generates PWM on a given channel.
   * @param  None
   * @retval None
@@ -348,7 +350,6 @@ static void MX_TIM3_GEN_PWM_Init(void)
   HAL_TIM_Base_MspInit(&htim3);
 }
 
-/* TIM6 handling DMA init function */
 /**             
   * @brief  TIM6 Configuration for arbitrary DAC & PWM generators.
 	* @note   For PWM gen: TIM6 handles the periodic change of PWM duty cycle using DMA -> Memory to Capture/Compare reg. transfers.
@@ -373,8 +374,6 @@ static void MX_TIM6_GEN_PWM_Init(void)
   HAL_TIMEx_MasterConfigSynchronization(&htim6, &sMasterConfig);
 }
 
-
-/* TIM7 handling DMA init function */
 /**             
   * @brief  TIM7 Configuration for arbitrary DAC & PWM generators.
 	* @note   For PWM gen: TIM7 handles the periodic change of PWM duty cycle using DMA -> Memory to Capture/Compare reg. transfers.
@@ -413,7 +412,6 @@ static void MX_TIM7_GEN_PWM_Init(void)
   * @{
   */	
 #ifdef USE_SYNC_PWM
-/* TIM8 init function using to generate synchronized PWMs */
 /**             
   * @brief  TIM8 Configuration.
 	* @note   Configures 4 channels for synchronized PWM outputs handled by one timer.
@@ -1265,6 +1263,7 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* htim_base)
 /** @addtogroup Scope
   * @{
   */
+
 /* ************************************************************************************** */
 /* --------------------------------- SCOPE FUNCTIONS ------------------------------------ */
 /* ************************************************************************************** */
@@ -1300,7 +1299,6 @@ uint32_t getMaxScopeSamplingFreq(uint8_t ADCRes){
 /**
   * @}
   */
-
 
 /* ************************************************************************************** */
 /* ----------------------------- GEN and PWM GEN FUNCTIONS ------------------------------ */
@@ -1384,7 +1382,6 @@ void TIMGenDacDeinit(void){
 /**
   * @}
   */
-
 
 /* ************************************************************************************** */
 /* ------------------- PWM GENERATOR (CHANGING DUTY CYCLE) FUNCTIONS -------------------- */
@@ -1503,7 +1500,7 @@ void TIMGenPwmDeinit(void){
   * @brief  Configuration of Timer Prescaler (PSC).
 	* @note		Calculated for TIM1 & TIM3 by host application.
 	* @param  pscVal: Prescaler value
-	* @param  chan: channel 1 or 2
+	* @param  chan: channel number 1 or 2
   * @retval None
   */	
 void TIM_GEN_PWM_PSC_Config(uint16_t pscVal, uint8_t chan){
@@ -1518,7 +1515,7 @@ void TIM_GEN_PWM_PSC_Config(uint16_t pscVal, uint8_t chan){
   * @brief  Configuration of Timer Auto-Reload register (ARR).
 	* @note		Calculated for TIM1 & TIM3 by host application.
 	* @param  arrVal: Auto-Reload register value
-	* @param  chan: channel 1 or 2
+	* @param  chan: channel number 1 or 2
   * @retval None
   */	
 void TIM_GEN_PWM_ARR_Config(uint16_t arrVal, uint8_t chan){
@@ -3121,6 +3118,10 @@ uint8_t TIM_Reconfig(uint32_t samplingFreq,TIM_HandleTypeDef* htim_base,uint32_t
 	return result;
 
 }
+/**
+  * @}
+  */
+
 /**
   * @}
   */

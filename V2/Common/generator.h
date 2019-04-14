@@ -12,9 +12,19 @@
 
 #include "stdint.h"
 
+/** @addtogroup Generator
+  * @{
+  */
+
+/** @defgroup Generator_Defines Generator Defines
+  * @{
+  */
 #define DEFAULT_GENERATING_FREQ 1000
 #define MAX_DAC_CHANNELS 2
 
+/** @defgroup Generator_Common_Enums Generator Common Enums for DAC and PWM.
+  * @{
+  */
 typedef enum{
 	GEN_PWM = 0,
 	GEN_DAC
@@ -29,7 +39,13 @@ typedef enum{
 	GENERATOR_IDLE = 0,
 	GENERATOR_RUN
 }generatorState;
+/**
+  * @}
+  */
 
+/** @defgroup Generator_Common_Struct_Definition Generator Common Structure Definitions
+  * @{
+  */
 typedef struct{
 	uint16_t *bufferMemory;		
 	uint32_t generatingFrequency[MAX_DAC_CHANNELS];
@@ -45,8 +61,16 @@ typedef struct{
 //	uint16_t genPwmArr[MAX_DAC_CHANNELS];	
 //	uint16_t genPwmPsc[MAX_DAC_CHANNELS];	
 }generatorTypeDef;
+/**
+  * @}
+  */
 
+// Externs ===========================================================
+extern volatile generatorTypeDef generator;
 
+/** @defgroup Generator_DAC_Prototypes Generator DAC Function Prototypes
+  * @{
+  */
 void GeneratorTask(void const *argument);
 void generatorSetDefault(void);
 void genInit(void);
@@ -65,8 +89,13 @@ void genUnsetOutputBuffer(void);
 void genStart(void);
 void genStop(void);
 void genReset(void);
+/**
+  * @}
+  */
 
-/* PWM generator function prototypes */
+/** @defgroup Generator_PWM_Prototypes Generator PWM Function Prototypes
+  * @{
+  */
 void genSetMode(uint8_t mode);
 void generatorSetModePWM(void);
 void generatorSetModeDAC(void);
@@ -74,12 +103,15 @@ void generator_deinit(void);
 void genSetPwmFrequencyPSC(uint32_t pscVal, uint8_t chan);
 void genSetPwmFrequencyARR(uint32_t arrVal, uint8_t chan);
 
-extern volatile generatorTypeDef generator;
+/**
+  * @}
+  */
 
 #endif /* GENERATOR_H_ */
 
 #endif // USE_GEN || USE_GEN_PWM
 
-
-
+/**
+  * @}
+  */
 

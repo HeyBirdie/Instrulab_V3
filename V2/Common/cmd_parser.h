@@ -8,12 +8,27 @@
 */ 
 #ifndef CMD_PARSER_H_
 #define CMD_PARSER_H_
+
+/** @addtogroup Parser
+  * @{
+  */
+	
 // Constant definitions =======================================================
 extern xQueueHandle cmdParserMessageQueue;
 	
 // Types definitions ==========================================================
 // Exported variables =========================================================
 // Exported functions =========================================================
+/** @defgroup Parser_Prototypes Parser Function Prototypes
+  * @{
+  */
 void CmdParserTask(void const *argument);
+/**
+  * @}
+  */
 
 #endif /* CMD_PARSER_H_ */
+
+/**
+  * @}
+  */

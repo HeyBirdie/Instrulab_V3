@@ -42,12 +42,16 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f3xx_hal.h"
 	 
+/** @addtogroup Timers
+  * @{
+  */
+	 
 uint8_t TIM_Reconfig(uint32_t samplingFreq,TIM_HandleTypeDef* htim_base,uint32_t* realFreq);
 
 /** @addtogroup Scope
   * @{
   */	 
-/** @defgroup Scope_Prototypes Scope Function Prototypes.
+/** @defgroup Scope_TIM_Prototypes Scope Timers Function Prototypes.
   * @{
   */	 
 #ifdef USE_SCOPE
@@ -60,7 +64,7 @@ uint8_t TIM_Reconfig_scope(uint32_t samplingFreq,uint32_t* realFreq);
   * @}
   */	 
 
-/** @defgroup Arbitrary_DAC_PWM_Prototypes Arbitrary DAC and PWM Function Prototypes
+/** @defgroup Arbitrary_DAC_PWM_TIM_Prototypes Arbitrary DAC and PWM Timers Function Prototypes
   * @{
   */	 
 #if defined(USE_GEN) || defined(USE_GEN_PWM)
@@ -70,7 +74,7 @@ uint8_t TIM_Reconfig_gen(uint32_t samplingFreq,uint8_t chan,uint32_t* realFreq);
   * @}
   */	 
 
-/** @defgroup Synch_PWM_Prototypes Synchronized PWM Function Prototypes.
+/** @defgroup Synch_PWM_TIM_Prototypes Synchronized PWM Timers Function Prototypes.
   * @{
   */	
 #ifdef USE_SYNC_PWM
@@ -84,7 +88,7 @@ uint8_t TIM_Reconfig_gen(uint32_t samplingFreq,uint8_t chan,uint32_t* realFreq);
 /** @addtogroup Scope
   * @{
   */	
-/** @addtogroup Scope_Prototypes Scope Function Prototypes
+/** @addtogroup Scope_TIM_Prototypes Scope Timers Function Prototypes
   * @{
   */
 #ifdef USE_SCOPE
@@ -100,7 +104,7 @@ uint32_t getMaxScopeSamplingFreq(uint8_t ADCRes);
   * @}
   */		
 
-/** @addtogroup Arbitrary_DAC_PWM_Prototypes
+/** @addtogroup Arbitrary_DAC_PWM_TIM_Prototypes
   * @{
   */
 #if defined(USE_GEN) || defined(USE_GEN_PWM)
@@ -117,7 +121,7 @@ void TIMGenDacDeinit(void);
   * @}
   */
 
-/** @defgroup Arbitrary_PWM_Prototypes Arbitrary PWM Function Prototypes
+/** @defgroup Arbitrary_PWM_TIM_Prototypes Arbitrary PWM Timers Function Prototypes
   * @{
   */
 #ifdef USE_GEN_PWM
@@ -143,7 +147,7 @@ void PWMGeneratingDisable(void);
   * @}
   */
 
-/** @addtogroup Synch_PWM_Prototypes
+/** @addtogroup Synch_PWM_TIM_Prototypes
   * @{
   */	
 #ifdef USE_SYNC_PWM
@@ -164,7 +168,7 @@ void TIM_SYNC_PWM_StepMode_Disable(void);
   * @}
   */
 
-/** @addtogroup Logic_Analyzer_Prototypes
+/** @addtogroup Logic_Analyzer_TIM_Prototypes
   * @{
   */
 #ifdef USE_LOG_ANLYS
@@ -194,7 +198,7 @@ void TIM_SamplingStop(void);
   * @}
   */
 
-/** @defgroup Counter_Prototypes Counter Function Prototypes
+/** @defgroup Counter_TIM_Prototypes Counter Timers Function Prototypes
   * @{
   */
 #ifdef USE_COUNTER
@@ -283,6 +287,10 @@ extern void COUNTER_IC2_DMA_CpltCallback(DMA_HandleTypeDef *dmah);
 /**
   * @}
   */
+	 
+/**
+  * @}
+  */	 
 	 
 #ifdef __cplusplus
 }
