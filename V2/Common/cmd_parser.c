@@ -139,13 +139,9 @@ void CmdParserTask(void const *argument){
 					default:
 					xQueueSendToBack(messageQueue, UNSUPORTED_FUNCTION_ERR_STR, portMAX_DELAY);
 					while(commBufferReadByte(&chr)==0 && chr!=';');
-////					commsSendUint32(cmdIn);
 				}	
 			}
 		}
-	/*	if (getBytesAvailable()>=15){
-			xQueueSendToBackFromISR(cmdParserMessageQueue, "1TryParseCmd", &xHigherPriorityTaskWoken);
-		}*/
 	}
 }
 
@@ -160,7 +156,6 @@ command parseSystemCmd(void){
 	uint8_t error=0;
 	//try to parse command while buffer is not empty 
 
-	///////	do{ 
 		cmdIn = giveNextCmd();
 		switch(cmdIn){
 			case CMD_GET_CONFIG:
@@ -172,7 +167,6 @@ command parseSystemCmd(void){
 				cmdIn = CMD_ERR;
 			break;
 		}
-///////	}while(cmdIn != CMD_END && cmdIn != CMD_ERR && error==0);
 	if(error>0){
 		cmdIn=error;
 	}else{

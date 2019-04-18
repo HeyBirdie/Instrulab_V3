@@ -18,11 +18,18 @@
 #include "tim.h"
 #include "gpio.h"
 
-// External variables definitions =============================================
+/** @defgroup Scope Scope
+  * @{
+  */
+	
 const int16_t RANGES[8] = {RANGE_1_LOW,RANGE_1_HI,RANGE_2_LOW,RANGE_2_HI,RANGE_3_LOW,RANGE_3_HI,RANGE_4_LOW,RANGE_4_HI};
 #ifdef USE_SHIELD
 const int16_t SHIELD_RANGES[8] = {SHIELD_RANGE_1_LOW,SHIELD_RANGE_1_HI,SHIELD_RANGE_2_LOW,SHIELD_RANGE_2_HI,SHIELD_RANGE_3_LOW,SHIELD_RANGE_3_HI,SHIELD_RANGE_4_LOW,SHIELD_RANGE_4_HI};
 #endif
+
+/** @defgroup Scope_Private_Variables Scope Private Variables
+  * @{
+  */
 xQueueHandle scopeMessageQueue;
 
 uint8_t scopeBuffer[MAX_SCOPE_BUFF_SIZE+MAX_ADC_CHANNELS*SCOPE_BUFFER_MARGIN]; 
@@ -37,26 +44,37 @@ static uint32_t writingIndex=0;
 static uint32_t lastWritingIndex=0;
 static volatile scopeTypeDef scope;
 
-
 uint32_t actualIndex = 0;
 uint16_t data = 0;
 uint32_t samplesTaken = 0;
 uint32_t totalSmpTaken = 0;
 uint32_t SmpBeforeTrig=0;
 uint32_t SmpAfterTrig=0;
+/**
+  * @}
+  */
 
-// Function prototypes ========================================================
+/** @defgroup Scope_Functions_Prototypes Scope Functions Prototypes
+  * @{
+  */
 uint16_t samplesPassed(uint16_t dataRemain, uint16_t lastDataRemain);
 uint8_t validateBuffUsage(void);
+/**
+  * @}
+  */
 
-// Function definitions =======================================================
+
+/** @defgroup Scope_Function_Definitions Scope Function Definitions
+  * @{
+  */
+	
 /**
   * @brief  Oscilloscope task function.
-  * task is getting messages from other tasks and takes care about oscilloscope functions
+  * 				task is getting messages from other tasks and takes care about oscilloscope functions
   * @param  Task handler, parameters pointer
   * @retval None
   */
-//portTASK_FUNCTION(vScopeTask, pvParameters){	
+
 void ScopeTask(void const *argument){
 	
 	//Build error on lines below? Lenght of Pin strings must be 4 chars long!!!
@@ -73,19 +91,12 @@ void ScopeTask(void const *argument){
 	while(1){
 		xQueueReceive(scopeMessageQueue, message, portMAX_DELAY);
 		xSemaphoreTakeRecursive(scopeMutex, portMAX_DELAY);
-		///commsSendString("SCP_Run\r\n");
-		if(message[0] == '2' && scope.state != SCOPE_IDLE){ //data was send. Actualisation of scope State and/or rerun
-			//if(scope.settings.triggerMode == TRIG_SINGLE){
-			//	scope.state = SCOPE_DONE;
-			//}else{  //TRIG_NORMAL || TRIG_AUTO (rerun)
-				///commsSendString("SCP_ScopeWaitRes\r\n");
-				//scopeInit();
+		
+		if(message[0] == '2' && scope.state != SCOPE_IDLE){ //Data was send. Actualisation of scope sxtate and/or rerun
 				scope.state = SCOPE_WAIT_FOR_RESTART;
-			//}
-		}else if(message[0] == '3'){  //settings has been changed
+		}else if(message[0] == '3'){  //Settings has been changed
 			if(scope.state == SCOPE_DONE || scope.state == SCOPE_IDLE){
 			}else{
-				///commsSendString("SCP_ScopeReinit\r\n");
 				samplingDisable();
 				scopeInit();
 				if(scope.state!=SCOPE_WAIT_FOR_RESTART && scope.state!=SCOPE_DATA_SENDING){
@@ -94,20 +105,18 @@ void ScopeTask(void const *argument){
 					samplingEnable();
 				}
 			}	
-		}else if (message[0] == '4' && scope.state != SCOPE_SAMPLING_WAITING && scope.state != SCOPE_SAMPLING_TRIGGER_WAIT && scope.state != SCOPE_SAMPLING && scope.state != SCOPE_DATA_SENDING){ //enable sampling
+		}else if (message[0] == '4' && scope.state != SCOPE_SAMPLING_WAITING && scope.state != SCOPE_SAMPLING_TRIGGER_WAIT && scope.state != SCOPE_SAMPLING && scope.state != SCOPE_DATA_SENDING){ //Enable sampling
 			scopeInit();
 			scope.state=SCOPE_SAMPLING_WAITING;
 			samplingEnable();
-			///commsSendString("SCP_ScopeStart\r\n");
+
 			xQueueSendToBack(messageQueue, "SMPL", portMAX_DELAY); 
-		}else if (message[0] == '5'){//disable sampling
+		}else if (message[0] == '5'){//Disable sampling
 			samplingDisable();
 			scope.state = SCOPE_IDLE;
-			///commsSendString("SCP_ScopeStop\r\n");
-		}else if (message[0] == '6' && scope.state==SCOPE_WAIT_FOR_RESTART ){
+		}else if (message[0] == '6' && scope.state==SCOPE_WAIT_FOR_RESTART ){ //Rerun sampling
 			samplingEnable();
 			scope.state=SCOPE_SAMPLING_WAITING;
-			///commsSendString("SCP_ScopeRestart\r\n");
 		}
 		xSemaphoreGiveRecursive(scopeMutex);
 	}
@@ -115,23 +124,15 @@ void ScopeTask(void const *argument){
 
 /**
   * @brief  Oscilloscope trigger finding task function.
-  * Task is finding trigger edge when osciloscope is running
+  * 				Task is finding trigger edge when osciloscope is sampling. 
   * @param  Task handler, parameters pointer
   * @retval None
   */
 //portTASK_FUNCTION(vScopeTriggerTask, pvParameters) {
 void ScopeTriggerTask(void const *argument) {
-//	uint32_t actualIndex = 0;
-//	uint16_t data = 0;
-//	uint32_t samplesTaken = 0;
-//	uint32_t totalSmpTaken = 0;
-//	uint32_t SmpBeforeTrig=0;
-//	uint32_t SmpAfterTrig=0;
-	
 
 	while(1){
 		if(scope.state==SCOPE_SAMPLING_WAITING || scope.state==SCOPE_SAMPLING_TRIGGER_WAIT || scope.state==SCOPE_SAMPLING){
-			/////commsSendString("TRIG_Run\r\n");
 			xSemaphoreTakeRecursive ( scopeMutex , portMAX_DELAY );
 			lastWritingIndex = writingIndex;
 			writingIndex = scope.oneChanSamples - DMA_GetCurrDataCounter(scope.triggerChannel);
@@ -145,7 +146,7 @@ void ScopeTriggerTask(void const *argument) {
 				}else{
 					data=*(scope.pChanMem[scope.triggerChannel-1]+actualIndex);
 				}
-				////data = scopeBuffer[actualIndex];
+
 				updateTrigger();
 				samplesTaken += samplesPassed(writingIndex,lastWritingIndex);	
 				//start finding right level before trigger (cannot start to find it earlier because pretrigger was not taken yet)
@@ -158,7 +159,7 @@ void ScopeTriggerTask(void const *argument) {
 						xQueueSendToBack(messageQueue, "SMPL", portMAX_DELAY);
 					}
 					
-			//finding for trigger
+			//looking for trigger
 			}else if(scope.state == SCOPE_SAMPLING_TRIGGER_WAIT){
 				samplesTaken += samplesPassed(writingIndex,lastWritingIndex);	
 				if(scope.settings.adcRes<=8){
@@ -167,7 +168,6 @@ void ScopeTriggerTask(void const *argument) {
 				}else{
 					data=*(scope.pChanMem[scope.triggerChannel-1]+actualIndex);
 				}
-				////data = scopeBuffer[actualIndex];
 				updateTrigger();
 				if((scope.settings.triggerEdge == EDGE_RISING && data > triggerLevel) 
 				|| (scope.settings.triggerEdge == EDGE_FALLING && data < triggerLevel)
@@ -189,7 +189,7 @@ void ScopeTriggerTask(void const *argument) {
 				if(scope.state == SCOPE_SAMPLING && samplesTaken >= samplesToStop){
 					samplingDisable();
 					
-					//finding exact trigger
+					//finding exact trigger position because not every samples are chcecked 
 					if (scope.settings.triggerMode != TRIG_AUTO && scope.settings.triggerMode != TRIG_AUTO_FAST){	
 						if(scope.settings.adcRes>8){
 							if(scope.settings.triggerEdge == EDGE_RISING){
@@ -224,8 +224,6 @@ void ScopeTriggerTask(void const *argument) {
 					}
 					samplesTaken = 0;
 					totalSmpTaken = 0;
-					//give message that data is ready
-					/////commsSendString("TRIG_Sampled\r\n");
 					xQueueSendToBack (messageQueue, "1DataReady__", portMAX_DELAY);
 				}
 			}
@@ -254,7 +252,7 @@ uint16_t samplesPassed(uint16_t index, uint16_t lastIndex){
 /**
   * @brief 	Checks if scope settings doesn't exceed memory
   * @param  None
-  * @retval err/ok
+  * @retval 1=err / 0=ok
   */
 uint8_t validateBuffUsage(){
 	uint8_t result=1;
@@ -271,6 +269,7 @@ uint8_t validateBuffUsage(){
 
 /**
   * @brief  Oscilloscope initialisation.
+	*					Configurstion of DMA and TIM time base
   * @param  None
   * @retval None
   */
@@ -292,7 +291,8 @@ void scopeInit(void){
 }
 
 /**
-  * @brief  Update trigger level and pretriger values (can be changed on the fly)
+  * @brief  Update trigger level and pretriger values
+	*					Ccan be changed on the fly
   * @param  None
   * @retval None
   */
@@ -330,9 +330,9 @@ void scopeSetDefault(void){
 }
 
 /**
-  * @brief  Getter function of pointer for data buffer.
+  * @brief  Getter function number of scope channels being used
   * @param  None
-  * @retval pointer to buffer
+  * @retval Number of channels
   */
 uint8_t GetNumOfChannels (void){
 	return scope.numOfChannles;
@@ -341,7 +341,7 @@ uint8_t GetNumOfChannels (void){
 /**
   * @brief  Getter function of pointer for data buffer.
   * @param  None
-  * @retval pointer to buffer
+  * @retval Pointer to buffer
   */
 uint16_t *getDataPointer(uint8_t chan){
 	return scope.pChanMem[chan];
@@ -350,7 +350,7 @@ uint16_t *getDataPointer(uint8_t chan){
 /**
   * @brief  Getter function of one channel memory size.
   * @param  None
-  * @retval mem size
+  * @retval One channel memory size
   */
 uint32_t getOneChanMemSize(){
 	return scope.oneChanMemSize;
@@ -359,7 +359,7 @@ uint32_t getOneChanMemSize(){
 /**
   * @brief  Getter function of one channel samples.
   * @param  None
-  * @retval mem size
+  * @retval One channel number of samples
   */
 uint32_t getOneChanMemSamples(){
 	return scope.oneChanSamples;
@@ -368,7 +368,7 @@ uint32_t getOneChanMemSamples(){
 /**
   * @brief  Getter function of trigger index.
   * @param  None
-  * @retval pointer to sample where trigger occured
+  * @retval Pointer to sample where trigger occured
   */
 uint32_t getTriggerIndex(void){
 	return triggerIndex;
@@ -377,7 +377,7 @@ uint32_t getTriggerIndex(void){
 /**
   * @brief  Getter function of data length.
   * @param  None
-  * @retval data length
+  * @retval Data length
   */
 uint32_t getSamples(void){
 	return scope.settings.samplesToSend;
@@ -395,7 +395,7 @@ uint16_t getADCRes(void){
 /**
   * @brief  Getter function of pretrigger.
   * @param  None
-  * @retval pretrigger value
+  * @retval Pretrigger value
   */
 uint16_t getPretrigger(void){
 	return scope.settings.pretrigger;
@@ -404,7 +404,7 @@ uint16_t getPretrigger(void){
 /**
   * @brief  Getter for oscilloscope state.
   * @param  None
-  * @retval scope state
+  * @retval Scope state
   */
 scopeState getScopeState(void){
 	return scope.state;
@@ -436,7 +436,7 @@ void scopeSetTriggerEdge(scopeTriggerEdge edge){
 /**
   * @brief  Setter for ADC resolution
   * @param  ADC resolution 2^N where N is number of bits
-  * @retval success/error
+  * @retval success=0/error
   */
 uint8_t scopeSetDataDepth(uint16_t res){
 	uint8_t result=BUFFER_SIZE_ERR;
@@ -464,7 +464,7 @@ uint8_t scopeSetDataDepth(uint16_t res){
 /**
   * @brief  Setter for sampling frequency
   * @param  Samples per second
-  * @retval success/error
+  * @retval success=0/error
   */
 uint8_t scopeSetSamplingFreq(uint32_t freq){
 	uint8_t result=SCOPE_INVALID_SAMPLING_FREQ;
@@ -485,7 +485,7 @@ uint8_t scopeSetSamplingFreq(uint32_t freq){
 
 /**
   * @brief  Setter for trigger level
-  * @param  signal level to trigger (0xFFFF is 100%)
+  * @param  Signal level to trigger (0xFFFF is 100%)
   * @retval None
   */
 void scopeSetTrigLevel(uint16_t level){
@@ -496,7 +496,7 @@ void scopeSetTrigLevel(uint16_t level){
 
 /**
   * @brief  Setter for pretrigger
-  * @param  fraction of buffer before trigger event (0xFFFF is 100%)
+  * @param  Fraction of buffer before trigger event (0xFFFF is 100%)
   * @retval None
   */
 void scopeSetPretrigger(uint16_t pretrig){
@@ -506,9 +506,9 @@ void scopeSetPretrigger(uint16_t pretrig){
 }
 
 /**
-  * @brief  Setter for data length
-  * @param  flength of data which will be send
-  * @retval None
+  * @brief  Setter for number of samples
+  * @param  Numbr of samples
+  * @retval success=0/error
   */
 uint8_t scopeSetNumOfSamples(uint32_t smp){
 	uint8_t result=BUFFER_SIZE_ERR;
@@ -525,8 +525,8 @@ uint8_t scopeSetNumOfSamples(uint32_t smp){
 
 /**
   * @brief  Setter for number of channels
-  * @param  number of channels
-  * @retval success/error
+  * @param  Number of channels
+  * @retval success=0/error
   */
 uint8_t scopeSetNumOfChannels(uint8_t chan){
 	uint8_t result=BUFFER_SIZE_ERR;
@@ -556,8 +556,8 @@ uint8_t scopeSetNumOfChannels(uint8_t chan){
 
 /**
   * @brief  Setter for trigger channel
-  * @param  trigger channel
-  * @retval None
+  * @param  Trigger channel
+  * @retval success=0/error
   */
 uint8_t scopeSetTrigChannel(uint8_t chan){
 	uint8_t result=SCOPE_INVALID_TRIGGER_CHANNEL;
@@ -577,9 +577,10 @@ uint32_t scopeGetRealSmplFreq(){
 
 
 /**
-  * @brief  sets ADC channel to sample
+  * @brief  ADC channel selections
+	*					Selects ADC channel to be sampled. Possible selection defined in mcu_config.h
   * @param  ADC number, Channel number
-  * @retval error
+  * @retval success=0/error
   */
 uint8_t scopeSetADCInputChannel(uint8_t adc, uint8_t chann){
 	uint8_t result = SCOPE_INVALID_ADC_CHANNEL;
@@ -595,9 +596,9 @@ uint8_t scopeSetADCInputChannel(uint8_t adc, uint8_t chann){
 }
 
 /**
-  * @brief  sets ADC channel to default
+  * @brief  Set ADC channels to default input
   * @param  ADC number, Channel number
-  * @retval error
+  * @retval success=0/error
   */
 uint8_t scopeSetADCInputChannelDefault(){
 	uint8_t result = SCOPE_INVALID_ADC_CHANNEL;
@@ -613,9 +614,9 @@ uint8_t scopeSetADCInputChannelDefault(){
 }
 
 /**
-  * @brief  sets ADC channel to default
-  * @param  ADC number, Channel number
-  * @retval error
+  * @brief  Set all ADC channels to sense intenral Vref value 
+  * @param  None
+  * @retval success=0/error
   */
 uint8_t scopeSetADCInputChannelVref(){
 	uint8_t result = SCOPE_INVALID_ADC_CHANNEL;
@@ -632,9 +633,9 @@ uint8_t scopeSetADCInputChannelVref(){
 
 
 /**
-  * @brief  return pointer to dafinition of ranges
-  * @param  int16 pointer
-  * @retval None
+  * @brief  getter of pointer to dafinition of input voltage ranges
+  * @param  uint8 pointer - Number of ranges
+  * @retval uint16 pointer - Pointer to ranges
   */
 const int16_t* scopeGetRanges(uint8_t * len){
 #ifdef USE_SHIELD
@@ -680,6 +681,13 @@ void scopeStop(void){
 	xQueueSendToBack(scopeMessageQueue, "5Stop", portMAX_DELAY);
 }
 
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
 
 #endif //USE_SCOPE
 
