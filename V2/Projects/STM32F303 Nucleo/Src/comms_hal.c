@@ -1,4 +1,4 @@
-/*
+/**
   *****************************************************************************
   * @file    comms_hal.c
   * @author  Y3288231
@@ -66,7 +66,7 @@ void commsSendBuff(uint8_t *buff, uint16_t len){
 	}
 	#else
 	//UARTsendBuff((char *)buff,len);
-	HAL_UART_Transmit(&huart2, buff, len, 10000);
+	HAL_UART_Transmit(&huart2, buff, len, 5000);
 	#endif
 }
 void commsSendString(char *chr){
@@ -83,7 +83,7 @@ void commsSendString(char *chr){
 	}
 	#else
 //	UARTsendBuff(chr,i);
-	HAL_UART_Transmit(&huart2, (uint8_t *)chr, i, 10000);
+	HAL_UART_Transmit(&huart2, (uint8_t *)chr, i, 5000);
 	#endif
 
 }

@@ -1,6 +1,6 @@
-/*
+/**
   *****************************************************************************
-  * @file    scope.c
+  * @file    generator.c
   * @author  Y3288231
   * @date    Dec 15, 2014
   * @brief   This file contains oscilloscope functions
@@ -16,8 +16,13 @@
 #include "dac.h"
 #include "tim.h"
 
+/** @defgroup Generator Generator
+  * @{
+  */
 
-// External variables definitions =============================================
+/** @defgroup Generator_Private_Variables Generator Private Variables
+  * @{
+  */
 xQueueHandle generatorMessageQueue;
 //uint8_t validateGenBuffUsage(void);
 void clearGenBuffer(void);
@@ -25,9 +30,14 @@ void clearGenBuffer(void);
 volatile generatorTypeDef generator;
 uint16_t blindValue=0;
 
-uint16_t generatorBuffer[MAX_GENERATOR_BUFF_SIZE/2]; 
+uint16_t generatorBuffer[MAX_GENERATOR_BUFF_SIZE/2];
+/**
+  * @}
+  */
 
-// Function definitions =======================================================
+/** @defgroup Generator_Function_Definitions Generator Function Definitions
+  * @{
+  */
 /**
   * @brief  Generator task function.
   * task is getting messages from other tasks and takes care about generator functions
@@ -103,6 +113,11 @@ void GeneratorTask(void const *argument){
 	}
 }
 
+/**
+	* @brief  Sets arb. generator mode.  
+	* @param  mode: GEN_DAC or GEN_PWM
+  * @retval None
+  */
 void genSetMode(uint8_t mode)
 {
 	switch(mode){
@@ -117,17 +132,32 @@ void genSetMode(uint8_t mode)
 	}
 }
 
+/**
+	* @brief  Sets generator mode to PWM.  
+	* @param  None
+  * @retval None
+  */
 void generatorSetModePWM(void){
 	//generator_deinit();
 	generator.modeState = GENERATOR_PWM;
 }
 
+/**
+	* @brief  Sets generator mode to DAC.  
+	* @param  None
+  * @retval None
+  */
 void generatorSetModeDAC(void){
 	//generator_deinit();
 	//TIMGenPwmDeinit();	
 	generator.modeState = GENERATOR_DAC;
 }
 
+/**
+	* @brief  Generator deinitialization.  
+	* @param  None
+  * @retval None
+  */
 void generator_deinit(void){
 	switch(generator.modeState){
 		case GENERATOR_PWM:
@@ -142,10 +172,22 @@ void generator_deinit(void){
 }
 
 #ifdef USE_GEN_PWM
+/**
+	* @brief  Arb. PWM Generator frequency configurarion function.  
+	* @param  pscVal:	value of PSC register sent by host
+	* @param  chan: channel number 1 or 2
+  * @retval None
+  */
 void genSetPwmFrequencyPSC(uint32_t pscVal, uint8_t chan){
 	TIM_GEN_PWM_PSC_Config(pscVal, chan);		// -1 subtraction made in PC app
 }
 
+/**
+	* @brief  Arb. PWM Generator frequency configurarion function.  
+	* @param  pscVal:	value of ARR register sent by host
+	* @param  chan: channel number 1 or 2
+  * @retval None
+  */
 void genSetPwmFrequencyARR(uint32_t arrVal, uint8_t chan){
 	TIM_GEN_PWM_ARR_Config(arrVal, chan);		// -1 subtraction made in PC app
 }
@@ -172,6 +214,11 @@ void generatorSetDefault(void)
 	generator.DAC_res=DAC_DATA_DEPTH;
 }
 
+/**
+  * @brief  Arb. DAC Generator initialization function.
+  * @param  None
+  * @retval None
+  */
 void genInit(void)
 {	
 	for(uint8_t i = 0;i<MAX_DAC_CHANNELS;i++){
@@ -185,6 +232,11 @@ void genInit(void)
 }
 
 #ifdef USE_GEN_PWM
+/**
+  * @brief  Arb. PWM Generator initialization function.
+  * @param  None
+  * @retval None
+  */
 void genPwmInit(void)
 {	
 	for(uint8_t i = 0;i<MAX_DAC_CHANNELS;i++){
@@ -196,7 +248,11 @@ void genPwmInit(void)
 }
 #endif //USE_GEN_PWM	
 
-
+/**
+  * @brief  Common Generator set data length function.
+	* @param  
+  * @retval None
+  */
 uint8_t genSetData(uint16_t index,uint8_t length,uint8_t chan){
 	uint8_t result = GEN_INVALID_STATE;
 	if(generator.state==GENERATOR_IDLE ){
@@ -214,6 +270,12 @@ uint8_t genSetData(uint16_t index,uint8_t length,uint8_t chan){
 	return result;
 }
 
+/**
+  * @brief  Arb. DAC Generator set frequency function.
+	* @param  Freq: required generating frequency
+	* @param  chan: channel number 1 or 2 
+  * @retval None
+  */
 uint8_t genSetFrequency(uint32_t freq,uint8_t chan){
 	uint8_t result = GEN_TO_HIGH_FREQ;
 	uint32_t realFreq;
@@ -225,6 +287,11 @@ uint8_t genSetFrequency(uint32_t freq,uint8_t chan){
 	return result;
 }
 
+/**
+  * @brief  Common function for sending real sampling frequency.
+	* @param  None
+  * @retval None
+  */
 void genSendRealSamplingFreq(void){
 	xQueueSendToBack(messageQueue, "2SendGenFreq", portMAX_DELAY);
 }
@@ -367,5 +434,12 @@ void genReset(void){
 	xQueueSendToBack(generatorMessageQueue, "8Reset", portMAX_DELAY);
 }
 
+/**
+  * @}
+  */
+
 #endif // USE_GEN || USE_GEN_PWM
 
+/**
+  * @}
+  */
