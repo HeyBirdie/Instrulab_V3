@@ -120,7 +120,7 @@ void USART2_IRQHandler(void)
 
 /* USER CODE BEGIN 1 */
 /**
-* @brief This function is not used. Handles DMA1 channel6 global interrupt.
+* @brief This function handles DMA1 channel6 global interrupt.
 */
 void DMA1_Channel6_IRQHandler(void)
 {
@@ -159,30 +159,18 @@ void DMA1_Channel7_IRQHandler(void)
 
 extern DMA_HandleTypeDef hdma_tim1_up;
 
-/**
-  * @brief  Logic Analyzer ISR triggered by an incoming signal edge on GPIO.
-	*					Stores time of trigger and starts posttrigger time (TIM4) in order to sample the rest.
-  */
 void EXTI15_10_IRQHandler(void){
 	TIM_PostTrigger_SoftwareStart();
 	logAnlys.triggerPointer = hdma_tim1_up.Instance->CNDTR;	
 	LOG_ANLYS_handle_interrupt(EXTI->PR & 0x3fc0);
 }
 
-/**
-  * @brief  Logic Analyzer ISR triggered by an incoming signal edge on GPIO.
-	*					Stores time of trigger and starts posttrigger time (TIM4) in order to sample the rest.
-  */
 void EXTI9_5_IRQHandler(void){
 	TIM_PostTrigger_SoftwareStart();
 	logAnlys.triggerPointer = hdma_tim1_up.Instance->CNDTR;	
 	LOG_ANLYS_handle_interrupt(EXTI->PR & 0x3fc0); //mask the pending requests to get interrupts from selected pins only
 }
 
-/**
-  * @brief  Logic Analyzer callback called from EXTI9_5_IRQHandler or EXTI15_10_IRQHandler.
-	*					Distinguishes the source of the trigger.
-  */
 void LOG_ANLYS_handle_interrupt(uint32_t pr){
 	uint8_t isRightPin = 0;
 	
@@ -258,9 +246,7 @@ void LOG_ANLYS_handle_interrupt(uint32_t pr){
 
 #endif //USE_LOG_ANLYS
 
-/**
-  * @brief  ISR used by Counter and Logic Analyzer.
-  */
+
 #if defined(USE_COUNTER) || defined(USE_LOG_ANLYS)
 /**
 * @brief This function handles TIM4 global interrupt.

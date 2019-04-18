@@ -1,9 +1,9 @@
 /**
   ******************************************************************************
-  * @file		tim.h
-  * @date   18/01/2015 10:00:31
-  * @brief	This file provides code for the configuration
-  *         of the TIM instances.
+  * File Name          : TIM.h
+  * Date               : 18/01/2015 10:00:31
+  * Description        : This file provides code for the configuration
+  *                      of the TIM instances.
   ******************************************************************************
   *
   * COPYRIGHT(c) 2015 STMicroelectronics
@@ -42,71 +42,31 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f3xx_hal.h"
 	 
-/** @addtogroup Timers
-  * @{
-  */
-	 
 uint8_t TIM_Reconfig(uint32_t samplingFreq,TIM_HandleTypeDef* htim_base,uint32_t* realFreq);
-
-/** @addtogroup Scope
-  * @{
-  */	 
-/** @defgroup Scope_TIM_Prototypes Scope Timers Function Prototypes.
-  * @{
-  */	 
+	 
 #ifdef USE_SCOPE
 uint8_t TIM_Reconfig_scope(uint32_t samplingFreq,uint32_t* realFreq);
 #endif //USE_SCOPE
-/**
-  * @}
-  */
-/**
-  * @}
-  */	 
-
-/** @defgroup Arbitrary_DAC_PWM_TIM_Prototypes Arbitrary DAC and PWM Timers Function Prototypes
-  * @{
-  */	 
+	 
 #if defined(USE_GEN) || defined(USE_GEN_PWM)
 uint8_t TIM_Reconfig_gen(uint32_t samplingFreq,uint8_t chan,uint32_t* realFreq);
 #endif //USE_GEN || USE_GEN_PWM
-/**
-  * @}
-  */	 
-
-/** @defgroup Synch_PWM_TIM_Prototypes Synchronized PWM Timers Function Prototypes.
-  * @{
-  */	
+	 
+	 
 #ifdef USE_SYNC_PWM
   #define __STEP_MODE_ENABLE()  		TIM8->CR1 |= TIM_CR1_OPM
 	#define __STEP_MODE_DISABLE()  		TIM8->CR1 &= ~TIM_CR1_OPM
 #endif //USE_SYNC_PWM
-/**
-  * @}
-  */	
 
-/** @addtogroup Scope
-  * @{
-  */	
-/** @addtogroup Scope_TIM_Prototypes Scope Timers Function Prototypes
-  * @{
-  */
+	 
 #ifdef USE_SCOPE
 void TIMScopeEnable(void);
 void TIMScopeDisable(void);
 void MX_TIM15_Init(void);
 uint32_t getMaxScopeSamplingFreq(uint8_t ADCRes);
 #endif //USE_SCOPE
-/**
-  * @}
-  */	
-/**
-  * @}
-  */		
 
-/** @addtogroup Arbitrary_DAC_PWM_TIM_Prototypes
-  * @{
-  */
+
 #if defined(USE_GEN) || defined(USE_GEN_PWM)
 void TIMGenEnable(void);
 void TIMGenDisable(void);
@@ -117,13 +77,8 @@ void TIMGenInit(void);
 void TIMGenPwmDeinit(void);
 void TIMGenDacDeinit(void);
 #endif //USE_GEN || USE_GEN_PWM
-/**
-  * @}
-  */
 
-/** @defgroup Arbitrary_PWM_TIM_Prototypes Arbitrary PWM Timers Function Prototypes
-  * @{
-  */
+
 #ifdef USE_GEN_PWM
 /* PWM generatin timers */
 static void MX_TIM1_GEN_PWM_Init(void);
@@ -138,18 +93,13 @@ void TIM_GEN_PWM_ARR_Config(uint16_t arrVal, uint8_t chan);
 void TIMGenPwmInit(void);
 
 /* TIM1 and TIM3 enable/disable */
-//void TIMGenPWMEnable(void);
-//void TIMGenPWMDisable(void);
+void TIMGenPWMEnable(void);
+void TIMGenPWMDisable(void);
 void PWMGeneratingEnable(void);
 void PWMGeneratingDisable(void);
 #endif //USE_GEN_PWM
-/**
-  * @}
-  */
 
-/** @addtogroup Synch_PWM_TIM_Prototypes
-  * @{
-  */	
+
 #ifdef USE_SYNC_PWM
 static void MX_TIM8_SYNC_PWM_Init(void);
 void TIM_SYNC_PWM_Init(void);
@@ -164,13 +114,8 @@ void TIM_ARR_PSC_Reconfig(uint32_t arrPsc);
 void TIM_SYNC_PWM_StepMode_Enable(void);
 void TIM_SYNC_PWM_StepMode_Disable(void);
 #endif // USE_SYNC_PWM
-/**
-  * @}
-  */
 
-/** @addtogroup Logic_Analyzer_TIM_Prototypes
-  * @{
-  */
+
 #ifdef USE_LOG_ANLYS
 extern DMA_HandleTypeDef hdma_tim4_up;
 
@@ -191,16 +136,11 @@ void GPIO_DisableIRQ(void);
 void TIM_PostTrigger_SoftwareStart(void);
 
 void LOG_ANLYS_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
-void LOG_ANLYS_TriggerEventOccured(void);
+void LOG_ANLYS_TriggerEventOccuredCallback(void);
 void TIM_SamplingStop(void);
 #endif //USE_LOG_ANLYS
-/**
-  * @}
-  */
 
-/** @defgroup Counter_TIM_Prototypes Counter Timers Function Prototypes
-  * @{
-  */
+
 #ifdef USE_COUNTER
 typedef enum{
 	false = 0,
@@ -284,17 +224,19 @@ extern void COUNTER_ETR_DMA_CpltCallback(DMA_HandleTypeDef *dmah);
 extern void COUNTER_IC1_DMA_CpltCallback(DMA_HandleTypeDef *dmah);
 extern void COUNTER_IC2_DMA_CpltCallback(DMA_HandleTypeDef *dmah);
 #endif // USE_COUNTER
-/**
-  * @}
-  */
-	 
-/**
-  * @}
-  */	 
+
 	 
 #ifdef __cplusplus
 }
 #endif
 #endif /*__ tim_H */
+
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

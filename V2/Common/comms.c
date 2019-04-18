@@ -1,4 +1,4 @@
-/**
+/*
   *****************************************************************************
   * @file    comms.c
   * @author  Y3288231
@@ -23,13 +23,9 @@
 #include "usart.h"
 #include "gpio.h"
 
-/** @defgroup Comms Comms
-  * @{
-  */
 
-/** @defgroup Comms_Private_Variables Comms Private Variables
-  * @{
-  */
+
+// External variables definitions =============================================
 xQueueHandle messageQueue;
 static xSemaphoreHandle commsMutex;
 static uint8_t commBuffMem[COMM_BUFFER_SIZE];
@@ -37,14 +33,6 @@ static uint8_t commBuffMem[COMM_BUFFER_SIZE];
 static commBuffer comm;
 //commBuffer commTX;
 char cntMessage[30];
-uint8_t volatile testArray[100];	
-/**
-  * @}
-  */
-	
-/** @defgroup Comms_Private_Prototypes Comms Private Function Prototypes
-  * @{
-  */	
 void sendSystConf(void);
 void sendCommsConf(void);
 void sendScopeConf(void);
@@ -57,13 +45,10 @@ void sendLogAnlysConf(void);
 void sendShieldPresence(void);
 void sendSystemVersion(void);
 void assertPins(void);
-/**
-  * @}
-  */
 
-/** @defgroup Comms_Function_Definitions Comms Function Definitions
-  * @{
-  */
+uint8_t volatile testArray[100];	
+
+// Function definitions =======================================================
 //portTASK_FUNCTION(vPrintTask, pvParameters) {
 void LLCommTask(void const *argument){
 
@@ -573,6 +558,7 @@ uint8_t commInputByte(uint8_t chr){
 	}
 }
 
+
 uint16_t getBytesAvailable(){
 	uint16_t result; 
 	if(comm.state==BUFF_FULL){
@@ -585,11 +571,7 @@ uint16_t getBytesAvailable(){
 	}
 }
 
-/**
-  * @brief  Send System configuration.
-  * @param  None
-  * @retval None
-  */
+
 void sendSystConf(){
 	commsSendString("SYST");
 	commsSendUint32(HAL_RCC_GetHCLKFreq());  //CCLK
@@ -597,11 +579,6 @@ void sendSystConf(){
 	commsSendString(MCU);
 }
 
-/**
-  * @brief  Send Communication configuration.
-  * @param  None
-  * @retval None
-  */
 void sendCommsConf(){
 	commsSendString("COMM");
 	commsSendUint32(COMM_BUFFER_SIZE);
@@ -615,11 +592,6 @@ void sendCommsConf(){
 	#endif
 }
 
-/**
-  * @brief  Send System version.
-  * @param  None
-  * @retval None
-  */
 void sendSystemVersion(){
 	commsSendString("VER_");
 	commsSendString("Instrulab FW"); 	//12
@@ -638,11 +610,6 @@ void sendSystemVersion(){
 }
 
 #ifdef USE_SCOPE
-/**
-  * @brief  Send Scope configuration.
-  * @param  None
-  * @retval None
-  */
 void sendScopeConf(){
 	uint8_t i;
 	commsSendString("OSCP");
@@ -671,13 +638,7 @@ void sendScopeConf(){
 }
 #endif //USE_SCOPE
 
-
 #ifdef USE_COUNTER
-/**
-  * @brief  Send Counter configuration.
-  * @param  None
-  * @retval None
-  */
 void sendCounterConf(){
 	commsSendString("CNT_");
 	commsSendUint32(CNT_COUNTER_PERIPH_CLOCK);
@@ -698,13 +659,7 @@ void sendCounterConf(){
 }
 #endif //USE_COUNTER
 
-
 #ifdef USE_SCOPE
-/**
-  * @brief  Send Scope input channels.
-  * @param  None
-  * @retval None
-  */
 void sendScopeInputs(){
 	uint8_t i,j;
 	commsSendString("INP_");
@@ -749,13 +704,7 @@ void sendScopeInputs(){
 }
 #endif //USE_SCOPE
 
-
 #ifdef USE_GEN
-/**
-  * @brief  Send Arb. DAC Generator configuration.
-  * @param  None
-  * @retval None
-  */
 void sendGenConf(){
 	uint8_t i;
 	commsSendString("GEN_");
@@ -792,11 +741,6 @@ void sendGenConf(){
 
 
 #ifdef USE_GEN_PWM
-/**
-  * @brief  Send Arb. PWM Generator configuration.
-  * @param  None
-  * @retval None
-  */
 void sendGenPwmConf(void){
 	uint8_t i;
 	commsSendString("GENP");		
@@ -814,13 +758,7 @@ void sendGenPwmConf(void){
 }
 #endif //USE_GEN_PWM
 
-
 #ifdef USE_SYNC_PWM
-/**
-  * @brief  Send Synch. PWM Generator configuration.
-  * @param  None
-  * @retval None
-  */
 void sendSyncPwmConf(void)
 {
 	uint8_t i;
@@ -888,13 +826,7 @@ void sendLogAnlysConf(void)
 }
 #endif //USE_LOG_ANLYS
 
-
 #ifdef USE_SHIELD
-/**
-  * @brief  Send info whether the shield is connected.
-  * @param  None
-  * @retval None
-  */
 void sendShieldPresence(void){
 	if(isScopeShieldConnected()){
 		commsSendString(STR_ACK);
@@ -905,11 +837,9 @@ void sendShieldPresence(void){
 
 #endif //USE_SHIELD
 
-/**
-  * @}
-  */	
+	
 
-/**
-  * @}
-  */
+
+
+
 

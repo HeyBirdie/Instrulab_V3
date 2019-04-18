@@ -1,8 +1,8 @@
 /**
   ******************************************************************************
-  * @file          : usart.c
-  * @date          : 18/01/2015 10:00:31
-  * @brief         : This file provides code for the configuration
+  * File Name          : USART.c
+  * Date               : 18/01/2015 10:00:31
+  * Description        : This file provides code for the configuration
   *                      of the USART instances.
   ******************************************************************************
   *

@@ -1,8 +1,8 @@
 /**
   ******************************************************************************
-  * @file           : gpio.c
-  * @date           : 18/01/2015 10:00:29
-  * @brief          : This file provides code for the configuration
+  * File Name          : gpio.c
+  * Date               : 18/01/2015 10:00:29
+  * Description        : This file provides code for the configuration
   *                      of all used GPIO pins.
   ******************************************************************************
   *

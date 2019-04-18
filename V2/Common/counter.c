@@ -1,4 +1,4 @@
-/**
+/*
   *****************************************************************************
   * @file    counter.c
   * @author  HeyBirdie
@@ -17,32 +17,23 @@
 #include "stdlib.h"
 #include "portmacro.h"
 
-/** @defgroup Counter Counter
-  * @{
-  */
 
-/** @defgroup Counter_Private_Variables Counter Private Variables
-  * @{
-  */
+// External variables definitions =============================================
 xQueueHandle counterMessageQueue;
 xSemaphoreHandle counterMutex;
 portTickType xStartTime;
 
 volatile counterTypeDef counter;
-/**
-  * @}
-  */
+uint32_t startTime = 0;
 
 /* Obsolete variables */
 static uint32_t ic1PassNum = 1;
 static uint32_t ic2PassNum = 1;
 
-/** @defgroup Counter_Function_Definitions Counter Function Definitions
-  * @{
-  */
+// Function definitions ========================================================
 /**
   * @brief  Counter task function.
-  * 				Task is getting messages from other tasks and takes care about counter functions.
+  * task is getting messages from other tasks and takes care about counter functions
   * @param  Task handler, parameters pointer
   * @retval None
   */
@@ -87,13 +78,6 @@ void CounterTask(void const *argument)
 /* ************************************************************************************** */
 /* -------------------------------- Counter basic settings ------------------------------ */
 /* ************************************************************************************** */
-/**
-  * @brief  Counter mode initialization function.
-	*					Sends the request to the queue of Counter task. 
-	*					Called from parser (cmd_parser.c).
-	* @param  mode:	ETR - direct method, IC - reciprocal, TI - time interval, REF - measuring with reference
-  * @retval None
-  */
 void counterSetMode(uint8_t mode){
 	switch(mode){
 		case ETR:
@@ -111,35 +95,14 @@ void counterSetMode(uint8_t mode){
 	}
 }
 
-/**
-  * @brief  Counter start request.
-	*					Sends the request to the queue of Counter task. 
-	*					Called from parser (cmd_parser.c).
-	* @param  None
-  * @retval None
-  */
 void counterSendStart(void){	
 	xQueueSendToBack(counterMessageQueue, "5StartCounter", portMAX_DELAY);
 }
 
-/**
-  * @brief  Counter stop request.
-	*					Sends the request to the queue of Counter task. 
-	*					Called from parser (cmd_parser.c).
-	* @param  None
-  * @retval None
-  */
 void counterSendStop(void){	
 	xQueueSendToBack(counterMessageQueue, "6StopCounter", portMAX_DELAY);
 }
 
-/**
-  * @brief  Counter deinitialization request.
-	*					Sends the request to the queue of Counter task. 
-	*					Called from parser (cmd_parser.c).
-	* @param  None
-  * @retval None
-  */
 void counterDeinit(void){
 	xQueueSendToBack(counterMessageQueue, "7DeinitCounter", portMAX_DELAY);
 }
@@ -147,61 +110,30 @@ void counterDeinit(void){
 /* ************************************************************************************** */
 /* ---------------------------- Counter INIT DEINIT functions --------------------------- */
 /* ************************************************************************************** */
-/**
-  * @brief  Counter direct (External TRigger) mode initialization function.
-	*					Called from Counter task.
-	* @param  None
-  * @retval None
-  */
 void counterInitETR(void){
 	counter_deinit();
 	counter.state = COUNTER_ETR;
 	TIM_counter_etr_init();
 }
 
-/**
-  * @brief  Counter reciprocal (Input Capture) mode initialization function.
-	*					Called from Counter task.
-	* @param  None
-  * @retval None
-  */
 void counterInitIC(void){
 	counter_deinit();
 	counter.state = COUNTER_IC;
 	TIM_counter_ic_init();
 }
 
-/**
-  * @brief  Counter reference measurement mode initialization function. 
-	*					Allows measuring frequency with precise external clock source.
-	*					Called from Counter task.
-	* @param  None
-  * @retval None
-  */
 void counterInitREF(void){
 	counter_deinit();
 	counter.state = COUNTER_REF;
 	TIM_counter_ref_init();
 }
 
-/**
-  * @brief  Counter Time Interval mode initialization function. 
-	*					Allows measuring time between two events (rising/falling edge) on single or two channels.
-	*					Called from Counter task.
-	* @param  None
-  * @retval None
-  */
 void counterInitTI(void){
 	counter_deinit();
 	counter.state = COUNTER_TI;
 	TIM_counter_ti_init();
 }
 
-/**
-  * @brief  Counter deinitialization function.
-	* @param  None
-  * @retval None
-  */
 void counter_deinit(void){
 	switch(counter.state){
 		case COUNTER_ETR:
@@ -225,12 +157,6 @@ void counter_deinit(void){
 /* ************************************************************************************** */
 /* ---------------------------- Counter START STOP functions ---------------------------- */
 /* ************************************************************************************** */
-/**
-  * @brief  Counter start function.
-	*					Called from Counter task.
-	* @param  None
-  * @retval None
-  */
 void counterStart(void){
 	switch(counter.state){
 		case COUNTER_ETR:
@@ -251,12 +177,6 @@ void counterStart(void){
 	}	
 }
 
-/**
-  * @brief  Counter stop function.
-	*					Called from Counter task.
-	* @param  None
-  * @retval None
-  */
 void counterStop(void){
 	switch(counter.state){
 		case COUNTER_ETR:
@@ -278,8 +198,8 @@ void counterStop(void){
 }
 
 /**
-  * @brief  Setter for time gating of direct counting (ETR).
-	* @param  gateTime: 100, 500, 1000, 5000, 10000 in milliseconds
+  * @brief  Setter for counter ETR time gating
+	* @param  gateTime - units [ms]: 100, 500, 1000, 5000, 10000
   * @retval None
   */
 void counterSetEtrGate(uint16_t gateTime){
@@ -288,9 +208,9 @@ void counterSetEtrGate(uint16_t gateTime){
 }
 
 /**
-  * @brief  Setter for measuring with reference (REF). The PSC and REF numbers to be multiplied (number of REF clock ticks to be counted).
-						Note that REF mode uses ETR struct, some ETR functions...
-	* @param  psc: 16-bit value for timer PSC register.
+  * @brief  Setters for REF counter (TIM4) - PSC and REF numbers to be multiplied (number of REF clock ticks to be counted).
+						Note the REF mode uses ETR struct, some ETR functions...
+	* @param  buffer - psc or arr: range between 1 - 65536
   * @retval None
   */
 void counterSetRefPsc(uint16_t psc){	
@@ -298,19 +218,13 @@ void counterSetRefPsc(uint16_t psc){
 	TIM_ARR_PSC_Config(counter.counterEtr.arr, counter.counterEtr.psc);		
 }
 
-/**
-  * @brief  Setter for measuring with reference (REF).
-						Note that REF mode uses ETR struct, some ETR functions...
-	* @param  psc: 16-bit value for timer ARR register.
-  * @retval None
-  */
 void counterSetRefArr(uint16_t arr){		
 	counter.counterEtr.arr = arr - 1;
 	TIM_ARR_PSC_Config(counter.counterEtr.arr, counter.counterEtr.psc);			
 }
 
 /**
-  * @brief  Setter for counter IC buffer size (number of edges counted) on channel 1.
+  * @brief  Setters for counters' IC buffer sizes (number of edges counted)
 	* @param  buffer: range between 2 - xxx (max. value depends on free memory availability)
   * @retval None
   */
@@ -321,11 +235,6 @@ void counterSetIc1SampleCount(uint16_t buffer){
 	xSemaphoreGiveRecursive(counterMutex);
 }
 
-/**
-  * @brief  Setter for counter IC buffer size (number of edges counted) on channel 2.
-	* @param  buffer: range between 2 - xxx (max. value depends on free memory availability)
-  * @retval None
-  */
 void counterSetIc2SampleCount(uint16_t buffer){
 	xSemaphoreTakeRecursive(counterMutex, portMAX_DELAY);	
 	counter.counterIc.ic2BufferSize = buffer + 1;	
@@ -334,7 +243,7 @@ void counterSetIc2SampleCount(uint16_t buffer){
 }
 
 /**
-  * @brief  Setter for counter IC signal prescaler on channel 1.
+  * @brief  Setters for counters' IC signal prescalers
 	* @param  presc: 1, 2, 4, 8
   * @retval None
   */
@@ -343,163 +252,96 @@ void counterSetIc1Prescaler(uint16_t presc){
 	DMA_Restart(&hdma_tim2_ch1);
 }
 
-/**
-  * @brief  Setter for counter IC signal prescaler on channel 2.
-	* @param  presc: 1, 2, 4, 8
-  * @retval None
-  */
 void counterSetIc2Prescaler(uint16_t presc){		
 	TIM_IC2_PSC_Config(presc);	
 	DMA_Restart(&hdma_tim2_ch2_ch4);	
 }
 
 /**
-  * @brief  Init duty cycle measuring during reciprocal (IC) mode on channel 1.
+  * @brief  Enable/Disable Duty Cycle measuring under input capture (IC) mode.
+						Used for decision purposes.
 	* @param  None
   * @retval None
   */
+
+/* Cahnnel 1 */
 void counterIc1DutyCycleInit(void){	
 	counter.icDutyCycle = DUTY_CYCLE_CH1_ENABLED;
 	TIM_IC_DutyCycle_Init();	
 }
 
-/**
-  * @brief  Deinit duty cycle measuring during reciprocal (IC) mode on channel 1.
-	* @param  None
-  * @retval None
-  */
 void counterIc1DutyCycleDeinit(void){	
 	TIM_IC_DutyCycle_Deinit();		
 	counter.icDutyCycle = DUTY_CYCLE_DISABLED;
 }
 
-/**
-  * @brief  Init duty cycle measuring during reciprocal (IC) mode on channel 2.
-	* @param  None
-  * @retval None
-  */
+/* Channel 2 */
 void counterIc2DutyCycleInit(void){	
 	counter.icDutyCycle = DUTY_CYCLE_CH2_ENABLED;
 	TIM_IC_DutyCycle_Init();	
 }
 
-/**
-  * @brief  Deinit duty cycle measuring during reciprocal (IC) mode on channel 2.
-	* @param  None
-  * @retval None
-  */
 void counterIc2DutyCycleDeinit(void){		
 	TIM_IC_DutyCycle_Deinit();		
 	counter.icDutyCycle = DUTY_CYCLE_DISABLED;
 }
 
-/**
-  * @brief  Start duty cycle measurement on channel 1 or 2.
-	* @param  None
-  * @retval None
-  */
+/* Common for both channels */
 void counterIcDutyCycleEnable(void){
 	TIM_IC_DutyCycle_Start();
 }
 
-/**
-  * @brief  Stop duty cycle measurement on channel 1 or 2.
-	* @param  None
-  * @retval None
-  */
 void counterIcDutyCycleDisable(void){
 	TIM_IC_DutyCycle_Stop();
 }
 
 /**
-	* @brief  Configures the trigger edge sensitivity to rising/falling. 
-	*					For IC and TI modes on channel 1.					
-	* @param  None
-  * @retval None 
+	* @brief  Functions used to select active adges (events) - dedicated to Duty Cycle 
+						measurement configuration of IC and to events of TI mode. 						
+	* @param  none
+  * @retval none 
   */
 void counterSetIcTi1_RisingFalling(void){	
 	TIM_IC1_RisingFalling();	
 	DMA_Restart(&hdma_tim2_ch1);
 }	
 
-/**
-	* @brief  Configures the trigger edge sensitivity to rising.
-	*					For IC and TI modes on channel 1.					
-	* @param  None
-  * @retval None 
-  */
 void counterSetIcTi1_Rising(void){
 	counter.eventChan1 = EVENT_RISING;
 	TIM_IC1_RisingOnly();	
 }	
 
-/**
-	* @brief  Configures the trigger edge sensitivity to falling.
-	*					For IC and TI modes on channel 1.					
-	* @param  None
-  * @retval None 
-  */
 void counterSetIcTi1_Falling(void){
 	counter.eventChan1 = EVENT_FALLING;
 	TIM_IC1_FallingOnly();	
 }
 
-/**
-	* @brief  Configures the trigger edge sensitivity to rising/falling.
-	*					For IC and TI modes on channel 2.					
-	* @param  None
-  * @retval None 
-  */
 void counterSetIcTi2_RisingFalling(void){
 	TIM_IC2_RisingFalling();
 	DMA_Restart(&hdma_tim2_ch2_ch4);	
 }	
 
-/**
-	* @brief  Configures the trigger edge sensitivity to rising.
-	*					For IC and TI modes on channel 2.					
-	* @param  None
-  * @retval None 
-  */
 void counterSetIcTi2_Rising(void){
 	counter.eventChan2 = EVENT_RISING;
 	TIM_IC2_RisingOnly();	
 }	
 
-/**
-	* @brief  Configures the trigger edge sensitivity to falling.
-	*					For IC and TI modes on channel 2.					
-	* @param  None
-  * @retval None 
-  */
 void counterSetIcTi2_Falling(void){
 	counter.eventChan2 = EVENT_FALLING;
 	TIM_IC2_FallingOnly();	
 }
 
-
-/**
-	* @brief  Configures sequence of events AB to be measured. E.g. setting event A on channel 1 and event B on channel 2 and sequence AB then we can measure time between AB. 
-	*					For TI mode only.			
-	* @param  None
-  * @retval None 
-  */
 void counterSetTiSequence_AB(void){
 	TIM_TI_Sequence_AB();
 }
 
-/**
-	* @brief  Configures sequence of events BA to be measured. E.g. setting event A on channel 2 and event B on channel 1 or vice versa and sequence BA, we can measure time between BA. 
-	*					For TI mode only.			
-	* @param  None
-  * @retval None 
-  */
 void counterSetTiSequence_BA(void){
 	TIM_TI_Sequence_BA();
 }
 
 /**
-  * @brief  Function configuring event sequence dependence - refer to tim.c TIM_TI_Start() for more information.
+  * @brief  Function configuring event sequence dependence - refer to tim.c TIM_TI_Start()
+						for more information.
 	* @param  None
   * @retval None
   */
@@ -512,8 +354,8 @@ void counterSetTiMode_Dependent(void){
 } 
 
 /**
-  * @brief  Setter for counter TI measurement timeout.
-	* @param  timeout: 500 - 28000 in milliseconds
+  * @brief  Setter for counter TI timeout
+	* @param  timeout: 500 - 28000 [ms]
   * @retval None
   */
 void counterSetTiTimeout(uint32_t timeout){
@@ -524,8 +366,8 @@ void counterSetTiTimeout(uint32_t timeout){
 /* ----------------------------- Counter callback functions ----------------------------- */
 /* ************************************************************************************** */
 /**
-  * @brief  This function is executed in case of DMA transfer complete event of direct (ETR) or reference (REF) mode.
-	*					The DMA transfer complete event is triggered after TIM4 gate time elapses.
+  * @brief  This function is executed in case of DMA transfer complete event of ETR or REF mode.
+	*					DMA transfer complete event is triggered after TIM4 gate time elapse.
   * @param  Pointer to DMA handle structure.
   * @retval None
   * @state  VERY USED
@@ -540,7 +382,6 @@ void COUNTER_ETR_DMA_CpltCallback(DMA_HandleTypeDef *dmah)
 		counter.counterEtr.etrp = TIM_ETPS_GetPrescaler();
 		double gateFreq = ((double)tim4clk / (double)((counter.counterEtr.arr + 1) * (counter.counterEtr.psc + 1)));			/* TIM4 gating frequency */	
 		counter.counterEtr.freq = ((double)counter.counterEtr.buffer * gateFreq * counter.counterEtr.etrp);								/* Sampled frequency */
-		/* Configure the ETR input prescaler */
 		TIM_ETRP_Config(counter.counterEtr.freq);	
 		
 		if(counter.sampleCntChange != SAMPLE_COUNT_CHANGED){
@@ -731,8 +572,8 @@ void counterIcDutyCycleProcess(void)
 /* ----------------------------- Counter specific functions ----------------------------- */
 /* ************************************************************************************** */
 /**
-	* @brief  This function configures ARR and PSC registers of 16b-it timer if running on 72 MHz. 	
-	* @param  gateTime: gate time in milliseconds
+	* @brief  This function configures ARR and PSC registers of 16bit timer if running on 72 MHz. 	
+	* @param  gateTime: gate time in [ms] 	
   * @retval none 
   */
 void counterGateConfig(uint16_t gateTime)
@@ -809,9 +650,7 @@ void counterIcTiSetDefault(void)
 }
 
 
-/** @defgroup Counter OBSOLETE Functions NOT USED
-  * @{
-  */
+
 /* ************************************************************************************** */
 /* --------------------------- Obsolete functions - not used ---------------------------- */
 /* ************************************************************************************** */
@@ -913,16 +752,5 @@ void counterIc2BufferConfig(uint16_t ic2buffSize)
 	}
 }
 
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
-
 	#endif //USE_COUNTER
 
-/**
-  * @}
-  */

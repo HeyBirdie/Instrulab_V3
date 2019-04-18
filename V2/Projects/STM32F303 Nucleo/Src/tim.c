@@ -1,8 +1,8 @@
 /**
   ******************************************************************************
-  * @file           		: tim.c
-  * @date               : 18/01/2015 10:00:31
-  * @brief			        : This file provides code for the configuration
+  * File Name          : TIM.c
+  * Date               : 18/01/2015 10:00:31
+  * Description        : This file provides code for the configuration
   *                      of the TIM instances.
   ******************************************************************************
   *
@@ -46,29 +46,11 @@
 #include "task.h"
 #include "semphr.h"
 
-/** @defgroup Timers Timers
-  * @{
-  */
 
-/** @defgroup Scope Scope
-  * @{
-  */
-/** @defgroup Scope_Variables Scope Variables
-  * @{
-  */
 #ifdef USE_SCOPE	
 TIM_HandleTypeDef htim_scope;
 #endif //USE_SCOPE
-/**
-  * @}
-  */
-/**
-  * @}
-  */
-
-/** @defgroup Arbitrary_DAC_PWM_Variables Arbitrary DAC & PWM Generator Variables
-  * @{
-  */	
+	
 #if defined(USE_GEN) || defined(USE_GEN_PWM)
 TIM_HandleTypeDef htim6;
 TIM_HandleTypeDef htim7;
@@ -79,26 +61,14 @@ TIM_HandleTypeDef htim7;
 	DMA_HandleTypeDef hdma_tim7_up;
 	#endif //USE_GEN_PWM
 #endif // USE_GEN || USE_GEN_PWM
-/**
-  * @}
-  */
 
-/** @defgroup Logic_Analyzer_Variables LA Variables
-  * @{
-  */
 #ifdef USE_LOG_ANLYS
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim4;
 DMA_HandleTypeDef hdma_tim1_up;
 DMA_HandleTypeDef hdma_tim4_up;
 #endif //USE_LOG_ANLYS
-/**
-  * @}
-  */
 
-/** @defgroup Synch_PWM_Variables Synchronized PWM Variables
-  * @{
-  */
 #ifdef USE_SYNC_PWM
 TIM_HandleTypeDef htim8;
 DMA_HandleTypeDef hdma_tim8_ch1;
@@ -106,13 +76,7 @@ DMA_HandleTypeDef hdma_tim8_ch2;
 DMA_HandleTypeDef hdma_tim8_ch3_up;
 DMA_HandleTypeDef hdma_tim8_ch4_trig_com;
 #endif // USE_SYNC_PWM
-/**
-  * @}
-  */
 
-/** @defgroup Counter_Variables Counter Variables
-  * @{
-  */
 #ifdef USE_COUNTER
 uint32_t tim2clk, tim4clk;
 extern portTickType xStartTime;
@@ -131,16 +95,8 @@ void COUNTER_ETR_DMA_CpltCallback(DMA_HandleTypeDef *dmah);
 void COUNTER_IC1_DMA_CpltCallback(DMA_HandleTypeDef *dmah);
 void COUNTER_IC2_DMA_CpltCallback(DMA_HandleTypeDef *dmah);
 #endif //USE_COUNTER
-/**
-  * @}
-  */		
-	
-/** @addtogroup Scope
-  * @{
-  */
-/** @defgroup Scope_TIM_Inits Scope TIMers Initialization Functions
-  * @{
-  */	
+			
+			
 #ifdef USE_SCOPE
 /* TIM15 init function */
 void MX_TIM15_Init(void)
@@ -164,22 +120,10 @@ void MX_TIM15_Init(void)
 
 }
 #endif //USE_SCOPE
-/**
-  * @}
-  */		
-/**
-  * @}
-  */
+	
 
-/** @defgroup Timers_Init_Functions Timers Initialization Functions Section.
-  * @{
-  */
-
-/** @defgroup Arbitrary_DAC_TIM_Inits Arbitrary DAC Generator TIMers Initialization Functions
-  * @{
-  */	
 /**             
-  * @brief  TIM6 Configuration.
+  * @brief  TIM6 Configuration
   * @note   TIM6 configuration is based on APB1 frequency
   * @note   TIM6 Update event occurs each TIM6CLK/256   
   * @param  None
@@ -213,7 +157,7 @@ void MX_TIM6_Init(void)
 
 
 /**             
-  * @brief  TIM6 Configuration.
+  * @brief  TIM6 Configuration
   * @note   TIM6 configuration is based on APB1 frequency
   * @note   TIM6 Update event occurs each TIM6CLK/256   
   * @param  None
@@ -244,22 +188,12 @@ void MX_TIM7_Init(void)
   //HAL_TIM_Base_Start(&htim6);
 }
 	#endif //USE_GEN
-/**
-  * @}
-  */
+
 
 /* ************************************************************************************** */
 /* ------------------------------- START OF PWM GENERATOR ------------------------------- */
-/** @defgroup Arbitrary_PWM_TIM_Inits Arbitrary PWM Generator TIMers Initialization Functions
-  * @{
-  */	
 #ifdef USE_GEN_PWM
-/**             
-  * @brief  TIM1 Configuration.
-  * @note   TIM1 generates PWM on a given channel.
-  * @param  None
-  * @retval None
-  */
+/* TIM1 PWM init function */
 static void MX_TIM1_GEN_PWM_Init(void)
 {
   TIM_ClockConfigTypeDef sClockSourceConfig;
@@ -312,12 +246,8 @@ static void MX_TIM1_GEN_PWM_Init(void)
   HAL_TIM_Base_MspInit(&htim1);
 }
 
-/**             
-  * @brief  TIM3 Configuration.
-  * @note   TIM3 generates PWM on a given channel.
-  * @param  None
-  * @retval None
-  */
+
+/* TIM3 PWM init function */
 static void MX_TIM3_GEN_PWM_Init(void)
 {
   TIM_ClockConfigTypeDef sClockSourceConfig;
@@ -350,14 +280,8 @@ static void MX_TIM3_GEN_PWM_Init(void)
   HAL_TIM_Base_MspInit(&htim3);
 }
 
-/**             
-  * @brief  TIM6 Configuration for arbitrary DAC & PWM generators.
-	* @note   For PWM gen: TIM6 handles the periodic change of PWM duty cycle using DMA -> Memory to Capture/Compare reg. transfers.
-	*					The DMA is triggered by predefined frequency in order to tranfer data from RAM (arbitrary waveform) to TIM1 CC reg.
-	* @note 	For DAC gen: TIM6 handles the periodic change of DAC value acording to predefined arbitrary waveform.
-  * @param  None
-  * @retval None
-  */
+
+/* TIM6 handling DMA init function */
 static void MX_TIM6_GEN_PWM_Init(void)
 {
   TIM_MasterConfigTypeDef sMasterConfig;
@@ -374,14 +298,8 @@ static void MX_TIM6_GEN_PWM_Init(void)
   HAL_TIMEx_MasterConfigSynchronization(&htim6, &sMasterConfig);
 }
 
-/**             
-  * @brief  TIM7 Configuration for arbitrary DAC & PWM generators.
-	* @note   For PWM gen: TIM7 handles the periodic change of PWM duty cycle using DMA -> Memory to Capture/Compare reg. transfers.
-	*					The DMA is triggered by predefined frequency in order to tranfer data from RAM (arbitrary waveform) to TIM3 CC reg.
-	* @note 	For DAC gen: TIM7 handles the periodic change of DAC value acording to predefined arbitrary waveform.
-  * @param  None
-  * @retval None
-  */
+
+/* TIM7 handling DMA init function */
 static void MX_TIM7_GEN_PWM_Init(void)
 {
   TIM_MasterConfigTypeDef sMasterConfig;
@@ -399,25 +317,14 @@ static void MX_TIM7_GEN_PWM_Init(void)
 }
 
 #endif //USE_GEN_PWM
-/**
-  * @}
-  */
 /* -------------------------------- END OF PWM GENERATOR -------------------------------- */
 /* ************************************************************************************** */
 
 
 /* ************************************************************************************** */
 /* ---------------------------- START OF SYNC PWM GENERATOR ----------------------------- */
-/** @defgroup Synch_PWM_TIM_Inits Synchronizes PWM Generator TIMers Initialization Functions
-  * @{
-  */	
 #ifdef USE_SYNC_PWM
-/**             
-  * @brief  TIM8 Configuration.
-	* @note   Configures 4 channels for synchronized PWM outputs handled by one timer.
-  * @param  None
-  * @retval None
-  */
+/* TIM8 init function using to generate synchronized PWMs */
 static void MX_TIM8_SYNC_PWM_Init(void)
 {
   TIM_ClockConfigTypeDef sClockSourceConfig;
@@ -481,28 +388,15 @@ static void MX_TIM8_SYNC_PWM_Init(void)
 //	TIM8->DIER |= TIM_DIER_CC4DE;
 }
 #endif // USE_SYNC_PWM
-/**
-  * @}
-  */
 /* ----------------------------- END OF SYNC PWM GENERATOR ------------------------------ */
 /* ************************************************************************************** */
 
 
 /* ************************************************************************************** */
 /* ------------------------------ START OF LOGIC ANALYZER ------------------------------- */
-/** @defgroup Logic_Analyzer_TIM_Inits LA TIMers Initialization Functions
-  * @{
-  */	
 #ifdef USE_LOG_ANLYS
 /* TIM1 init function. TIM1 clocked on 144 MHz (PLL as source) */
 /* TIM1 (DMA transfer trigger) is HW stopped by TIM4 (posttrigger) update event (overflow). */
-/**             
-  * @brief  TIM1 Configuration.
-	* @note   Configures the timer to periodically trigger DMA for tranfering data 
-	*					from GPIOs to RAM (Logic analyzer data sampling).
-  * @param  None
-  * @retval None
-  */
 void MX_TIM1_LOG_ANLYS_Init(void)
 {
   TIM_ClockConfigTypeDef sClockSourceConfig;
@@ -532,12 +426,6 @@ void MX_TIM1_LOG_ANLYS_Init(void)
 }
 
 /* TIM4 init function - Clocked on 72 MHz. */
-/**             
-  * @brief  TIM4 Configuration.
-	* @note   Represents posttrigger time launched right after incoming event on required channel.
-  * @param  None
-  * @retval None
-  */
 void MX_TIM4_LOG_ANLYS_Init(void)
 {
   TIM_ClockConfigTypeDef sClockSourceConfig;
@@ -563,32 +451,18 @@ void MX_TIM4_LOG_ANLYS_Init(void)
   HAL_TIMEx_MasterConfigSynchronization(&htim4, &sMasterConfig);
 }
 #endif //USE_LOG_ANLYS
-/**
-  * @}
-  */
 /* -------------------------------- END OF LOGIC ANALYZER ------------------------------- */
 /* ************************************************************************************** */
 
 
 /* ************************************************************************************** */
 /* ----------------------- START OF COUNTER FUNCTION DEFINITIONS ------------------------ */
-/** @defgroup Counter_TIM_Inits Counter TIMers Initialization Functions
-  * @{
-  */	
 #ifdef USE_COUNTER
 /* ************************************************************************************** */
 /* ---------------------- Counter timer peripherals INIT functions ---------------------- */
 /* ************************************************************************************** */
+
 /* Timer TIM4 initialization - used for time gating of Counter TIM2 */
-/**             
-  * @brief  TIM4 Configuration.
-	* @note   Direct (ETR): used for timing of input signal gating. Then applying T=t/n resp. f=n/t.
-	* @note   Reference (REF): used for counting an external clock. Gate opened according to the frequency of the external clk source.
-	* @note   Reciprocal (IC): used for periodical check whether all the data was already transfered.	
-	* @note   Time Interval (TI): used for periodical check whether all the data was already transfered.
-  * @param  None
-  * @retval None
-  */
 static void MX_TIM4_Init(void)
 {
   TIM_ClockConfigTypeDef sClockSourceConfig;
@@ -634,13 +508,6 @@ static void MX_TIM4_Init(void)
 }
 
 /* TIM2 mode ETR init function */
-/**             
-  * @brief  TIM2 Configuration for Direct and Reference methods.
-	* @note   Direct (ETR): Directly counts edges. The gate opened according to TIM4.
-	* @note   Reference (REF): Counting an external clock source. The time of counting is given by the frequency of an external clk source on TIM4 and its ARR*PSC (gating). 
-  * @param  None
-  * @retval None
-  */
 static void MX_TIM2_ETRorREF_Init(void)
 {
   TIM_ClockConfigTypeDef sClockSourceConfig;
@@ -679,13 +546,6 @@ static void MX_TIM2_ETRorREF_Init(void)
 }
 
 /* TIM2 mode IC init function */
-/**             
-  * @brief  TIM2 Configuration for Reciprocal and Time Interval methods.
-	* @note   Reciprocal (IC): TIM2 is counting the internal clk and its value is stored into RAM whenever an event occurs on the channel (incoming edge).  
-	* @note   Time Interval (TI): TIM2 is reset + triggered by an incoming event on the 1st channel. The next incoming event on 2nd channel stores the value of TIM2 to RAM. 
-  * @param  None
-  * @retval None
-  */
 static void MX_TIM2_ICorTI_Init(void)
 {
   TIM_ClockConfigTypeDef sClockSourceConfig;
@@ -729,24 +589,10 @@ static void MX_TIM2_ICorTI_Init(void)
 }
 
 #endif //USE_COUNTER
-/**
-  * @}
-  */
 /* ----------------------------- END OF COUNTER DEFINITIONS ----------------------------- */
 /* ************************************************************************************** */
-/**
-  * @}
-  */	
 
-/** @defgroup Common_GPIOs_DMAs_TIM_Inits Common GPIOs & DMAs Initialization Function.
-  * @{
-  */	
-/**             
-  * @brief  This function configures GPIOs and DMAs used by the functionalities.
-	* @note   Called from Timers initialization functions. 
-  * @param  htim_base: pointer to timer's handler
-  * @retval None
-  */
+
 void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
 {
 	GPIO_InitTypeDef GPIO_InitStruct;
@@ -1105,18 +951,9 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
 	}
 	#endif //USE_COUNTER
 }
-/**
-  * @}
-  */
 
-/** @defgroup Common_GPIOs_DMAs_TIM_Deinits Common GPIOs & DMAs Deinitialization Function.
-  * @{
-  */
-/**             
-  * @brief  This function deinitializes GPIOs and DMAs used by the functionalities.
-	* @param  htim_base: pointer to timer's handler
-  * @retval None
-  */	
+
+
 void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* htim_base)
 {
 	#ifdef USE_SCOPE
@@ -1255,21 +1092,14 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* htim_base)
 	}
 	#endif //USE_COUNTER
 } 
-/**
-  * @}
-  */
 
 
-/** @addtogroup Scope
-  * @{
-  */
+
+
 
 /* ************************************************************************************** */
 /* --------------------------------- SCOPE FUNCTIONS ------------------------------------ */
 /* ************************************************************************************** */
-/** @defgroup Scope_TIM_Functions Scope TIMers Functions.
-  * @{
-  */
 /* USER CODE BEGIN 1 */
 #ifdef USE_SCOPE
 uint8_t TIM_Reconfig_scope(uint32_t samplingFreq,uint32_t* realFreq){
@@ -1293,28 +1123,15 @@ uint32_t getMaxScopeSamplingFreq(uint8_t ADCRes){
 	return HAL_RCC_GetPCLK2Freq()/(ADCRes+2);
 }
 #endif //USE_SCOPE
-/**
-  * @}
-  */
-/**
-  * @}
-  */
+
+
+
+
 
 /* ************************************************************************************** */
 /* ----------------------------- GEN and PWM GEN FUNCTIONS ------------------------------ */
 /* ************************************************************************************** */
-/** @defgroup Arbitrary_DAC_PWM_TIM_Functions Arbitrary DAC & PWM Generators Functions.
-  * @{
-  */
 #if defined(USE_GEN) || defined(USE_GEN_PWM)
-/**             
-  * @brief  This function calls Common timer reconfiguration function TIM_Reconfig().
-	* @note		Reconfigures timer as close as possible to required value (recalculates timer registers).
-	* @param  samplingFreq: required frequency of the timer
-	* @param  chan: channel number 0 - 1
-	* @param  *realFreq: pointer to calculated real frequency
-  * @retval status
-  */	
 uint8_t TIM_Reconfig_gen(uint32_t samplingFreq,uint8_t chan,uint32_t* realFreq){
 	if(chan==0){
 		return TIM_Reconfig(samplingFreq,&htim6,realFreq);
@@ -1325,44 +1142,22 @@ uint8_t TIM_Reconfig_gen(uint32_t samplingFreq,uint8_t chan,uint32_t* realFreq){
 	}
 }
 
-/**             
-  * @brief  Enable TIM6 & TIM7 that trigger DMA - generating DAC.
-	* @param  None
-  * @retval None
-  */	
 void TIMGenEnable(void){
   HAL_TIM_Base_Start(&htim6);
 	HAL_TIM_Base_Start(&htim7);
 }
 
-/**             
-  * @brief  Disable TIM6 & TIM7 - stop triggering DMA / generating DAC.
-	* @param  None
-  * @retval None
-  */	
 void TIMGenDisable(void){
   HAL_TIM_Base_Stop(&htim6);
 	HAL_TIM_Base_Stop(&htim7);
 }
 
-/**             
-  * @brief  Initialization of arbitrary DAC generator.
-	* @note 	TIM6 & TIM7 & DAC.
-	* @param  None
-  * @retval None
-  */	
 void TIMGenInit(void){
 	MX_DAC_Init();
 	MX_TIM6_Init();
 	MX_TIM7_Init();
 }
 
-/**             
-  * @brief  Deinit of arbitrary DAC generator.
-	* @note 	Peripherals reset TIM6 & TIM7 & DAC.
-	* @param  None
-  * @retval None
-  */	
 void TIMGenDacDeinit(void){
 //	HAL_TIM_Base_DeInit(&htim6);
 //	HAL_TIM_Base_DeInit(&htim7);
@@ -1379,23 +1174,16 @@ void TIMGenDacDeinit(void){
 	RCC->APB1RSTR &= ~RCC_APB1RSTR_DAC1RST;		
 }
 #endif //USE_GEN || USE_GEN_PWM
-/**
-  * @}
-  */
+
+
+
+
 
 /* ************************************************************************************** */
 /* ------------------- PWM GENERATOR (CHANGING DUTY CYCLE) FUNCTIONS -------------------- */
 /* ************************************************************************************** */
-/** @defgroup Arbitrary_PWM_TIM_Functions Arbitrary PWM Generator Functions.
-  * @{
-  */
+
 #ifdef USE_GEN_PWM
-/**             
-  * @brief  Reconfigures the number of PWM Duty Cycle changes in one waveform period.
-	* @note		The number of DC cahnges is represented by CNDTR register of DMA peripheral.
-	* @param  chan: channel number 0 or 1 (TIM6 or TIM7)
-  * @retval None
-  */	
 void TIM_DMA_Reconfig(uint8_t chan){	
 	if(chan==0){
 		HAL_DMA_Abort(&hdma_tim6_up);	
@@ -1406,12 +1194,6 @@ void TIM_DMA_Reconfig(uint8_t chan){
 	}
 }
 
-/**             
-  * @brief  Enables/Starts generating of PWM and its simultaneous Duty Cycle changes.
-	* @note		The PWM generated by TIM6 (ch2) & TIM7 (ch1). The DMA for DC change triggered by TIM1 (for TIM6) & TIM3 (for TIM7).
-	* @param  None
-  * @retval None
-  */	
 void PWMGeneratingEnable(void){
 	if(generator.numOfChannles==1){	
 		/* After sole Generator initialization, PWM generator do not enter TIMGenPwmInit() 
@@ -1429,12 +1211,6 @@ void PWMGeneratingEnable(void){
 	}
 }
 
-/**             
-  * @brief  Disables/Stops generating of PWM and its simultaneous Duty Cycle changes.
-	* @note		The PWM generated by TIM6 (ch2) & TIM7 (ch1). The DMA for DC change triggered by TIM1 (for TIM6) & TIM3 (for TIM7).
-	* @param  None
-  * @retval None
-  */	
 void PWMGeneratingDisable(void){
 	if(generator.numOfChannles==1){				
 		HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
@@ -1447,12 +1223,6 @@ void PWMGeneratingDisable(void){
 	}
 }
 
-/**             
-  * @brief  Initialization of arbitrary PWM generator.
-	* @note		TIM6 & TIM7 (PWM gen.) and TIM1 & TIM3 (DMA for Duty Cycle change).
-	* @param  None
-  * @retval None
-  */	
 void TIMGenPwmInit(void){
 	MX_TIM1_GEN_PWM_Init();	
 	MX_TIM6_GEN_PWM_Init();
@@ -1460,12 +1230,6 @@ void TIMGenPwmInit(void){
 	MX_TIM7_GEN_PWM_Init();			// DMA transaction timing
 }
 
-/**             
-  * @brief  Deinit of arbitrary PWM generator.
-	* @note		Resetting peripherals TIM6 & TIM7 (PWM gen.) and TIM1 & TIM3 (DMA for Duty Cycle change).
-	* @param  None
-  * @retval None
-  */	
 void TIMGenPwmDeinit(void){
 //	HAL_TIM_Base_DeInit(&htim1);
 //	HAL_TIM_Base_DeInit(&htim6);			
@@ -1486,23 +1250,16 @@ void TIMGenPwmDeinit(void){
 	RCC->APB1RSTR &= ~RCC_APB1RSTR_TIM3RST;	
 }
 
-//void TIMGenPWMEnable(void){
-//  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
-//	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
-//}
+void TIMGenPWMEnable(void){
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+}
 
-//void TIMGenPWMDisable(void){
-//  HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
-//	HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_1);
-//}
+void TIMGenPWMDisable(void){
+  HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
+	HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_1);
+}
 
-/**             
-  * @brief  Configuration of Timer Prescaler (PSC).
-	* @note		Calculated for TIM1 & TIM3 by host application.
-	* @param  pscVal: Prescaler value
-	* @param  chan: channel number 1 or 2
-  * @retval None
-  */	
 void TIM_GEN_PWM_PSC_Config(uint16_t pscVal, uint8_t chan){
 	if(chan == 1){
 		TIM1->PSC = pscVal;
@@ -1511,13 +1268,6 @@ void TIM_GEN_PWM_PSC_Config(uint16_t pscVal, uint8_t chan){
 	}
 }
 
-/**             
-  * @brief  Configuration of Timer Auto-Reload register (ARR).
-	* @note		Calculated for TIM1 & TIM3 by host application.
-	* @param  arrVal: Auto-Reload register value
-	* @param  chan: channel number 1 or 2
-  * @retval None
-  */	
 void TIM_GEN_PWM_ARR_Config(uint16_t arrVal, uint8_t chan){
 	if(chan == 1){
 		TIM1->ARR = arrVal;
@@ -1527,24 +1277,15 @@ void TIM_GEN_PWM_ARR_Config(uint16_t arrVal, uint8_t chan){
 }
 
 #endif //USE_GEN_PWM
-/**
-  * @}
-  */
+
+
+
 
 
 /* ************************************************************************************* */
 /* ----------------------- SYNCHRONIZED PWM GENERATOR FUNCTIONS ------------------------ */
 /* ************************************************************************************* */
-/** @defgroup Synch_PWM_Functions Synchronized PWM Generator Functions.
-  * @{
-  */
 #ifdef USE_SYNC_PWM
-/**             
-  * @brief  Initialization of Synchronized PWMs.
-	* @note		TIM8.
-	* @param  None
-  * @retval None
-  */	
 void TIM_SYNC_PWM_Init(void){		
 //	htim8.State = HAL_TIM_STATE_RESET;
 	MX_TIM8_SYNC_PWM_Init();
@@ -1553,12 +1294,6 @@ void TIM_SYNC_PWM_Init(void){
 	HAL_TIM_Base_Init(&htim8);
 }
 
-/**             
-  * @brief  Deinit of Synchronized PWMs.
-	* @note		TIM8 peripherla reset.
-	* @param  None
-  * @retval None
-  */	
 void TIM_SYNC_PWM_Deinit(void){
 	HAL_TIM_Base_DeInit(&htim8);	
 	
@@ -1568,13 +1303,6 @@ void TIM_SYNC_PWM_Deinit(void){
 }
 
 /* Set the channel to be enabled or disabled. */
-/**             
-  * @brief  Sets channel state.
-	* @note		Channel can be disabled.
-	* @param  channel: channel number 1 - 4
-	* @param  state: CHAN_ENABLE or CHAN_DISABLE
-  * @retval None
-  */	
 void TIM_SYNC_PWM_ChannelState(uint8_t channel, uint8_t state)
 {
 	if(channel == 1){
@@ -1589,11 +1317,6 @@ void TIM_SYNC_PWM_ChannelState(uint8_t channel, uint8_t state)
 }
 
 /* Start generating Output Compare signals. */
-/**             
-  * @brief  Starts generating synchronized PWM on the selected channels.
-	* @param  None
-  * @retval None
-  */	
 void TIM_SYNC_PWM_Start(void)
 {		
 	if(syncPwm.chan1 == CHAN_ENABLE){		
@@ -1630,11 +1353,6 @@ void TIM_SYNC_PWM_Start(void)
 }
 
 /* Stop generating Output Compare signals. */
-/**             
-  * @brief  Stops generating synchronized PWM.
-	* @param  None
-  * @retval None
-  */	
 void TIM_SYNC_PWM_Stop(void)
 {	
 	/* Disable the peripheral */
@@ -1690,15 +1408,8 @@ void TIM_SYNC_PWM_Stop(void)
   HAL_TIM_Base_Init(&htim8);	
 }
 
-/**             
-  * @brief  Synch. PWM channels configuration.
-	* @note		Since only one TIMer is used for generaring synchronized PWMs the value of CCR reg. must be changed on the fly (using DMA from Memory to CCR).
-	* @note		Configure the required DMA for n-th channel. CCR register in time of rising edge and falling edge. 
-						The channel number is sent in previous message.
-	* @param  ccr1st:	the value of CCR for the 1st edge
-	* @param  ccr2st:	the value of CCR for the 2st edge
-  * @retval None
-  */	
+/* Configure the required DMA for n-th channel. CCR register in time of rising edge and falling edge. 
+The channel number is sent in previous message. */
 void TIM_SYNC_PWM_DMA_ChanConfig(uint16_t ccr1st, uint16_t ccr2nd)
 {
 	switch (syncPwm.channelToConfig)
@@ -1724,24 +1435,14 @@ void TIM_SYNC_PWM_DMA_ChanConfig(uint16_t ccr1st, uint16_t ccr2nd)
 	}	
 }
 
-/**             
-  * @brief  Enable Step mode for Synch. PWMs.
-	* @note		Only one period of PWM is generated. Disable continuous mode.
-	* @param  None
-  * @retval None
-  */	
+/* Enable STEP mode */
 void TIM_SYNC_PWM_StepMode_Enable(void)
 {	
 	TIM8->CR1 |= TIM_CR1_OPM;			
 	syncPwm.stepMode = CHAN_ENABLE;
 }
 
-/**             
-  * @brief  Disable Step mode for Synch. PWMs.
-	* @note		Disable one PWM period generation. Enable continuous mode.
-	* @param  None
-  * @retval None
-  */
+/* Disable STEP mode */
 void TIM_SYNC_PWM_StepMode_Disable(void)
 {
 	TIM8->CR1 &= ~TIM_CR1_OPM;	
@@ -1749,10 +1450,9 @@ void TIM_SYNC_PWM_StepMode_Disable(void)
 }
 
 /**
-	* @brief  Reconfiguration of PWM frequency.
-	* @note		ARR & PSC calculated by host.
-	* @params arrPsc: ARR and PSC register of TIM8
-  * @retval None 
+	* @brief  Function settings ARR and PSC values of TIM8
+	* @params arr, psc
+  * @retval none 
   */
 void TIM_ARR_PSC_Reconfig(uint32_t arrPsc)
 {								
@@ -1762,30 +1462,18 @@ void TIM_ARR_PSC_Reconfig(uint32_t arrPsc)
 }
 
 #endif //USE_SYNC_PWM
-/**
-  * @}
-  */
+
+
+
 
 
 /* ************************************************************************************** */
 /* ----------------------------- LOGIC ANALYZER FUNCTIONS ------------------------------- */
 /* ************************************************************************************** */
-/** @defgroup Logic_Analyzer_TIM_Functions LA Functions.
-  * @{
-  */
 #ifdef USE_LOG_ANLYS
 /* ************************************************************************************** */
 /* ------------------------ Logic analyzer Interrupts/Callbacks ------------------------- */
 /* ************************************************************************************** */
-/** @defgroup Logic_Analyzer_TIM_Callbacks LA ISR Callback Functions.
-  * @{
-  */
-/**
-	* @brief  Posttrigger time elapsed callback.
-	* @note		The time after the trigger occured elapsed and all required data is sampled.
-	* @params htim:	TIM handler
-  * @retval None 
-  */
 void LOG_ANLYS_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {	
 //  if(__HAL_TIM_GET_FLAG(htim, TIM_FLAG_UPDATE) != RESET)
@@ -1808,33 +1496,19 @@ void LOG_ANLYS_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 //    }
 //  }
 }
-/**
-  * @}
-  */
 
-/* ************************************************************************************** */
-/* --------------------- Logic analyzer Initialization + Starting ----------------------- */
-/* ************************************************************************************** */
-/**
-	* @brief  Stores the time when the trigger should have occured.
-	* @note		Stores CNDTR reg. of DMA. This function is used only for AUTO trigger in case the trigger did not occur.
-	*					It is the value of posttrigger time start and will change only if the actual trigger uccurs.
-	* @params None
-  * @retval None 
-  */
-void LOG_ANLYS_TriggerEventOccured(void)
+/* Unable the trigger in this interrupt callback */
+void LOG_ANLYS_TriggerEventOccuredCallback(void)
 {		
 	/* Trigger interrupt after posttriger timer elapses (Update Event). */
 	logAnlys.triggerPointer = hdma_tim1_up.Instance->CNDTR;
 	logAnlys.trigOccur = TRIG_OCCURRED;
 }
 
-/**
-	* @brief  Initialization Logic Analyzer.
-	* @note		TIM1 & TIM4 init.
-	* @params None
-  * @retval None 
-  */
+/* ************************************************************************************** */
+/* --------------------- Logic analyzer Initialization + Starting ----------------------- */
+/* ************************************************************************************** */
+
 void TIM_LogAnlys_Init(void)
 {
 	htim1.State = HAL_TIM_STATE_RESET;
@@ -1844,12 +1518,6 @@ void TIM_LogAnlys_Init(void)
 	MX_TIM4_LOG_ANLYS_Init();
 }
 
-/**
-	* @brief  Deinit Logic Analyzer.
-	* @note		TIM1 & TIM4 peripherals reset.
-	* @params None
-  * @retval None 
-  */
 void TIM_LogAnlys_Deinit(void)
 {		
 	HAL_TIM_Base_DeInit(&htim4);	
@@ -1864,12 +1532,6 @@ void TIM_LogAnlys_Deinit(void)
 	htim4.State = HAL_TIM_STATE_RESET;	
 }
 
-/**
-	* @brief  Starts Logic Analyzer sampling.
-	* @note		Starts TIM1 for triggering DMA from GPIOs to RAM.
-	* @params None
-  * @retval None 
-  */
 void TIM_LogAnlys_Start(void)
 {		
 	/* Enable DMA transfers. */
@@ -1878,12 +1540,6 @@ void TIM_LogAnlys_Start(void)
 	HAL_TIM_Base_Start(&htim1);	
 }
 
-/**
-	* @brief  Stops Logic Analyzer sampling.
-	* @note		Stops TIM1 for triggering DMA from GPIOs to RAM. Aborts DMA and disables IRQ from the selected trigger.
-	* @params None
-  * @retval None 
-  */
 void TIM_LogAnlys_Stop(void)
 {
 	/* Abort sampling so that CNDTR (DMA data length) can be changed. */
@@ -1897,12 +1553,7 @@ void TIM_LogAnlys_Stop(void)
 	logAnlys.trigOccur = TRIG_NOT_OCCURRED;
 }
 
-/**
-	* @brief  Posttrigger time reconfiguration.
-	* @note		The time after the trigger is handled by TIM4 and ARR+PSC calculated by host.
-	* @params arrPsc: ARR & PSC value 
-  * @retval None 
-  */
+/* F303RE nucleo - TIM4 timing */
 void TIM_PostTrigger_ARR_PSC_Reconfig(uint32_t arrPsc)
 {	
 	uint16_t arr = (uint16_t)arrPsc;
@@ -1917,12 +1568,7 @@ void TIM_PostTrigger_ARR_PSC_Reconfig(uint32_t arrPsc)
 //	HAL_TIM_Base_Stop(&htim4);
 }
 
-/**
-	* @brief  Sampling frequency reconfiguration.
-	* @note		Reconfigures timer TIM1 for triggering DMA to transfer data from GPIOs to RAM. ARR+PSC calculated by host.
-	* @params arrPsc: ARR & PSC value 
-  * @retval None 
-  */
+/* F303RE nucleo - TIM1 */
 void TIM_SamplingFreq_ARR_PSC_Reconfig(uint32_t arrPsc)
 {
 	uint16_t arr = (uint16_t)arrPsc;
@@ -1934,12 +1580,6 @@ void TIM_SamplingFreq_ARR_PSC_Reconfig(uint32_t arrPsc)
 	__HAL_TIM_SET_PRESCALER(&htim1, psc);	
 }
 
-/**
-	* @brief  Software start of posttrigger in Auto trigger mode.
-	* @note		Starts TIM4 that represents posttrigger time.
-	* @params None
-  * @retval None 
-  */
 void TIM_PostTrigger_SoftwareStart(void)
 {	
 	/* Trigger interrupt after posttriger timer elapses (Update Event). */
@@ -1948,36 +1588,18 @@ void TIM_PostTrigger_SoftwareStart(void)
 //	HAL_TIM_Base_Start(&htim4);
 }
 
-/**
-	* @brief  Disables trigger.
-	* @note		Disables all IRQ channels of GPIOs to prevent from triggering.
-	* @params None
-  * @retval None 
-  */
 void GPIO_DisableIRQ(void){
 	__HAL_GPIO_EXTI_CLEAR_IT(0x3fc0);
 	HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
 	HAL_NVIC_DisableIRQ(EXTI15_10_IRQn);	
 }
 
-/**
-	* @brief  Stops sampling.
-	* @note		Stop TIM1 and abort DMA.
-	* @params None
-  * @retval None 
-  */
 void TIM_SamplingStop(void){
 	HAL_TIM_Base_Stop(&htim1);
 	HAL_DMA_Abort(&hdma_tim1_up);		
 }
 
 /* Called from logAnlys Task after pretrigger thread.sleep time elapsed. */
-/**
-	* @brief  Enables triggers.
-	* @note		Enable triggers on selected channel after the pretrigger time data was already samples.
-	* @params None
-  * @retval None 
-  */
 void GPIO_EnableTrigger(void)
 {
 	GPIO_InitTypeDef   GPIO_InitStructure;
@@ -2043,27 +1665,14 @@ void GPIO_EnableTrigger(void)
 }
 
 #endif //USE_LOG_ANLYS
-/**
-  * @}
-  */
+
 
 
 /* ************************************************************************************** */
 /* ---------------------------------- COUNTER FUNCTIONS --------------------------------- */
 /* ************************************************************************************** */
-/** @defgroup Counter_TIM_Functions Counter Functions.
-  * @{
-  */
 #ifdef USE_COUNTER
-/** @defgroup Counter_TIM_Callbacks Counter ISR Callback Functions.
-  * @{
-  */
-/**
-	* @brief  Period of gate time elapsed callback.
-	* @note		TIM4 ISR called whenever gate time elapses.
-	* @params htim:	TIM handler
-  * @retval None 
-  */
+/* ISR CpltCallback */
 void COUNTER_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   if(__HAL_TIM_GET_FLAG(htim, TIM_FLAG_UPDATE) != RESET)
@@ -2075,19 +1684,10 @@ void COUNTER_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     }
   }
 }
-/**
-  * @}
-  */
-
+	
 /* ************************************************************************************** */
 /* ---------------------------- Counter timer INIT functions ---------------------------- */
 /* ************************************************************************************** */
-/**
-	* @brief  Initialize Counter Direct method (ETR input).
-	* @note		TIM4 gate time; TIM2 counting an external signal.
-	* @params None
-  * @retval None 
-  */
 void TIM_counter_etr_init(void){	
 	htim4.State = HAL_TIM_STATE_RESET;
 	htim2.State = HAL_TIM_STATE_RESET;	
@@ -2098,13 +1698,6 @@ void TIM_counter_etr_init(void){
 	tim4clk = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_TIM34); 	
 }
 
-/**
-	* @brief  Initialize Counter Reference method.
-	* @note		TIM4 counts predefined number of ticks of an external signal (gate opened).
-	* @note 	TIM2 counting an external signal.
-	* @params None
-  * @retval None 
-  */
 void TIM_counter_ref_init(void){	
 	/* There are DMA pending requests when stopped. Unfortunately 
 	cannot be cleared in another way. */
@@ -2122,13 +1715,6 @@ void TIM_counter_ref_init(void){
 	MX_TIM2_ETRorREF_Init();
 }
 
-/**
-	* @brief  Initialize Counter Reciprocal method (Input Capture).
-	* @note		TIM4 channel periodically triggers ISR to check whether the sampling is done.
-	* @note 	TIM2 counting and storing time (count) of an incomming edge to the memory. 
-	* @params None
-  * @retval None 
-  */
 void TIM_counter_ic_init(void){	
 	htim4.State = HAL_TIM_STATE_RESET;
 	htim2.State = HAL_TIM_STATE_RESET;	
@@ -2138,13 +1724,6 @@ void TIM_counter_ic_init(void){
 	MX_TIM2_ICorTI_Init();
 }
 
-/**
-	* @brief  Initialize Counter Time Interval method.
-	* @note		TIM4 channel periodically triggers ISR to check whether the sampling is done.
-	* @note 	TIM2 triggered by 1st channel event. The 2nd channel stores the time of incoming 2nd event.
-	* @params None
-  * @retval None 
-  */
 void TIM_counter_ti_init(void){
 	/* There are DMA pending requests when stopped. Unfortunately 
 	cannot be cleared in another way. */
@@ -2164,12 +1743,6 @@ void TIM_counter_ti_init(void){
 }
 
 /* HAL_RCCEx_GetPeriphCLKFreq function does not count with PLL clock source for TIM2 */
-/**
-	* @brief  Overclocks / doubles TIM2 peripheral frequency for Counter.
-	* @note		HAL function for overclocking TIM2 does not work.
-	* @params None
-  * @retval None 
-  */
 void TIM_doubleClockVal(void){
 	if ((RCC->CFGR3&RCC_TIM2CLK_PLLCLK) == RCC_TIM2CLK_PLLCLK){
 		tim2clk = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_TIM2) * 2; 
@@ -2181,11 +1754,6 @@ void TIM_doubleClockVal(void){
 /* ************************************************************************************** */
 /* --------------------------- Counter timer DEINIT functions --------------------------- */
 /* ************************************************************************************** */
-/**
-	* @brief  Deinits Counter Direct method.
-	* @params None
-  * @retval None 
-  */
 void TIM_etr_deinit(void){
 //	TIM_Counter_Deinit();
 	
@@ -2193,11 +1761,6 @@ void TIM_etr_deinit(void){
 	HAL_TIM_Base_DeInit(&htim4);		
 }
 
-/**
-	* @brief  Deinits Counter Reference method.
-	* @params None
-  * @retval None 
-  */
 void TIM_ref_deinit(void){
 //	TIM_Counter_Deinit();
 	
@@ -2205,11 +1768,6 @@ void TIM_ref_deinit(void){
 	HAL_TIM_Base_DeInit(&htim4);		
 }
 
-/**
-	* @brief  Deinits Counter Reciprocal method.
-	* @params None
-  * @retval None 
-  */
 void TIM_ic_deinit(void){
 //	TIM_Counter_Deinit();
 	
@@ -2217,11 +1775,6 @@ void TIM_ic_deinit(void){
 	HAL_TIM_Base_DeInit(&htim4);				
 }
 
-/**
-	* @brief  Deinits Counter Time Interval method.
-	* @params None
-  * @retval None 
-  */
 void TIM_ti_deinit(void){
 //	TIM_Counter_Deinit();
 	
@@ -2230,11 +1783,6 @@ void TIM_ti_deinit(void){
 	TIM_TI_Deinit();	
 }
 
-/**
-	* @brief  Deinits Counter by resetting both TIM2 & TIM4 periphs.
-	* @params None
-  * @retval None 
-  */
 void TIM_Counter_Deinit(void){
 	/* Reset TIM4 preipheral */
 	RCC->APB1RSTR |= RCC_APB1RSTR_TIM4RST;
@@ -2247,11 +1795,6 @@ void TIM_Counter_Deinit(void){
 /* ************************************************************************************** */
 /* ---------------------- Counter timer mode START STOP functions ----------------------- */
 /* ************************************************************************************** */
-/**
-	* @brief  Starts Counter Direct method.
-	* @params None
-  * @retval None 
-  */
 void TIM_ETR_Start(void)
 {		
 	HAL_TIM_Base_Start(&htim2);			
@@ -2266,11 +1809,6 @@ void TIM_ETR_Start(void)
 	counter.sampleCntChange = SAMPLE_COUNT_CHANGED;
 }
 
-/**
-	* @brief  Stops Counter Direct method.
-	* @params None
-  * @retval None 
-  */
 void TIM_ETR_Stop(void)
 {
 //	HAL_TIM_Base_Stop_DMA(&htim2);
@@ -2282,11 +1820,6 @@ void TIM_ETR_Stop(void)
 	HAL_TIM_Base_Stop(&htim4);
 }
 
-/**
-	* @brief  Starts Counter Reciprocal method.
-	* @params None
-  * @retval None 
-  */
 void TIM_IC_Start(void)
 {
 	/* DMA requests enable */
@@ -2304,11 +1837,6 @@ void TIM_IC_Start(void)
 	TIM2->CCER |= TIM_CCER_CC1E;
 }
 
-/**
-	* @brief  Stops Counter Reciprocal method.
-	* @params None
-  * @retval None 
-  */
 void TIM_IC_Stop(void)
 {
 	/* Disable capturing */
@@ -2329,11 +1857,6 @@ void TIM_IC_Stop(void)
 	HAL_TIM_Base_Stop(&htim2);	
 }
 
-/**
-	* @brief  Starts Counter Time Interval method.
-	* @params None
-  * @retval None 
-  */
 void TIM_TI_Start(void)
 {				
 	/* Get systick value to handle timeout */
@@ -2422,11 +1945,6 @@ void TIM_TI_Start(void)
 	}
 }
 
-/**
-	* @brief  Stops Counter Reciprocal method.
-	* @params None
-  * @retval None 
-  */
 void TIM_TI_Stop(void)
 {
 	/* Abort DMA transfers */
@@ -2446,11 +1964,6 @@ void TIM_TI_Stop(void)
 	TIM2->DIER &= ~TIM_DIER_CC2DE;	
 }
 
-/**
-	* @brief  Initializes Counter Time Interval method.
-	* @params None
-  * @retval None 
-  */
 void TIM_TI_Init(void)
 {		
 	/* Do not run timer after initialization, wait for start command */
@@ -2478,11 +1991,6 @@ void TIM_TI_Init(void)
 	counter.abba = BIN0;	
 }
 
-/**
-	* @brief  Deinits Counter Time Interval method.
-	* @params None
-  * @retval None 
-  */
 void TIM_TI_Deinit(void)
 {
 	/* Disable capturing*/
@@ -2502,11 +2010,7 @@ void TIM_TI_Deinit(void)
 /* ************************************************************************************** */
 /* ------------------------------ IC duty cycle functions ------------------------------- */
 /* ************************************************************************************** */
-/**
-	* @brief  Reconfigures DMA for duty cycle measurement under Counter Reciprocal method.
-	* @params None
-  * @retval None 
-  */
+
 void TIM_IC_DutyCycleDmaRestart(void)
 {	
 	HAL_DMA_Abort(&hdma_tim2_ch1);
@@ -2517,11 +2021,6 @@ void TIM_IC_DutyCycleDmaRestart(void)
 	HAL_DMA_Start(&hdma_tim2_ch2_ch4, (uint32_t)&(TIM2->CCR2), (uint32_t)counter.counterIc.ic2buffer, 1);				
 }
 
-/**
-	* @brief  Initializes duty cycle measurement under Counter Reciprocal method.
-	* @params None
-  * @retval None 
-  */
 void TIM_IC_DutyCycle_Init(void)
 {	
 	/* Stop timer elapse event interrupt first */
@@ -2572,11 +2071,6 @@ void TIM_IC_DutyCycle_Init(void)
 	TIM2->SMCR |= TIM_SMCR_SMS_2;
 }
 
-/**
-	* @brief  Deinits duty cycle measurement under Counter Reciprocal method.
-	* @params None
-  * @retval None 
-  */
 void TIM_IC_DutyCycle_Deinit(void)
 {			
 	/* Select the active input for CCR1 */
@@ -2605,11 +2099,6 @@ void TIM_IC_DutyCycle_Deinit(void)
 	TIM2->CCER |= TIM_CCER_CC2E;		
 }
 
-/**
-	* @brief  Starts duty cycle measurement under Counter Reciprocal method.
-	* @params None
-  * @retval None 
-  */
 void TIM_IC_DutyCycle_Start(void)
 {	
 	/* Set DMA CNDTR buffer count */
@@ -2632,11 +2121,6 @@ void TIM_IC_DutyCycle_Start(void)
 	counter.bin = BIN0;	
 }  
 
-/**
-	* @brief  Stops duty cycle measurement under Counter Reciprocal method.
-	* @params None
-  * @retval None 
-  */
 void TIM_IC_DutyCycle_Stop(void)
 {
 	/* Abort DMA transfers */
@@ -2656,9 +2140,7 @@ void TIM_IC_DutyCycle_Stop(void)
 /* ----------------------------- Specific counter functions ----------------------------- */
 /* ************************************************************************************** */
 /**
-  * @brief  Selects the desired ETR prescaler ETPS in Counter. (TIM2 should be clocked to 144 MHz)
-	* @note		Used for automatic ETR presacaler configuration. The ETR input may be fed only by cca 36 MHz. 
-	*					Therefore if higher input freq. then Prescaler must be higher as well.
+  * @brief  This function is used to select the desired ETR prescaler ETPS. (TIM2 should be clocked to 144 MHz)
 	* @param  freq: frequency
   * @retval none 
   */
@@ -2688,11 +2170,10 @@ void TIM_ETRP_Config(double freq)
 }
 
 /**
-	* @brief  Selects the required prescaler of IC1 of TIM2 in Counter. 
-						Automatic change according to frequency.
+	* @brief  This function is used to select the desired prescaler of IC1 of TIM2. 
+						Automatic change due to frequency.
 	* @param  freq: frequency
   * @retval none 
-  * @state  NOT USED, OBSOLETE
   */
 void TIM_IC1PSC_Config(double freq)
 {
@@ -2724,11 +2205,10 @@ void TIM_IC1PSC_Config(double freq)
 }
 
 /**
-	* @brief  This function is used to select the desired prescaler of IC2 of TIM2 in Counter. 
+	* @brief  This function is used to select the desired prescaler of IC2 of TIM2. 
 						Automatic change due to frequency.
 	* @param  freq: frequency
   * @retval none 
-	* @state  NOT USED, OBSOLETE
   */
 void TIM_IC2PSC_Config(double freq)
 {
@@ -2756,8 +2236,8 @@ void TIM_IC2PSC_Config(double freq)
 }
 
 /**
-	* @brief  Selects the required prescaler of IC1 of TIM2 in Counter. 
-						Direct change of prescaler according to value given to function as parameter.
+	* @brief  This function is used to select the desired prescaler of IC1 of TIM2. 
+						Direct change of prescaler due to value given to function as parameter.
 	* @param  prescVal: value of prescaler (1, 2, 4, 8)
   * @retval none 
   */
@@ -2778,8 +2258,8 @@ void TIM_IC1_PSC_Config(uint8_t prescVal)
 }
 
 /**
-	* @brief  Selects the required prescaler of IC2 of TIM2 in Counter. 
-						Direct change of prescaler according to value given to function as parameter.
+	* @brief  This function is used to select the desired prescaler of IC2 of TIM2. 
+						Direct change of prescaler due to value given to function as parameter.
 	* @param  prescVal: value of prescaler (1, 2, 4, 8)
   * @retval none 
   */
@@ -2800,7 +2280,7 @@ void TIM_IC2_PSC_Config(uint8_t prescVal)
 }
 
 /**
-	* @brief  Selects rising falling edges to be captured in Counter IC + Duty cycle & TI modes channel 1						
+	* @brief  Functions used to select active adges for events capturing (IC + Duty, TI modes)						
 	* @param  none
   * @retval none 
   */
@@ -2809,63 +2289,33 @@ void TIM_IC1_RisingFalling(void)
 	TIM2->CCER |= (TIM_CCER_CC1P | TIM_CCER_CC1NP); 
 }
 
-/**
-	* @brief  Selects rising edge to be captured in Counter IC + Duty cycle & TI modes channel 1						
-	* @param  none
-  * @retval none 
-  */
 void TIM_IC1_RisingOnly(void)
 {
 	TIM2->CCER &= ~(uint16_t)(TIM_CCER_CC1P | TIM_CCER_CC1NP);	
 }
 
-/**
-	* @brief  Selects falling edge to be captured in Counter IC + Duty cycle & TI modes channel 1							
-	* @param  none
-  * @retval none 
-  */
 void TIM_IC1_FallingOnly(void)
 {
 	TIM2->CCER &= ~(uint16_t)(TIM_CCER_CC1NP);	
 	TIM2->CCER |= (uint16_t)(TIM_CCER_CC1P);	
 }
 
-/**
-	* @brief  Selects rising falling edge to be captured in Counter IC + Duty cycle & TI modes channel 2							
-	* @param  none
-  * @retval none 
-  */
 void TIM_IC2_RisingFalling(void)
 {
 	TIM2->CCER |= (TIM_CCER_CC2P | TIM_CCER_CC2NP);
 }
 
-/**
-	* @brief  Selects rising edge to be captured in Counter IC + Duty cycle & TI modes channel 2							
-	* @param  none
-  * @retval none 
-  */
 void TIM_IC2_RisingOnly(void)
 {
 	TIM2->CCER &= ~(uint16_t)(TIM_CCER_CC2P | TIM_CCER_CC2NP);	
 }
 
-/**
-	* @brief  Selects falling edge to be captured in Counter IC + Duty cycle & TI modes channel 2							
-	* @param  none
-  * @retval none 
-  */
 void TIM_IC2_FallingOnly(void)
 {
 	TIM2->CCER &= ~(uint16_t)(TIM_CCER_CC2NP);	
 	TIM2->CCER |= (uint16_t)(TIM_CCER_CC2P);	
 }
 
-/**
-	* @brief  Selects AB sequence in Time Interval of Couter measurement.
-	* @param  none
-  * @retval none 
-  */
 void TIM_TI_Sequence_AB(void){				
 	/* Select the valid trigger input TI1FP1 */
 	TIM2->SMCR &= ~TIM_SMCR_TS;
@@ -2878,11 +2328,6 @@ void TIM_TI_Sequence_AB(void){
 	counter.abba = BIN0;
 }
 
-/**
-	* @brief  Selects BA sequence in Time Interval of Couter measurement.
-	* @param  none
-  * @retval none 
-  */
 void TIM_TI_Sequence_BA(void){	
 	/* Select the valid trigger input TI2FP2 */
 	TIM2->SMCR &= ~TIM_SMCR_TS;
@@ -2895,11 +2340,6 @@ void TIM_TI_Sequence_BA(void){
 	counter.abba = BIN1;
 }
 
-/**
-	* @brief  Counter Time Interval measurement active edges reconfiguration function.
-	* @param  none
-  * @retval none 
-  */
 void TIM_TI_ReconfigActiveEdges(void)
 {
 	if(counter.eventChan1==EVENT_RISING){
@@ -2952,22 +2392,12 @@ uint8_t TIM_ETPS_GetPrescaler(void)
 	return TIM_GetPrescaler(etpsRegVal);
 }
 
-/**
-	* @brief  Function getting Counter IC Prescaler of channel 1.
-	* @params None
-	* @retval None
-  */
 uint8_t TIM_IC1PSC_GetPrescaler(void)
 {
 	uint32_t ic1psc = ((TIM2->CCMR1) & TIM_CCMR1_IC1PSC_Msk) >> TIM_CCMR1_IC1PSC_Pos;	
 	return TIM_GetPrescaler(ic1psc);
 }
 
-/**
-	* @brief  Function getting Counter IC Prescaler of channel 2.
-	* @params None
-	* @retval None
-  */
 uint8_t TIM_IC2PSC_GetPrescaler(void)
 {
 	uint32_t ic2psc = ((TIM2->CCMR1) & TIM_CCMR1_IC2PSC_Msk) >> TIM_CCMR1_IC2PSC_Pos;	
@@ -2975,7 +2405,7 @@ uint8_t TIM_IC2PSC_GetPrescaler(void)
 }
 
 /**
-	* @brief  Returns a real value of given register value prescaler in Direct mode meas. of Counter. 
+	* @brief  This function returns a real value of given register value prescaler. 
 	* @params regPrescValue: ETRP prescaler register value
 	* @retval presc: real prescaler value used for later calculations
   */
@@ -3000,7 +2430,7 @@ uint8_t TIM_GetPrescaler(uint32_t regPrescValue)
 
 /**
 	* @brief  Function testing if DMA transfer complete bit is set. 
-	* @params dmah: pointer to a DMA_HandleTypeDef structure that contains
+	* @params DMA_HandleTypeDef *dmah: pointer to a DMA_HandleTypeDef structure that contains
   *         the configuration information for the specified DMA Channel.  
 	* @retval bool: true, false
   */
@@ -3020,12 +2450,6 @@ bool DMA_TransferComplete(DMA_HandleTypeDef *dmah)
 }
 
 /* The value of DMA buffer size can be changed only if aborted first */
-/**
-	* @brief  Restarts DMA in order to be able rewrite CDTR value (number of samples to be transferred). 
-	* @params dmah: pointer to a DMA_HandleTypeDef structure that contains
-  *         the configuration information for the specified DMA Channel.  
-	* @retval None
-  */
 void DMA_Restart(DMA_HandleTypeDef *dmah)
 {
 	if(dmah == &hdma_tim2_ch1){
@@ -3036,22 +2460,12 @@ void DMA_Restart(DMA_HandleTypeDef *dmah)
 		HAL_DMA_Start(&hdma_tim2_ch2_ch4, (uint32_t)&(TIM2->CCR2), (uint32_t)counter.counterIc.ic2buffer, counter.counterIc.ic2BufferSize);	
 	}
 }
-/**
-  * @}
-  */
 
 /* ---------------------------- END OF COUNTER DEFINITIONS ------------------------------ */
 /* ************************************************************************************** */
 #endif //USE_COUNTER
 
-/** @defgroup Common_TIM_Functions Common TIM Functions.
-  * @{
-  */
-/**             
-  * @brief  Common Timer reconfiguration function.
-  * @param  None
-  * @retval None
-  */	
+
 uint8_t TIM_Reconfig(uint32_t samplingFreq,TIM_HandleTypeDef* htim_base,uint32_t* realFreq){
 	
 	int32_t clkDiv;
@@ -3118,14 +2532,15 @@ uint8_t TIM_Reconfig(uint32_t samplingFreq,TIM_HandleTypeDef* htim_base,uint32_t
 	return result;
 
 }
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
 
 /* USER CODE END 1 */
+
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

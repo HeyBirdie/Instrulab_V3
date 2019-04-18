@@ -1,8 +1,8 @@
 /**
   ******************************************************************************
-  * @file          : main.c
-  * @date          : 18/01/2015 10:00:33
-  * @brief         : Main program body
+  * File Name          : main.c
+  * Date               : 18/01/2015 10:00:33
+  * Description        : Main program body
   ******************************************************************************
   *
   * COPYRIGHT(c) 2015 STMicroelectronics
@@ -52,10 +52,6 @@
 #include "sync_pwm.h"
 #include "logic_analyzer.h"
 
-/** @defgroup Main Main
-  * @{
-  */
-
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
@@ -67,15 +63,8 @@
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
-/**
-  * @defgroup  Main_Private_Prototypes Main Private Function Prototypes
-  * @{	
-  */
 void SystemClock_Config(void);
 static void StartThread(void const * argument);
-/**
-  * @}
-  */
 
 /* USER CODE BEGIN PFP */
 
@@ -85,10 +74,6 @@ static void StartThread(void const * argument);
 
 /* USER CODE END 0 */
 
-/**
-  * @brief  Main function. 
-	* @note 	Some periphs initialization, tasks creation and scheduler start.
-  */
 int main(void)
 {
   /* USER CODE BEGIN 1 */
@@ -251,5 +236,9 @@ void assert_failed(uint8_t* file, uint32_t line)
 /**
   * @}
   */ 
+
+/**
+  * @}
+*/ 
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

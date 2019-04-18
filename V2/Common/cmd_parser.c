@@ -1,4 +1,4 @@
-/**
+/*
   *****************************************************************************
   * @file    cmd_parser.c
   * @author  Y3288231
@@ -21,21 +21,8 @@
 #include "sync_pwm.h"
 #include "logic_analyzer.h"
 
-/** @defgroup Parser Parser
-  * @{
-  */
-
-/** @defgroup Parser_Private_Variables Parser Private Variables
-  * @{
-  */
+// External variables definitions =============================================
 xQueueHandle cmdParserMessageQueue;
-/**
-  * @}
-  */
-
-/** @defgroup Parser_Private_Prototypes Parser Private Function Prototypes
-  * @{
-  */
 command parseSystemCmd(void);
 command parseCommsCmd(void);
 command parseScopeCmd(void);
@@ -46,13 +33,8 @@ command giveNextCmd(void);
 command parseCounterCmd(void);
 command parseGenPwmCmd(void);
 void printErrResponse(command cmd);
-/**
-  * @}
-  */
+// Function definitions =======================================================
 
-/** @defgroup Parser_Function_Definitions Parser Function Definitions
-  * @{
-  */
 /**
   * @brief  Command parser task function.
   * @param  Task handler, parameters pointer
@@ -1115,12 +1097,3 @@ void printErrResponse(command cmd){
 		xQueueSendToBack(messageQueue, err, portMAX_DELAY);
 	}
 }
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
-

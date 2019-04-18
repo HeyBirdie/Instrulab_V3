@@ -1,4 +1,4 @@
-/**
+/*
   *****************************************************************************
   * @file    logic_analyzer.h
   * @author  HeyBirdie
@@ -21,49 +21,28 @@
 //#define LOG_ANLYS_DEFAULT_PRETRIGGER 			0x8000    //[ms]
 //#define LOG_ANLYS_DEFAULT_DATA_LEN 50   // SHOULD BE SET TO 100 !!!
 
-/** @addtogroup Logic_Analyzer
-  * @{
-  */
-
 /* Enums */
-/** @defgroup Logic_Analyzer_Enums Logic analyzer enums
-  * @{
-  */
-	
-	/**
-  * @brief  LA enable state - ENABLED, DISABLED. Used due to shared resources.
-	*					E.g. Counter uses the same ISR (TIMx) as Logic analyzer.
-  */
 typedef enum{
 	LOGA_DISABLED = 0,
 	LOGA_ENABLED
 }enableTypeDef;
 
-	/**
-  * @brief  LA modes.
-  */
 typedef enum{
 	LOGA_MODE_AUTO = 0,
 	LOGA_MODE_NORMAL = 1,
 	LOGA_MODE_SINGLE = 2
 }triggerModeTypeDef;
 
-	/**
-  * @brief  LA state. 
-  */
 typedef enum{
 	LOGA_IDLE = 0,    			  // during and after initialization & after deinit
 	LOGA_SAMPLING,					  // sampling started
 	LOGA_DATA_SENDING,			  // data sending to PC
-	LOGA_DATA_SENT,			  		// data sending to PC
+	LOGA_DATA_SENT,			  // data sending to PC
 	LOGA_WAIT_FOR_RESTART,	  // data sent to PC & wating for start command from host
 	LOGA_DONE,
 	LOGA_ERR
 }stateTypeDef;
 
-	/**
-  * @brief  LA trigger channel selection. 
-  */
 typedef enum{
 	TRIG_CHAN1 = 0,
 	TRIG_CHAN2,
@@ -75,32 +54,17 @@ typedef enum{
 	TRIG_CHAN8
 }trigConfigTypeDef;
 
-	/**
-  * @brief  LA trigger edge selection. 
-  */
 typedef enum{
 	TRIG_EDGE_RISING = 0,
 	TRIG_EDGE_FALLING
 }trigEdgeTypeDef;
 
-	/**
-  * @brief  LA trigger occurence flag. 
-  */
 typedef enum{
 	TRIG_OCCURRED = 0,
 	TRIG_NOT_OCCURRED
 }trigOccurrenceTypeDef;
-/**
-  * @}
-  */
 
-/** @defgroup Logic_Analyzer_Struct_Definition LA Structure Definition
-  * @{
-  */
-
-	/**
-  * @brief  Logic Analyzer Struct
-  */
+/* Structs */
 typedef struct{		
 	uint32_t triggerPointer;
 	uint32_t samplingFreq;
@@ -116,16 +80,11 @@ typedef struct{
 	trigEdgeTypeDef trigEdge;
 	trigOccurrenceTypeDef trigOccur;
 }logAnlysTypeDef;
-/**
-  * @}
-  */
 
 // Externs ===========================================================
 extern volatile logAnlysTypeDef logAnlys;
 
-/** @defgroup Logic_Analyzer_Prototypes LA Function Prototypes
-  * @{
-  */
+// Functions Prototypes ==============================================
 void LogAnlysTask(void const *argument);
 
 void logAnlysSendInit(void);
@@ -158,15 +117,7 @@ void logAnlysSetDefault(void);
 void logAnlysPeriodElapsedCallback(void);
 void triggerEventOccuredCallback(void);	
 
-/**
-  * @}
-  */
-
 #endif /* LOG_ANLYS__H_ */
 
 #endif //USE_LOG_ANLYS
 
-/**
-  * @}
-  */
-	
